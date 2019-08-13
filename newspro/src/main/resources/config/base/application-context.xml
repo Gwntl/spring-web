@@ -11,14 +11,13 @@
 	
 	<!-- 注册HandlerMapper、HandlerAdapter两个映射类 <mvc:annotation-driven />会注册两个映射类，负责将请求映射到类和方法中 -->
 	<mvc:annotation-driven/>
-	
-	<!-- 因为配置的spring是拦截所有请求，所以需要配置<mvc:default-servlet-handler />，来让静态资源通过（如js, css文件等） -->
+
 	<mvc:default-servlet-handler/>
 	
 	<!-- 视图解析器 , 视图解析器是将Controller类返回的视图名加上配置的前后缀进行展示-->
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="prefix" value="/WEB-INF/view/"></property>
-		<property name="suffix" value=".html"></property>
+		<property name="prefix" value="/public/view/"></property>
+		<property name="suffix" value=".jsp"></property>
 		<property name="contentType">
 			<value>test/html; charset=UTF-8</value>
 		</property>

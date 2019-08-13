@@ -1,0 +1,10 @@
+<div>
+    <h2>主题：{{email.subject}}</h2>
+    <h3>发送者：{{email.sender}}</h3>
+    <h3>日期：{{email.date}}</h3>
+    <h3>接收者：{{email.recipient}}</h3>
+    <h2>内容：{{email.message}}</h2>
+    <input ng-model="email.input"/>
+    <button type="button" class="btn btn-primary" ng-click="call()">执行</button>
+    <h4><a href="#/"><<<返回</a></h4>
+</div>
