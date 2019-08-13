@@ -1,6 +1,5 @@
-//var myApp = angular.module('myApp', []);
-
-mainapp.controller('myCtrl', ['$scope','$routeParams',function($scope,$routeParams) {
+mainapp.controller('myCtrl', ['$scope','$routeParams','$http','$location',function($scope,$routeParams,$http, $location) {
+	$scope.params = {};
     $scope.login=function(){
     	var username = $scope.username;
     	var password = $scope.password;
@@ -13,5 +12,23 @@ mainapp.controller('myCtrl', ['$scope','$routeParams',function($scope,$routePara
     		alert("密码不能位空");
     		return;
     	}
+    	
+    	$scope.params.username = username;
+    	$scope.params.password = password;
+    	console.log($scope.params);
+    	$http({
+    		method:"POST",
+    		url:"login.do",
+    		params:$scope.params
+    	}).then(function successCallback(data){
+    		console.log(data);
+    		if(data.status == 200 && data.data.result == "success"){
+    			$location.path("/trade");
+    		}else{
+    			alert("登陆失败");
+    		}
+    	}, function failCallBack(data){
+    		
+    	});
     }
 }]);	

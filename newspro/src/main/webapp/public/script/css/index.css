@@ -24,7 +24,8 @@ form {
 }
 
 .mycenter mysign {
-	width: 440px;
+	width: auto;
+	height: auto;
 }
 
 .mycenter input, checkbox, button {
@@ -49,3 +50,4 @@ form {
 	width: 100px;
 	float: right;
 }
+.lable_div{display:block;float:left;}
