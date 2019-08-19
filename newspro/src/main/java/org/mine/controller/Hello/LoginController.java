@@ -3,6 +3,8 @@ package org.mine.controller.Hello;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.mine.service.TuserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -10,6 +12,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class LoginController {
+	
+	@Autowired
+	private TuserService userService;
 
 	@RequestMapping(value = "/login")
 	@ResponseBody
@@ -18,7 +23,7 @@ public class LoginController {
 		Map<String, String> map = new HashMap<>();
 		System.out.println("username = " + username + ", password = " + password);
 		
-		if(username.equals("admin") || password.equals("admin")){
+		if(userService.isExist(username, password)){
 			map.put("username", username);
 			map.put("password", password);
 			map.put("result", "success");

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- scan：当此属性设置为true时，配置文件如果发生改变，将会被重新加载，默认值为true。 scanPeriod：设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒当scan为true时，此属性生效。默认的时间间隔为1分钟。 
+	debug：当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。默认值为false。 -->
+<configuration scan="true" debug="true">
+
+	<property name="RootLogLevel" value="ALL"></property>
+	<property name="StdoutLogLevel" value="ALL"></property>
+	<property name="FileLogLevel" value="DEBUG"></property>
+	<property name="ErrorLogLevel" value="ERROR"></property>
+
+	<!-- 控制台 -->
+	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+		<Encoding>UTF-8</Encoding>
+		<!-- 过滤掉低于指定 级别的日志,此处过滤掉trace的日志 TRACE<DEBUG<INFO<WARN<ERROR -->
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>${StdoutLogLevel}</level>
+		</filter>
+		<encoder>
+			<!-- 日志输出格式：%d表示日期时间，%thread表示线程名，%-5level：级别从左显示5个字符宽度 %logger{50} 表示logger名字最长50个字符，否则按照句点分割。 
+				%msg：日志消息，%n是换行符 -->
+			<pattern>
+				%d{yyyy-MM-dd HH:mm:ss.SSS}[%thread][%-5level][%logger{50}][%file:%line] %msg%n
+			</pattern>
+		</encoder>
+	</appender>
+
+	<!-- 将日志输出到文件中 -->
+	<appender name="FILE"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<Encoding>UTF-8</Encoding>
+<!-- 		<filter class="ch.qos.logback.classic.filter.ThresholdFilter"> -->
+<!-- 			<level>${FileLogLevel}</level> -->
+<!-- 		</filter> -->
+		<encoder>
+			<pattern>
+				%d{yyyy-MM-dd HH:mm:ss}[%thread][%-5level][%logger{50}][%file:%line] %msg%n
+			</pattern>
+		</encoder>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>log/%d{yyyy-MM-dd}/test_%i.log</fileNamePattern>
+			<maxFileSize>20MB</maxFileSize>
+			<maxHistory>30</maxHistory>
+			<totalSizeCap>20GB</totalSizeCap>
+		</rollingPolicy>
+	</appender>
+	
+	<appender name="STDERR"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<Encoding>UTF-8</Encoding>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>${ErrorLogLevel}</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMisMatch>DENY</onMisMatch>
+		</filter>
+		<encoder>
+			<pattern>
+				%d{yyyy-MM-dd HH:mm:ss}[%thread][%-5level][%logger{50}][%file:%line] %msg%n
+			</pattern>
+		</encoder>
+		<rollingPolicy
+			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<fileNamePattern>log/%d{yyyy-MM-dd}/ERROR_%i.log</fileNamePattern>
+			<maxFileSize>20MB</maxFileSize>
+			<maxHistory>30</maxHistory>
+			<totalSizeCap>20GB</totalSizeCap>
+		</rollingPolicy>
+	</appender>
+
+	<root level="${RootLogLevel}">
+		<appender-ref ref="STDOUT" />
+		<appender-ref ref="FILE" />
+		<appender-ref ref="STDERR" />
+	</root>
+</configuration>

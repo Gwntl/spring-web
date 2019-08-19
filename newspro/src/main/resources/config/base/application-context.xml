@@ -2,25 +2,47 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
-		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 
+	<!-- 引入配置文件 -->
+	<context:property-placeholder location="classpath:config/properties/jdbc.properties"/>
+	
 	<context:component-scan base-package="org.mine.*"/>
 	
-	<!-- 注册HandlerMapper、HandlerAdapter两个映射类 <mvc:annotation-driven />会注册两个映射类，负责将请求映射到类和方法中 -->
-	<mvc:annotation-driven/>
-
-	<mvc:default-servlet-handler/>
-	
-	<!-- 视图解析器 , 视图解析器是将Controller类返回的视图名加上配置的前后缀进行展示-->
-	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="prefix" value="/public/view/"></property>
-		<property name="suffix" value=".jsp"></property>
-		<property name="contentType">
-			<value>test/html; charset=UTF-8</value>
-		</property>
+	<!-- 配置数据源 -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${jdbc.driverClassName}"></property>
+		<property name="url" value="${jdbc.url}"></property>
+		<property name="username" value="${jdbc.username}"></property>
+		<property name="password" value="${jdbc.password}"></property>
 	</bean>
-
+	
+	<!-- 配置SqlSessionFactory -->
+	<bean id="sessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 加载数据库连接池 -->
+		<property name="dataSource" ref="dataSource"></property>
+		<!-- 别名 -->
+		<property name="typeAliasesPackage" value="org.mine.model"></property>
+		<!-- 加载mybatis配置文件 -->
+		<property name="mapperLocations" value="classpath:config/mybatis/*.xml"></property>
+		<property name="configLocation" value="classpath:config/mybatis/mybatis-config.xml"></property>
+	</bean>
+	
+	<!-- MapperScannerConfigurer配置后,不需要写dao的实现类，通过basePackage来找到对应的接口, nameSpace为全路径 -->
+	<!-- DAO接口所在包名，Spring会自动查找其下的类 -->
+	<bean id="" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!--指定会话工厂，如果当前上下文中只定义了一个则该属性可省去 -->
+		<property name="sqlSessionFactoryBeanName" value="sessionFactory"></property>
+		<!-- sqlSessionFactory是SqlSessionFactory类型,因此使用ref, sqlSessionFactoryBeanName是String类型 -->
+<!-- 		<property name="sqlSessionFactory" ref="sessionFactory"></property> -->
+		<!-- 指定要自动扫描接口的基础包，实现接口 -->
+		<property name="basePackage" value="org.mine.dao"></property>
+	</bean>
+	
+	
+	<!-- (事务管理) -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
 </beans>

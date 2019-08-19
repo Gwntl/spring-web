@@ -1,0 +1,92 @@
+2019-08-19 17:10:47[main][DEBUG][org.apache.ibatis.logging.LogFactory][LogFactory.java:135] Logging initialized using 'class org.apache.ibatis.logging.slf4j.Slf4jImpl' adapter.
+2019-08-19 17:10:47[main][DEBUG][org.apache.ibatis.logging.LogFactory][LogFactory.java:135] Logging initialized using 'class org.apache.ibatis.logging.slf4j.Slf4jImpl' adapter.
+2019-08-19 17:10:47[main][DEBUG][org.mybatis.spring.SqlSessionFactoryBean][SqlSessionFactoryBean.java:431] Parsed configuration file: 'class path resource [config/mybatis/mybatis-config.xml]'
+2019-08-19 17:10:47[main][DEBUG][org.mybatis.spring.SqlSessionFactoryBean][SqlSessionFactoryBean.java:472] Parsed mapper file: 'file [F:\git\Gwntl-Pro\spring-web\newspro\target\classes\config\mybatis\mapper\TuserMapper.xml]'
+2019-08-19 17:10:47[main][DEBUG][org.mybatis.spring.SqlSessionFactoryBean][SqlSessionFactoryBean.java:472] Parsed mapper file: 'file [F:\git\Gwntl-Pro\spring-web\newspro\target\classes\config\mybatis\mapper\TuserMapper_impl.xml]'
+2019-08-19 17:10:48[main][DEBUG][org.mybatis.spring.SqlSessionUtils][SqlSessionUtils.java:104] Creating a new SqlSession
+2019-08-19 17:10:48[main][DEBUG][org.mybatis.spring.SqlSessionUtils][SqlSessionUtils.java:140] SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@6404f418] was not registered for synchronization because synchronization is not active
+2019-08-19 17:10:49[main][DEBUG][o.m.spring.transaction.SpringManagedTransaction][SpringManagedTransaction.java:86] JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@27d4a09] will not be managed by Spring
+2019-08-19 17:10:49[main][DEBUG][userDao.select][BaseJdbcLogger.java:142] ==>  Preparing: select * from t_user 
+2019-08-19 17:10:49[main][DEBUG][userDao.select][BaseJdbcLogger.java:142] ==> Parameters: 
+2019-08-19 17:10:49[main][TRACE][userDao.select][BaseJdbcLogger.java:148] <==    Columns: id, username, password, remark
+2019-08-19 17:10:49[main][TRACE][userDao.select][BaseJdbcLogger.java:148] <==        Row: 1, test, test, test
+2019-08-19 17:10:49[main][DEBUG][userDao.select][BaseJdbcLogger.java:142] <==      Total: 1
+2019-08-19 17:10:49[main][DEBUG][org.mybatis.spring.SqlSessionUtils][SqlSessionUtils.java:168] Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@6404f418]
+2019-08-19 17:10:49[main][INFO ][org.mine.service.impl.TUserServiceImpl][TUserServiceImpl.java:45] isExist-------------
+2019-08-19 17:10:49[main][DEBUG][org.mybatis.spring.SqlSessionUtils][SqlSessionUtils.java:104] Creating a new SqlSession
+2019-08-19 17:10:49[main][DEBUG][org.mybatis.spring.SqlSessionUtils][SqlSessionUtils.java:140] SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@6e950bcf] was not registered for synchronization because synchronization is not active
+2019-08-19 17:10:50[main][DEBUG][o.m.spring.transaction.SpringManagedTransaction][SpringManagedTransaction.java:86] JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@525575] will not be managed by Spring
+2019-08-19 17:10:50[main][DEBUG][userDao.isExist][BaseJdbcLogger.java:142] ==>  Preparing: select * from t_user where username=? and password=? 
+2019-08-19 17:10:50[main][DEBUG][userDao.isExist][BaseJdbcLogger.java:142] ==> Parameters: test(String), test(String)
+2019-08-19 17:10:50[main][TRACE][userDao.isExist][BaseJdbcLogger.java:148] <==    Columns: id, username, password, remark
+2019-08-19 17:10:50[main][TRACE][userDao.isExist][BaseJdbcLogger.java:148] <==        Row: 1, test, test, test
+2019-08-19 17:10:50[main][DEBUG][userDao.isExist][BaseJdbcLogger.java:142] <==      Total: 1
+2019-08-19 17:10:50[main][DEBUG][org.mybatis.spring.SqlSessionUtils][SqlSessionUtils.java:168] Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@6e950bcf]
+2019-08-19 17:10:50[main][ERROR][org.mine.service.impl.TUserServiceImpl][TUserServiceImpl.java:51] test: org.mine.aplt.exception.MineException: shibail
+	at org.mine.aplt.exception.MineException.newException(MineException.java:16)
+	at org.mine.aplt.exception.GitWebException.GIT0001(GitWebException.java:12)
+	at org.mine.service.impl.TUserServiceImpl.isExist(TUserServiceImpl.java:48)
+	at com.jdbc.JdbcConnectToMysqlTest.testMtBatisImpl(JdbcConnectToMysqlTest.java:66)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:131)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:459)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:675)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:382)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:192)
+
+2019-08-19 19:12:28[main][DEBUG][org.apache.ibatis.logging.LogFactory][LogFactory.java:135] Logging initialized using 'class org.apache.ibatis.logging.slf4j.Slf4jImpl' adapter.
+2019-08-19 19:12:28[main][DEBUG][org.apache.ibatis.logging.LogFactory][LogFactory.java:135] Logging initialized using 'class org.apache.ibatis.logging.slf4j.Slf4jImpl' adapter.
+2019-08-19 19:12:28[main][DEBUG][org.mybatis.spring.SqlSessionFactoryBean][SqlSessionFactoryBean.java:431] Parsed configuration file: 'class path resource [config/mybatis/mybatis-config.xml]'
+2019-08-19 19:12:28[main][DEBUG][org.mybatis.spring.SqlSessionFactoryBean][SqlSessionFactoryBean.java:472] Parsed mapper file: 'file [F:\git\Gwntl-Pro\spring-web\newspro\target\classes\config\mybatis\mapper\TuserMapper.xml]'
+2019-08-19 19:12:29[main][DEBUG][org.mybatis.spring.SqlSessionFactoryBean][SqlSessionFactoryBean.java:472] Parsed mapper file: 'file [F:\git\Gwntl-Pro\spring-web\newspro\target\classes\config\mybatis\mapper\TuserMapper_impl.xml]'
+2019-08-19 19:12:29[main][DEBUG][org.mybatis.spring.SqlSessionUtils][SqlSessionUtils.java:104] Creating a new SqlSession
+2019-08-19 19:12:29[main][DEBUG][org.mybatis.spring.SqlSessionUtils][SqlSessionUtils.java:140] SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1df8b5b8] was not registered for synchronization because synchronization is not active
+2019-08-19 19:12:31[main][DEBUG][o.m.spring.transaction.SpringManagedTransaction][SpringManagedTransaction.java:86] JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@4bc28c33] will not be managed by Spring
+2019-08-19 19:12:31[main][DEBUG][userDao.select][BaseJdbcLogger.java:142] ==>  Preparing: select * from t_user 
+2019-08-19 19:12:31[main][DEBUG][userDao.select][BaseJdbcLogger.java:142] ==> Parameters: 
+2019-08-19 19:12:31[main][TRACE][userDao.select][BaseJdbcLogger.java:148] <==    Columns: id, username, password, remark
+2019-08-19 19:12:31[main][TRACE][userDao.select][BaseJdbcLogger.java:148] <==        Row: 1, test, test, test
+2019-08-19 19:12:31[main][DEBUG][userDao.select][BaseJdbcLogger.java:142] <==      Total: 1
+2019-08-19 19:12:31[main][DEBUG][org.mybatis.spring.SqlSessionUtils][SqlSessionUtils.java:168] Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1df8b5b8]
+2019-08-19 19:12:31[main][INFO ][org.mine.service.impl.TUserServiceImpl][TUserServiceImpl.java:45] isExist-------------
+2019-08-19 19:12:31[main][DEBUG][org.mybatis.spring.SqlSessionUtils][SqlSessionUtils.java:104] Creating a new SqlSession
+2019-08-19 19:12:31[main][DEBUG][org.mybatis.spring.SqlSessionUtils][SqlSessionUtils.java:140] SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7756c3cd] was not registered for synchronization because synchronization is not active
+2019-08-19 19:12:31[main][DEBUG][o.m.spring.transaction.SpringManagedTransaction][SpringManagedTransaction.java:86] JDBC Connection [com.mysql.cj.jdbc.ConnectionImpl@2bd2b28e] will not be managed by Spring
+2019-08-19 19:12:31[main][DEBUG][userDao.isExist][BaseJdbcLogger.java:142] ==>  Preparing: select * from t_user where username=? and password=? 
+2019-08-19 19:12:31[main][DEBUG][userDao.isExist][BaseJdbcLogger.java:142] ==> Parameters: test(String), test(String)
+2019-08-19 19:12:31[main][TRACE][userDao.isExist][BaseJdbcLogger.java:148] <==    Columns: id, username, password, remark
+2019-08-19 19:12:31[main][TRACE][userDao.isExist][BaseJdbcLogger.java:148] <==        Row: 1, test, test, test
+2019-08-19 19:12:31[main][DEBUG][userDao.isExist][BaseJdbcLogger.java:142] <==      Total: 1
+2019-08-19 19:12:31[main][DEBUG][org.mybatis.spring.SqlSessionUtils][SqlSessionUtils.java:168] Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7756c3cd]
+2019-08-19 19:12:31[main][ERROR][org.mine.service.impl.TUserServiceImpl][TUserServiceImpl.java:51] test: org.mine.aplt.exception.MineException: shibail
+	at org.mine.aplt.exception.MineException.newException(MineException.java:16)
+	at org.mine.aplt.exception.GitWebException.GIT0001(GitWebException.java:12)
+	at org.mine.service.impl.TUserServiceImpl.isExist(TUserServiceImpl.java:48)
+	at com.jdbc.JdbcConnectToMysqlTest.testMtBatisImpl(JdbcConnectToMysqlTest.java:66)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(Unknown Source)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(Unknown Source)
+	at java.lang.reflect.Method.invoke(Unknown Source)
+	at junit.framework.TestCase.runTest(TestCase.java:154)
+	at junit.framework.TestCase.runBare(TestCase.java:127)
+	at junit.framework.TestResult$1.protect(TestResult.java:106)
+	at junit.framework.TestResult.runProtected(TestResult.java:124)
+	at junit.framework.TestResult.run(TestResult.java:109)
+	at junit.framework.TestCase.run(TestCase.java:118)
+	at org.eclipse.jdt.internal.junit.runner.junit3.JUnit3TestReference.run(JUnit3TestReference.java:131)
+	at org.eclipse.jdt.internal.junit.runner.TestExecution.run(TestExecution.java:38)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:459)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.runTests(RemoteTestRunner.java:675)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.run(RemoteTestRunner.java:382)
+	at org.eclipse.jdt.internal.junit.runner.RemoteTestRunner.main(RemoteTestRunner.java:192)
+

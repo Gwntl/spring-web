@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+	<!-- 引入配置文件 -->
+	<context:property-placeholder location="classpath:config/properties/jdbc.properties"/>
+	
+	<context:component-scan base-package="org.mine.*"/>
+	
+	<!-- 配置数据源 -->
+	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${jdbc.driverClassName}"></property>
+		<property name="url" value="${jdbc.url}"></property>
+		<property name="username" value="${jdbc.username}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+	</bean>
+	
+	<!-- 配置SqlSessionFactory -->
+	<bean id="sessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 加载数据库连接池 -->
+		<property name="dataSource" ref="dataSource"></property>
+		<!-- 别名 -->
+<!-- 		<property name="typeAliasesPackage" value="org.mine.model"></property> -->
+		<!-- 加载mybatis mapper*.xml文件 -->
+		<property name="mapperLocations" value="classpath:config/mybatis/mapper/*.xml"></property>
+		<!-- 加载mybatis配置文件 -->
+		<property name="configLocation" value="classpath:config/mybatis/mybatis-config.xml"></property>
+	</bean>
+	<!-- DAO接口所在包名，Spring会自动查找其下的类 -->
+<!-- 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"> -->
+		<!--指定会话工厂，如果当前上下文中只定义了一个则该属性可省去 -->
+<!-- 		<property name="sqlSessionFactoryBeanName" value="sessionFactory"></property> -->
+		<!-- sqlSessionFactory是SqlSessionFactory类型,因此使用ref, sqlSessionFactoryBeanName是String类型 -->
+<!-- 		<property name="sqlSessionFactory" ref="sessionFactory"></property> -->
+		<!-- 指定要自动扫描接口的基础包，实现接口 -->
+<!-- 		<property name="basePackage" value="org.mine.dao"></property> -->
+<!-- 	</bean> -->
+	<!-- 配置SqlSessionTemplate需要写dao实现类,此时namespacce只要是唯一的就可以,返回对象时需要写对应的resultMap -->
+	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0">
+			<ref bean="sessionFactory"/>
+		</constructor-arg>
+	</bean>
+	<!-- (事务管理) -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	
+	<!-- 使用tx标签判定那些方法需要加上事务管理 -->
+	<tx:advice id="transaction" transaction-manager="transactionManager">
+		<tx:attributes>
+			<!-- REQUIRED: 如果当前没有事务，就新建一个事务，如果已经存在一个事务中，加入到这个事务中。 -->
+			<!-- * 表示针对所有方法 -->
+			<tx:method name="*" propagation="REQUIRED"/>
+		</tx:attributes>
+	</tx:advice>
+	<!-- 将事务交给切面进行管理 -->
+	<aop:config>
+		<!-- expression表达式中对应包下面的所有类 -->
+		<aop:pointcut expression="execution(** org.mine.controller.*.*(..))" id="controller"/>
+		<aop:advisor advice-ref="transaction" pointcut-ref="controller"/>
+	</aop:config>
+</beans>
