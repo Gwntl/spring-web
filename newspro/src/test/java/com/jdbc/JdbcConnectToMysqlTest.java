@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.mine.model.Tuser;
 import org.mine.service.TuserService;
+import org.slf4j.MDC;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -57,6 +58,7 @@ public class JdbcConnectToMysqlTest extends TestCase {
 	}
 	
 	public void testMtBatisImpl(){
+		MDC.put("trade", "test");
 		ApplicationContext context = new ClassPathXmlApplicationContext("classpath:config/base/application-context-impl.xml");
 		TuserService service = context.getBean(TuserService.class);
 		List<Tuser> list = service.getAllUsers();

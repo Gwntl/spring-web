@@ -29,7 +29,7 @@ mainapp.config(['$controllerProvider','ngDialogProvider',function($controllerPro
 			controller: $controllerProvider.register
 	};
 	
-	ngDialogProvider.setDefaults({});
+//	ngDialogProvider.setDefaults({});
 	
 }]);
 

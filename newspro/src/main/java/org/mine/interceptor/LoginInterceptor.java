@@ -3,6 +3,7 @@ package org.mine.interceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.MDC;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -21,6 +22,9 @@ public class LoginInterceptor implements HandlerInterceptor{
 		String url = request.getRequestURL().toString();
 		String sendUrl = url.substring(url.lastIndexOf(request.getContextPath())).replace(request.getContextPath(), "");
 		System.out.println(sendUrl);
+		
+		MDC.put("trade", sendUrl.substring(1, sendUrl.indexOf(".")));
+		
 		if(sendUrl.equals("/login.do")){
 			return true;
 		}

@@ -5,11 +5,11 @@ mainapp.controller('myCtrl', ['$scope','$routeParams','$http','$location','ngDia
     	var password = $scope.password;
     	console.log(username);
     	if(username == undefined || username == null || username == ""){
-    		alert("用户名不能位空");
+    		alertService.alert("用户名不能位空");
     		return;
     	}
     	if(password == undefined || password == null || password == ""){
-    		alert("密码不能位空");
+    		alertService.alert("密码不能位空");
     		return;
     	}
     	
@@ -25,14 +25,10 @@ mainapp.controller('myCtrl', ['$scope','$routeParams','$http','$location','ngDia
     		if(data.status == 200 && data.data.result == "success"){
     			$location.path("/trade");
     		}else{
-    			alert("登陆失败");
+    			alertService.alert("登陆失败");
     		}
     	}, function failCallBack(data){
-    		
+    		alertService.alert("登陆失败: " + data);
     	});
-    }
-    
-    $scope.open=function(){
-    	alertService.alert("test");
     }
 }]);	
