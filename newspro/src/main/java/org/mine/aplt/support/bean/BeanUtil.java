@@ -1,4 +1,4 @@
-package org.mine.aplt.support.Bean;
+package org.mine.aplt.support.bean;
 
 import org.springframework.beans.BeanUtils;
 

@@ -1,32 +1,39 @@
-<div class="mycenter">
-	<form class="form-inline" role="form">
-		<div>
-			<div class="form-group">
-				<label for="username" class="col-sm-4 form-label">用户名:</label>
-				<div class="col-sm-8">
-					<input type="text" class="form-control" ng-model="username"
-						style="width:270px;" placeholder="请输入用户名"/>
+<div class="bg"></div>
+<div class="header">
+	<div class="backg">
+		<div class="desc">
+			<form name="loginForm" class="">
+				<div class="divtest">
+					<label for="username" class="form-label labletest">用户名:</label> <input
+						type="text" class="form-control inputtest" ng-model="username"
+						placeholder="请输入用户名"/>
 				</div>
-			</div>
-			<div class="form-group">
-				<label for="password" class="col-sm-4 control-label">密码:</label>
-				<div class="col-sm-8">
-					<input type="password" class="form-control" ng-model="password"
-						style="width:270px;" placeholder="请输入密码"/>
+				<div class="divtest">
+					<label for="password" class="control-label labletest">密码:</label> <input
+						type="password" class="form-control inputtest" ng-model="password"
+						placeholder="请输入密码" />
 				</div>
-
-			</div>
-			<div class="form-group" style="margin:20px 0;">
-				<div class="col-sm-6">
-					<button type="submit" class="btn btn-primary loginbutton"
-						style="width:150px;" ng-click="login()">登录</button>
+				<div class="divtest">
+					<div class="buttons loginbutton" style="width: 50%;">
+						<a ng-click="open()" class="demo">登录</a>
+					</div>
+					<div class="buttons zhbutton" style="width: 50%;">
+						<a ng-click="open()" class="demo">注册</a>
+					</div>
 				</div>
-				<div class="col-sm-6">
-					<button type="submit" class="btn btn-primary zhbutton"
-						style="width:150px;" ng-click="login()">注册</button>
-				</div>
-			</div>
+			</form>
 		</div>
-	</form>
-	
+	</div>
 </div>
+
+<!-- <script type="text/ng-template" id="firstDialog"> -->
+<!-- 			<div class="ngdialog-message"> -->
+<!-- 				<ul class="mt"> -->
+<!-- 					<li>Use it in controllers, factories or directives</li> -->
+<!-- 					<li>Create your own directives</li> -->
+<!-- 					<li>Style all UI and templates</li> -->
+<!-- 					<li>Configure themes</li> -->
+<!-- 					<li>Add animations and effects</li> -->
+<!-- 				</ul> -->
+<!-- 			</div> -->
+<!-- 		</script> -->

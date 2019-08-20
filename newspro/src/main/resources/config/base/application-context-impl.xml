@@ -14,6 +14,8 @@
 	
 	<context:component-scan base-package="org.mine.*"/>
 	
+	<bean id="mdcInit" class="org.mine.aplt.support.logger.MDCLoggerInit" init-method=""></bean>
+	
 	<!-- 配置数据源 -->
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="${jdbc.driverClassName}"></property>

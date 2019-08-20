@@ -18,6 +18,7 @@ public class LoginController {
 
 	@RequestMapping(value = "/login")
 	@ResponseBody
+	//@ResponseBody将结果直接写入HTTP响应正文中,不执行页面跳转.
 	public Map<String, String> login(@RequestParam(value = "username")String username,
 			@RequestParam(value = "password") String password) {
 		Map<String, String> map = new HashMap<>();

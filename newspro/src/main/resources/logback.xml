@@ -38,7 +38,7 @@
 		</encoder>
 		<rollingPolicy
 			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-			<fileNamePattern>log/%d{yyyy-MM-dd}/test_%i.log</fileNamePattern>
+			<fileNamePattern>log/%d{yyyy-MM-dd}/${trade}_%i.log</fileNamePattern>
 			<maxFileSize>20MB</maxFileSize>
 			<maxHistory>30</maxHistory>
 			<totalSizeCap>20GB</totalSizeCap>

@@ -1,15 +1,20 @@
 @CHARSET "UTF-8";
 
-body {
-	background-image: url("../image/6.jpg");
-}
-
 form {
 	background-color: rgba(255, 255, 255, 0.4);
 	padding: 20px;
-	padding-left: 40px;
-	padding-right: 40px;
-	height: 300px;
+	padding-left: 33%;
+	padding-right: 33%;
+	height: 247px;
+	width:400px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: auto;
+}
+
+
+.warg{
+	margin-top:8%;
 }
 
 .mycenter {
@@ -46,8 +51,86 @@ form {
 	float: left;
 }
 
+.labletest{
+	float:left;
+}
+
+.inputtest{
+	width: 100%;
+}
+
+.divtest{
+	margin-left: -50%;
+	margin-right: -50%;
+}
+
 .zhbutton {
 	width: 100px;
 	float: right;
 }
 .lable_div{display:block;float:left;}
+
+.dis_div{
+	float:left;
+}
+
+/*alert*/
+.errorlayerdiv {
+	position: relative;
+	width: 400px;
+	height: auto;
+/* 	margin: 10% auto; */
+	background: #fff;
+	border-radius: 0px;
+	box-shadow: 0 0 20px #aaaaaa;
+	overflow: hidden
+}
+
+.errorlayertit {
+	height: auto;
+	line-height: auto;
+	background: #f0f7ff;
+	padding-left: 20px;
+	color: #888888
+}
+
+.errorlayertit span {
+	float: right;
+	margin-right: 20px;
+	cursor: pointer;
+	font-size: 24px;
+}
+
+.errorlayermain {
+	width: 100%;
+	padding: 20px;
+	line-height: 20px;
+}
+
+.errorlayerbuttondiv {
+	text-align: right;
+	padding: 0 20px 20px 20px;
+}
+
+.errorlayerbuttondiv .button1 {
+	width: 90px;
+	height: 24px;
+	line-height: 20px;
+	text-align: center;
+	color: #fff;
+	background: #15bdf4;
+	border: 0;
+	float: none;
+	margin-right: 0;
+}
+
+.errorlayerbuttondiv .button2 {
+	width: 90px;
+	height: 24px;
+	line-height: 20px;
+	text-align: center;
+	color: #fff;
+	margin-left: 10px;
+	background: #42b19d;
+	border: 0;
+}

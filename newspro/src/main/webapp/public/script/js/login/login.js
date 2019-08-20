@@ -1,4 +1,4 @@
-mainapp.controller('myCtrl', ['$scope','$routeParams','$http','$location',function($scope,$routeParams,$http, $location) {
+mainapp.controller('myCtrl', ['$scope','$routeParams','$http','$location','ngDialog','alertService',function($scope,$routeParams,$http, $location, ngDialog,alertService) {
 	$scope.params = {};
     $scope.login=function(){
     	var username = $scope.username;
@@ -30,5 +30,9 @@ mainapp.controller('myCtrl', ['$scope','$routeParams','$http','$location',functi
     	}, function failCallBack(data){
     		
     	});
+    }
+    
+    $scope.open=function(){
+    	alertService.alert("test");
     }
 }]);	
