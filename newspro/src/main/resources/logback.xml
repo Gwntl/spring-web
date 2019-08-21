@@ -24,8 +24,8 @@
 		</encoder>
 	</appender>
 
-	<!-- 将日志输出到文件中 -->
-	<appender name="FILE"
+	<!-- 将所有日志输出到指定文件中 -->
+	<appender name="STDINF"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<Encoding>UTF-8</Encoding>
 <!-- 		<filter class="ch.qos.logback.classic.filter.ThresholdFilter"> -->
@@ -38,11 +38,38 @@
 		</encoder>
 		<rollingPolicy
 			class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-			<fileNamePattern>log/%d{yyyy-MM-dd}/${trade}_%i.log</fileNamePattern>
+			<fileNamePattern>log/%d{yyyy-MM-dd}/X_%i.log</fileNamePattern>
 			<maxFileSize>20MB</maxFileSize>
 			<maxHistory>30</maxHistory>
 			<totalSizeCap>20GB</totalSizeCap>
 		</rollingPolicy>
+	</appender>
+	
+	<!-- SiftingAppender:能根据一定的规则鉴别日志事件,然后委托给不同的appender完成真正的日志输出任务. -->
+	<appender name="FILE" class="ch.qos.logback.classic.sift.SiftingAppender">
+		<Encoding>UTF-8</Encoding>
+		<!--discriminator鉴别器，根据taskId这个key对应的value鉴别日志事件，然后委托给具体appender写日志-->
+        <discriminator>
+            <key>trade</key>
+            <defaultValue>X</defaultValue>
+        </discriminator>
+		<sift>
+			<!--具体的写日志appender，每一个trade创建一个文件-->
+			<appender name="File-${trade}" class="ch.qos.logback.core.rolling.RollingFileAppender">
+				<rollingPolicy
+					class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+					<fileNamePattern>log/%d{yyyy-MM-dd}/${trade}_%i.log</fileNamePattern>
+					<maxFileSize>20MB</maxFileSize>
+					<maxHistory>30</maxHistory>
+					<totalSizeCap>20GB</totalSizeCap>
+				</rollingPolicy>
+				<encoder>
+					<pattern>
+						%d{yyyy-MM-dd HH:mm:ss}[%thread][%-5level][%logger{50}][%file:%line] %msg%n
+					</pattern>
+				</encoder>
+			</appender>
+		</sift>
 	</appender>
 	
 	<appender name="STDERR"
@@ -69,7 +96,8 @@
 
 	<root level="${RootLogLevel}">
 		<appender-ref ref="STDOUT" />
-		<appender-ref ref="FILE" />
+		<appender-ref ref="STDINF" />
 		<appender-ref ref="STDERR" />
+		<appender-ref ref="FILE" />
 	</root>
 </configuration>

@@ -33,7 +33,7 @@
 	<!-- 视图解析器 , 视图解析器是将Controller类返回的视图名加上配置的前后缀进行展示-->
 	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
 		<property name="prefix" value="/public/view/"></property>
-		<property name="suffix" value=".jsp"></property>
+		<property name="suffix" value=".html"></property>
 		<property name="contentType">
 			<value>test/html; charset=UTF-8</value>
 		</property>

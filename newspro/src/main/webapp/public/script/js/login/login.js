@@ -17,7 +17,7 @@ mainapp.controller('myCtrl', ['$scope','$routeParams','$http','$location','ngDia
     	$scope.params.password = password;
     	console.log($scope.params);
     	$http({
-    		method:"POST",
+    		method:"GET",
     		url:"login.do",
     		params:$scope.params
     	}).then(function successCallback(data){
@@ -25,10 +25,10 @@ mainapp.controller('myCtrl', ['$scope','$routeParams','$http','$location','ngDia
     		if(data.status == 200 && data.data.result == "success"){
     			$location.path("/trade");
     		}else{
-    			alertService.alert("登陆失败");
+    			alertService.alert("登陆失败:" + data.data.result);
     		}
     	}, function failCallBack(data){
-    		alertService.alert("登陆失败: " + data);
+    		alertService.alert("登陆失败: " + data.data.result);
     	});
     }
 }]);	

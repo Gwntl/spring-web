@@ -44,13 +44,12 @@ public class TUserServiceImpl implements TuserService {
 		// TODO Auto-generated method stub
 		logger.info("isExist-------------");
 		try{
-			if(dao.isExist(username, password) != null){
-				throw GitWebException.GIT0001("shibail");
+			if(dao.isExist(username, password, true) != null){
+				throw GitWebException.GIT1001("shibail>>>>>>>>>>>");
 			}
-		}catch(Exception e){
+		}catch(MineException e){
 			logger.error("test: " + MineException.getStackTrace(e));
-			e.printStackTrace();
-			throw GitWebException.GIT0001("shibail");
+			throw GitWebException.GIT1001(e.getError_msg());
 		}
 		return true;
 	}

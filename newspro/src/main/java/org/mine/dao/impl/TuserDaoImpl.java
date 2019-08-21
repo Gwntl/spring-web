@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.mine.aplt.exception.GitWebException;
 import org.mine.aplt.support.dao.BastDaoSupport;
+import org.mine.aplt.util.CommonUtils;
 import org.mine.dao.TuserDao;
 import org.mine.model.Tuser;
 import org.springframework.stereotype.Repository;
@@ -40,12 +42,15 @@ public class TuserDaoImpl extends BastDaoSupport implements TuserDao{
 	}
 
 	@Override
-	public Tuser isExist(String username, String password) {
+	public Tuser isExist(String username, String password , boolean nullException) {
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("username", username);
 		map.put("password", password);
-		// TODO Auto-generated method stub
-		return getSqlSessionTemplate().selectOne("userDao.isExist",map);
+		Tuser tuser = getSqlSessionTemplate().selectOne("userDao.isExist",map);
+		if(tuser == null && nullException){
+			throw GitWebException.GIT_NOTFOUNT("userDao.isExist", CommonUtils.toString(map));
+		}
+		return tuser;
 	}
 
 }
