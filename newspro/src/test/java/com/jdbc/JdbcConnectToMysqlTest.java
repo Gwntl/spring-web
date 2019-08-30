@@ -79,4 +79,16 @@ public class JdbcConnectToMysqlTest {
 		
 		System.out.println(service.isExist("test", "test"));
 	}
+	
+	@Test
+	public void test4(){
+		MDC.put("trade", "atest");
+		Tuser tuser = new Tuser();
+		tuser.setId(3);
+		tuser.setUsername("admin");
+		tuser.setPassword("admin");
+		tuser.setRemark("");
+		int num = service.insertOne(tuser);
+		System.out.println(num);
+	}
 }

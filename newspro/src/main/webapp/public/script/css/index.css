@@ -66,7 +66,7 @@ form {
 	width: 100%;
 }
 
-.divtest{
+.div-layout{
 	margin-left: -50%;
 	margin-right: -50%;
 	margin-tops: 0%;
@@ -120,6 +120,28 @@ form {
 	padding: 0 20px 20px 20px;
 }
 
+.ngdialog-header-alert {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: start;
+  align-items: flex-start;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding: 0rem 1rem;
+  border-bottom: 1px solid #dee2e6;
+  border-top-left-radius: 0.3rem;
+  border-top-right-radius: 0.3rem;
+  background: #aacec757;
+}
+
+.alert-span{
+	font-size:12px;	
+	/*自动适应宽度*/
+	display:block;
+	/*自动换行--当字母超过宽度,打散字母换行*/ 
+	word-break: break-all;
+}
+
 .errorlayerbuttondiv .button1 {
 	width: 90px;
 	height: 24px;
@@ -141,4 +163,58 @@ form {
 	margin-left: 10px;
 	background: #42b19d;
 	border: 0;
+}
+
+.button-login{
+	display: inline-block;
+	border: 2px solid #fff;
+	width: 125px;
+	font-size: 14px;
+	font-family: 'Montserrat', 'Helvetica', Arial, sans-serif;
+	font-weight: 700;
+	line-height: 21px;
+	padding: 8px 0;
+	text-decoration: none;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	vertical-align: top;
+	margin: 0 10px;
+	-webkit-transition: all .3s ease-in;
+	background: transparent;
+	color: #000000;
+	cursor: pointer;
+}
+
+.button-login:hover {
+	background-color: #ffffff;
+	color: #5c9aa3;
+}
+
+
+.alert-footer{
+	display: -ms-flexbox;
+  	display: flex;
+  	-ms-flex-align: center;
+  	align-items: center;
+  	-ms-flex-pack: end;
+  	justify-content: flex-end;
+  	padding: 1rem;
+  	border-top: 1px solid transparent;
+  	border-bottom-right-radius: 0.3rem;
+  	border-bottom-left-radius: 0.3rem;
+}
+
+.alert-button{
+	width: 91px;
+	padding: 7px 0px;
+	background: #acd2d2;
+}
+
+.alert-button:hover {
+	background-color: #46b9b6;
+	color: #ffffff;
+}
+
+.register-bg{
+	background-image: url('../image/6.jpg');;
 }

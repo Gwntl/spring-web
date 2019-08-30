@@ -15,4 +15,8 @@
 	<select id="isExist" parameterType="java.util.Map" resultMap="t_user">
 		select * from t_user where username=#{username} and password=#{password}
 	</select>
+	
+	<insert id="insertOne" parameterType="org.mine.model.Tuser">
+		insert into t_user (id,username,password,remark) values(#{id},#{username},#{password},#{remark});
+	</insert>
 </mapper>

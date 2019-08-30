@@ -15,4 +15,6 @@ public interface TuserService {
 	public Tuser getUser(String username);
 	
 	public boolean isExist(String username, String password);
+	
+	public int insertOne(Tuser tuser);
 }

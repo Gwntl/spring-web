@@ -3,25 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-<link rel="stylesheet" href="public/script/bootstrap/css/bootstrap.min.css">
+<!-- <link rel="stylesheet" href="public/script/bootstrap/css/bootstrap.min.css"> -->
+<link rel="stylesheet" href="public/script/bootstrap/css/bootstrap-3.3.7.min.css">
 <link rel="stylesheet" href="public/script/css/index.css">
 <link rel="stylesheet" href="public/script/lib/ng-dialog/css/ngDialog.css">
 <link rel="stylesheet" href="public/script/lib/ng-dialog/css/ngDialog-theme-default.css">
 <link rel="stylesheet" href="public/script/lib/ng-dialog/css/ngDialog-theme-flat.css">
 <link rel="stylesheet" href="public/script/css/style.css">
+<link rel="stylesheet" href="public/script/css/base/app.css">
 
-<script type="text/javascript" src="public/script/lib/jquery-1.9.1.min.js"></script>
-<script type="text/javascript" src="public/script/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="public/script/lib/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="public/script/bootstrap/js/bootstrap-3.3.7.min.js"></script>
 <script type="text/javascript" src="public/script/lib/angular-1.7.2/angular.min.js"></script>
-<script type="text/javascript" src="public/script/lib/angular-1.7.2/angular-route.js"></script>
+<!-- <script type="text/javascript" src="public/script/lib/angular-1.7.2/angular-route.js"></script> -->
+<script type="text/javascript" src="public/script/lib/angular-1.7.2/angular-ui-router.min.js"></script>
 <script type="text/javascript" src="public/script/lib/ng-dialog/ngDialog.min.js"></script>
 <script type="text/javascript" src="public/script/js/base/mainapp.js"></script>
 <script type="text/javascript" src="public/script/js/base/mainapp-route.js"></script>
+<script type="text/javascript" src="public/script/js/base/extend.js"></script>
 <script type="text/javascript" src="public/script/js/login/login.js"></script>
-<script type="text/javascript" src="public/script/js/login/test1.js"></script>
+<script type="text/javascript" src="public/script/js/trade/trade.js"></script>
+<script type="text/javascript" src="public/script/js/register/register.js"></script>
+<script type="text/javascript" src="public/script/lib/ngStorage.js"></script>
 
 </head>
-<body ng-app="mainapp">
-	<div ng-view></div>
+<body data-ng-app="mainapp">
+	<div class="app bak_mainapp" ng-class="{'app-header-fixed':app.settings.headerFixed, 'app-aside-fixed':app.settings.asideFixed, 'app-aside-folded':app.settings.asideFolded, 'app-aside-dock':app.settings.asideDock, 'container':app.settings.container}" ui-view=""></div>
 </body>
 </html>

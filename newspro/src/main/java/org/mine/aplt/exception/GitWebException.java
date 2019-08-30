@@ -38,6 +38,15 @@ public class GitWebException extends MineBizException{
 		return newException(PROPERTIES, "GIT1003", new Object[]{error_msg});
 	}
 	
+	/**
+	 * 该用户{%s}已存在
+	 * @param error_msg
+	 * @return
+	 */
+	public static MineBizException GIT1004(String error_msg){
+		return newException(PROPERTIES, "GIT1004", new Object[]{error_msg});
+	}
+	
 	public static MineBizException GIT_NOTFOUNT(String table_name, String message){
 		return newException(PROPERTIES, "GIT_NOTFOUNT", new Object[]{table_name, message});
 	}

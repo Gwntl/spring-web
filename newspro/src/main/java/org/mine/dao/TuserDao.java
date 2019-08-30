@@ -17,4 +17,6 @@ public interface TuserDao {
 	public Tuser getUser(String username);
 	
 	public Tuser isExist(String username, String password, boolean nullException);
+	
+	public int insertOne(Tuser tuser);
 }

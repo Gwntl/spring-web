@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.mine.aplt.exception.GitWebException;
+import org.mine.aplt.support.bean.BeanUtil;
 import org.mine.aplt.support.dao.BastDaoSupport;
 import org.mine.aplt.util.CommonUtils;
 import org.mine.dao.TuserDao;
@@ -51,6 +52,11 @@ public class TuserDaoImpl extends BastDaoSupport implements TuserDao{
 			throw GitWebException.GIT_NOTFOUNT("userDao.isExist", CommonUtils.toString(map));
 		}
 		return tuser;
+	}
+
+	@Override
+	public int insertOne(Tuser tuser) {
+		return getSqlSessionTemplate().insert("userDao.insertOne", tuser);
 	}
 
 }

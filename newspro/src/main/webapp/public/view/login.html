@@ -1,39 +1,43 @@
 <div class="bg"></div>
-<div class="header center-in-center">
+<!-- <div style="width:100%;height:100px;position:fixed;z-index: 3;"> -->
+<!-- 	<div style="width:30%;height:80px;background: url('public/script/image/logo.png');z-index: 3;"></div> -->
+<!-- </div> -->
+
+<div class="header center-in-center" style="width:100%;">
 	<div class="backg">
+		<div>
+			<h3>XXXXX管理系统</h3>
+		</div>
 		<div class="desc">
 			<form name="loginForm" class="">
-				<div class="divtest">
+				<div class="div-layout">
 					<label for="username" class="form-label labletest">用户名:</label> <input
 						type="text" class="form-control inputtest" ng-model="username"
 						placeholder="请输入用户名"/>
 				</div>
-				<div class="divtest">
+				<div class="div-layout">
 					<label for="password" class="control-label labletest">密码:</label> <input
 						type="password" class="form-control inputtest" ng-model="password"
 						placeholder="请输入密码" />
 				</div>
-				<div class="divtest">
-					<div class="buttons loginbutton" style="width: 50%;">
-						<a ng-click="login()" class="demo">登录</a>
+				<div class="div-layout">
+					<div class="buttons loginbutton" style="width: 100%;">
+<!-- 						<a ng-click="login()" class="demo">登录</a> -->
+						<button type="button" class="button-login" ng-click="login()">登录</button>
 					</div>
-					<div class="buttons zhbutton" style="width: 50%;">
-						<a ng-click="open()" class="demo">注册</a>
+					<div>
+						<h6 style="font-size:15px;">温馨提示:登陆请联系管理员获取用户名及密码.</h6>
 					</div>
+<!-- 					<div class="buttons zhbutton" style="width: 50%;"> -->
+<!-- 						<a ng-click="register()" class="demo">注册</a> -->
+<!-- 						<button type="button" class="button-login" ng-click="register()">注册</button> -->
+<!-- 					</div> -->
+					
 				</div>
 			</form>
 		</div>
 	</div>
 </div>
-
-<!-- <script type="text/ng-template" id="firstDialog"> -->
-<!-- 			<div class="ngdialog-message"> -->
-<!-- 				<ul class="mt"> -->
-<!-- 					<li>Use it in controllers, factories or directives</li> -->
-<!-- 					<li>Create your own directives</li> -->
-<!-- 					<li>Style all UI and templates</li> -->
-<!-- 					<li>Configure themes</li> -->
-<!-- 					<li>Add animations and effects</li> -->
-<!-- 				</ul> -->
-<!-- 			</div> -->
-<!-- 		</script> -->
+<div class="footer">
+	Created By Wntl.This product belongs to the author(WNTL).
+</div>

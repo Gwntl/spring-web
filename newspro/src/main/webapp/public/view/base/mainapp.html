@@ -1,0 +1,15 @@
+<div data-ng-include=" 'public/view/base/header.html' "
+	class="app-header navbar"></div>
+
+<div data-ng-include=" 'public/view/base/aside.html' "
+	class="app-aside hidden-xs {{app.settings.asideColor}}"></div>
+
+<div class="app-content">
+    <div ui-butterbar></div>
+    <a href class="off-screen-toggle hide" ui-toggle-class="off-screen" data-target=".app-aside" ></a>
+    <div class="app-content-body fade-in-up" ui-view></div>
+  </div>
+
+<div class="footer">
+	&copy; 2014 Copyright.
+</div>

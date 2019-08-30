@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.mine.aplt.exception.MineException;
+import org.mine.aplt.util.CommonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.CannotAcquireLockException;
@@ -41,6 +42,7 @@ public class ControllerExceptionDealing {
 	private static final String CALLBACK_METHOD = "methodName";
 	private static final String CALLBACK_ERROR_CODE = "errorcode";
 	private static final String CALLBACK_INFO = "errorinfo";
+	private static final String LOGIN_REQ = "login";
 	
 	/**
 	 * 处理java异常(非自定义)
@@ -97,6 +99,7 @@ public class ControllerExceptionDealing {
 		map.put(CALLBACK_INFO, error_infos);
 		map.put(CALLBACK_METHOD, handler.getMethod().getName());
 		map.put(CALLBACK_CLASS, handler.getClass().getName());
+		
 		return map;
 	}
 	
@@ -151,6 +154,11 @@ public class ControllerExceptionDealing {
 		map.put(CALLBACK_INFO, error_infos);
 		map.put(CALLBACK_METHOD, handler.getMethod().getName());
 		map.put(CALLBACK_CLASS, handler.getClass().getName());
+		
+		//当请求为登陆时,将错误信息改为"该用户不存在!"
+		if(map.get(CALLBACK_METHOD).equals(LOGIN_REQ)){
+			map.put(CALLBACK_RESULT, "用户名或密码错误!");
+		}
 		return map;
 	}
 	

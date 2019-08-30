@@ -1,8 +1,19 @@
-<div class="ngdialog-message">
-        <div class="errorlayermain">
-        	<a>{{msg}}</a>
-        </div>
-        <div class="ngdialog-buttons">
-            <button type="button" class="ngdialog-button ngdialog-button-primary" ng-click="closeThisDialog()">确 定</button>
-        </div>
+<div class="modal-dialog">
+	<div class="modal-content">
+		<div class="ngdialog-header-alert">
+			<span class="alert-span">{{title}}:</span>
+		</div>
+		<div class="modal-body">
+<!-- 		style="width:380px; height:60px;overflow: hidden;" -->
+			<span class="alert-span">{{msg}}</span>
+		</div>
+<!-- 		<div class="ngdialog-buttons"> -->
+		<div class="alert-footer">
+<!-- 			<button type="button" class="ngdialog-button ngdialog-button-primary" -->
+<!-- 				ng-click="closeThisDialog()">确 定</button> -->
+				<button type="button" class="button-login alert-button"
+				ng-click="closeThisDialog()">确 定</button>
+		</div>
+	</div>
 </div>
+
