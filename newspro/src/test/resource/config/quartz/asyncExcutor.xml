@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<!-- Spring线程池 -->
+	<bean id="threadPoolExcutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<!-- 核心线程数 -->
+		<property name="corePoolSize" value="10"></property>
+		<!-- 线程池维护线程的最大数量 -->
+		<property name="maxPoolSize" value="20"></property>
+		<!-- 允许的空闲时间, 默认60秒 -->
+		<property name="keepAliveSeconds" value="60"></property>
+		<!-- 缓存队列 -->
+		<property name="queueCapacity" value="50"></property>
+	</bean>
+
+</beans>

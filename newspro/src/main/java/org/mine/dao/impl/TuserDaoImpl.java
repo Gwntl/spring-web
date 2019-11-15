@@ -6,14 +6,14 @@ import java.util.Map;
 
 import org.mine.aplt.exception.GitWebException;
 import org.mine.aplt.support.bean.BeanUtil;
-import org.mine.aplt.support.dao.BastDaoSupport;
+import org.mine.aplt.support.dao.BaseDaoSupport;
 import org.mine.aplt.util.CommonUtils;
 import org.mine.dao.TuserDao;
 import org.mine.model.Tuser;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class TuserDaoImpl extends BastDaoSupport implements TuserDao{
+public class TuserDaoImpl extends BaseDaoSupport implements TuserDao{
 
 //	@Autowired
 //	SqlSessionTemplate session;

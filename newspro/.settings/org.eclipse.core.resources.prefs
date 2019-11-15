@@ -3,5 +3,6 @@ encoding//src/main/java=UTF-8
 encoding//src/main/resources=UTF-8
 encoding//src/main/resources/config/properties/jdbc.properties=UTF-8
 encoding//src/test/java=UTF-8
+encoding//src/test/resource/config/template/InterfaceMethodTemplate.properties=UTF-8
 encoding/<project>=UTF-8
 separateDerivedEncodings=true

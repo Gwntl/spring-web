@@ -9,8 +9,14 @@
 	<configs>
 		<config>src/main/resources/config/base/spring-mvc.xml</config>
 		<config>src/main/resources/config/base/application-context.xml</config>
+		<config>src/test/resource/config/quartz/quartz.xml</config>
+		<config>src/test/resource/config/quartz/spring-test.xml</config>
+		<config>src/test/resource/config/quartz/asyncExcutor.xml</config>
+		<config>src/main/resources/config/mybatis/mapper/BatchRunJobDetailMapper.xml</config>
+		<config>src/main/resources/config/mybatis/mapper/BatchQueueConf.xml</config>
 	</configs>
 	<autoconfigs>
+		<config>src/main/resources/config/base/application-context-impl.xml</config>
 	</autoconfigs>
 	<configSets>
 	</configSets>

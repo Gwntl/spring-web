@@ -9,12 +9,12 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
 
+	<import resource="../quartz/quartz.xml"/>
+
 	<!-- 引入配置文件 -->
 	<context:property-placeholder location="classpath:config/properties/jdbc.properties"/>
 	
 	<context:component-scan base-package="org.mine.*"/>
-	
-	<bean id="mdcInit" class="org.mine.aplt.support.logger.MDCLoggerInit" init-method=""></bean>
 	
 	<!-- 配置数据源 -->
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -55,7 +55,7 @@
 		<property name="dataSource" ref="dataSource"></property>
 	</bean>
 	
-	<!-- 使用tx标签判定那些方法需要加上事务管理 -->
+	<!-- 使用tx标签判定那些方法需要加上事务管理 controller方法 -->
 	<tx:advice id="transaction" transaction-manager="transactionManager">
 		<tx:attributes>
 			<!-- REQUIRED: 如果当前没有事务，就新建一个事务，如果已经存在一个事务中，加入到这个事务中。 -->
@@ -63,10 +63,24 @@
 			<tx:method name="*" propagation="REQUIRED"/>
 		</tx:attributes>
 	</tx:advice>
+	
 	<!-- 将事务交给切面进行管理 -->
 	<aop:config>
-		<!-- expression表达式中对应包下面的所有类 -->
-		<aop:pointcut expression="execution(** org.mine.controller.*.*(..))" id="controller"/>
+		<!-- expression表达式中对应包下面的所有类  多个表法式 使用or分割-->
+		<aop:pointcut expression="execution(* org.mine.service.*.*(..))" id="controller"/>
 		<aop:advisor advice-ref="transaction" pointcut-ref="controller"/>
 	</aop:config>
+	
+	<!-- 开启事务自动注解,用于独立业务代码使用 -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	
+	<!-- 配置线程池 -->
+	<bean id="threadTaskPoll" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="20"/>
+		<property name="maxPoolSize" value="30"/>
+		<property name="keepAliveSeconds" value="120"/>
+		<property name="queueCapacity" value="20"/>
+		<property name="allowCoreThreadTimeOut" value="true"/>
+	</bean>
+	
 </beans>

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="job1" class="com.quartz.job.JobDemo01"></bean>
+
+	<bean id="jonDetail1" parent="abstractJobDetail">
+		<property name="targetObject">
+			<ref bean="job1" />
+		</property>
+	</bean>
+	<bean id="core1" parent="abstractTrigger">
+		<property name="jobDetail">
+			<ref bean="jonDetail1" />
+		</property>
+	</bean>
+
+	<bean id="job2" class="com.quartz.job.JobDemo02"></bean>
+	<bean id="jonDetail2" parent="abstractJobDetail">
+		<property name="targetObject">
+			<ref bean="job2" />
+		</property>
+	</bean>
+	<bean id="core2" parent="abstractTrigger">
+		<property name="jobDetail">
+			<ref bean="jonDetail2" />
+		</property>
+		<property name="cronExpression">
+			<value>0/10 * * * * ?</value>
+		</property>
+	</bean>
+	
+<!-- 	<bean id="d01" class="com.quartz.job.abs.SonDemo01"> -->
+<!-- 		<property name="className" value="sonDemo01"></property> -->
+<!-- 		<property name="classPath" value="com.quartz.job.abs.SonDemo01"></property> -->
+<!-- 	</bean> -->
+<!-- 	<bean id="d02" class="com.quartz.job.abs.SonDemo02"> -->
+<!-- 		<property name=""></property> -->
+<!-- 	</bean> -->
+	
+	<bean id="demo01" parent="p">
+		<property name="className" value="sonDemo01"></property>
+		<property name="classPath" value="com.quartz.job.abs.SonDemo01"></property>
+	</bean>
+	
+	<bean id="demo02" parent="p">
+		<property name="className" value="sonDemo02"></property>
+		<property name="classPath" value="com.quartz.job.abs.SonDemo02"></property>
+	</bean>
+</beans>

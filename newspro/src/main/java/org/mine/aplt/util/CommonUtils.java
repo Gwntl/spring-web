@@ -1,10 +1,14 @@
 package org.mine.aplt.util;
 
-import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 公共工具类
@@ -15,6 +19,8 @@ import java.util.Map;
  * @version v1.0
  */
 public final class CommonUtils {
+	private static final Logger logger = LoggerFactory.getLogger(CommonUtils.class);
+	
 
 	public static boolean isEmpty(Object obj){
 		return obj == null;
@@ -79,7 +85,7 @@ public final class CommonUtils {
 	}
 	
 	public static String toString(Map<?, ?> map){
-		if(map == null){
+		if(isEmpty(map)){
 			return null;
 		}
 		
@@ -149,26 +155,98 @@ public final class CommonUtils {
 		return list;
 	}
 	
+	public static Date stringToDate(String timeStr) throws ParseException{
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		return dateFormat.parse(timeStr);
+	}
+	
+	/**
+	 * 将需要加入的初始值放入对应的属性中
+	 * @param map 初始值集
+	 * @param initValue 该值形式为<init=12,13,15;init1=1q;init2=orij>
+	 * @return
+	 */
+	public static Map<String, Object> initMapValue(Map<String, Object> map, String initValue){
+		if(isNotEmpty(map) && isNotEmpty(initValue)){
+			String[] values = initValue.split(";");
+			for(int i = 0, length = values.length; i < length; i++){
+				String[] key_value = values[i].split("=");
+				map.put(key_value[0], key_value[1]);
+			}
+		} else {
+			logger.error("设置值为空!!!!");
+		}
+		return map;
+	}
+	
+	/**
+	 * 下划线转驼峰
+	 * @param str
+	 * @param fisrtLetterSkip 第一个单词跳过
+	 * @return
+	 */
+	public static String underLineToHump(String str, boolean fisrtLetterSkip){
+		String[] content = str.toLowerCase().split("_");
+		int length = content.length;
+		StringBuffer buffer = new StringBuffer(length);
+		for(int i = 0; i < length; i ++){
+			if(fisrtLetterSkip && i == 0){
+				buffer.append(content[i]);
+			} else {
+				buffer.append(capitalizedFirstLetter(content[i]));
+			}
+		}
+		return buffer.toString();
+	}
+	
+	/**
+	 * 首字母大写(前移为大写)
+	 * @param s
+	 * @return
+	 */
+	public static String capitalizedFirstLetter(String str){
+		char[] chars = str.toLowerCase().toCharArray();
+		char firstLetter = chars[0];
+		if(firstLetter >= 'a' && firstLetter <= 'z'){
+			chars[0] = (char) (firstLetter - 32);
+		}
+		return new String(chars);
+	}
+	
+	/**
+	 * 首字母小写
+	 * @param str
+	 * @return
+	 */
+	public static String firstLetterLowerCase(String str){
+		char[] chars = str.toCharArray();
+		char firstLetter = chars[0];
+		if(firstLetter >= 'A' && firstLetter <= 'Z'){
+			chars[0] += 32;
+		}
+		return new String(chars);
+	}
 	
 	public static void main(String[] args){
-		Map<String, Object> map = new HashMap<>();
-		map.put("1", 100);
-		map.put("2", 2.093);
-		map.put("3", "4947rjr");
-		map.put("4", new BigDecimal(100));
-		
-		System.out.println(toString(map));
-		
-		List<String> list = new ArrayList<>();
-		list.add("qweqwe");
-		list.add("qwe12e3qwe");
-		list.add("qweqwqwe12e");
-		list.add("qweeqe121qwe");
-		
-		System.out.println(toString(list));
-		
-		String[] a = {"94jueek","454","we1231"};
-		System.out.println(toString(a));
+//		Map<String, Object> map = new HashMap<>();
+//		map.put("1", 100);
+//		map.put("2", 2.093);
+//		map.put("3", "4947rjr");
+//		map.put("4", new BigDecimal(100));
+//		
+//		System.out.println(toString(map));
+//		
+//		List<String> list = new ArrayList<>();
+//		list.add("qweqwe");
+//		list.add("qwe12e3qwe");
+//		list.add("qweqwqwe12e");
+//		list.add("qweeqe121qwe");
+//		
+//		System.out.println(toString(list));
+//		
+//		String[] a = {"94jueek","454","we1231"};
+//		System.out.println(toString(a));
+		System.out.println(underLineToHump("ass_bsd_vdd", false));
 	}
 	
 }

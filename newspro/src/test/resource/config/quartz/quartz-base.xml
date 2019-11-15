@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<!-- 添加触发器 -->
+		<property name="triggers">
+			<list>
+				<ref bean="core1" />
+				<ref bean="core2" />
+			</list>
+		</property>
+	</bean>
+	
+	<bean id="abstractTrigger" abstract="true" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<!-- 每一秒钟执行一次 -->
+		<property name="cronExpression">
+			<value>0/1 * * * * ?</value>
+		</property>
+	</bean>
+	
+	<bean id="abstractJobDetail" abstract="true" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetMethod">
+			<value>sayHello</value>
+		</property>
+	</bean>
+	
+	<bean id="p" abstract="true" class="com.quartz.job.abs.AbstractDemo" init-method="init"></bean>
+</beans>
