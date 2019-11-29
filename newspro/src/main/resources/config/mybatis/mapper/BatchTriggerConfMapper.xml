@@ -7,15 +7,14 @@
 		<result column="trigger_start_time" property="triggerStartTime"/>
 		<result column="trigger_end_time" property="triggerEndTime"/>
 		<result column="trigger_crontrigger" property="triggerCrontrigger"/>
-		<result column="trigger_job_group_id" property="triggerJobGroupId"/>
 		<result column="trigger_maintenance_date" property="triggerMaintenanceDate"/>
 		<result column="vaild_status" property="vaildStatus"/>
 		<result column="trigger_remark" property="triggerRemark"/>
 	</resultMap>
 
 	<sql id="Base_Select_List">
-		trigger_id,trigger_name,trigger_start_time,trigger_end_time,trigger_crontrigger,trigger_job_group_id,
-		trigger_maintenance_date,vaild_status,trigger_remark
+		trigger_id,trigger_name,trigger_start_time,trigger_end_time,trigger_crontrigger,trigger_maintenance_date,
+		vaild_status,trigger_remark
 	</sql>
 
 	<sql id="Base_Insert_Column">
@@ -25,7 +24,6 @@
 			<if test="triggerStartTime != null">trigger_start_time,</if>
 			<if test="triggerEndTime != null">trigger_end_time,</if>
 			<if test="triggerCrontrigger != null">trigger_crontrigger,</if>
-			<if test="triggerJobGroupId != null">trigger_job_group_id,</if>
 			<if test="triggerMaintenanceDate != null">trigger_maintenance_date,</if>
 			<if test="vaildStatus != null">vaild_status,</if>
 			<if test="triggerRemark != null">trigger_remark,</if>
@@ -39,7 +37,6 @@
 			<if test="triggerStartTime != null">#{triggerStartTime},</if>
 			<if test="triggerEndTime != null">#{triggerEndTime},</if>
 			<if test="triggerCrontrigger != null">#{triggerCrontrigger},</if>
-			<if test="triggerJobGroupId != null">#{triggerJobGroupId},</if>
 			<if test="triggerMaintenanceDate != null">#{triggerMaintenanceDate},</if>
 			<if test="vaildStatus != null">#{vaildStatus},</if>
 			<if test="triggerRemark != null">#{triggerRemark},</if>
@@ -63,11 +60,11 @@
 	<insert id="batchInsertXML" parameterType="java.util.List">
 		insert into batch_trigger_conf
 		(trigger_id,trigger_name,trigger_start_time,trigger_end_time,trigger_crontrigger
-			,trigger_job_group_id,trigger_maintenance_date,vaild_status,trigger_remark)
+			,trigger_maintenance_date,vaild_status,trigger_remark)
 		values
 		<foreach collection="list" item="item" index="index" separator=",">
 			(#{item.triggerId},#{item.triggerName},#{item.triggerStartTime},#{item.triggerEndTime},#{item.triggerCrontrigger}
-				,#{item.triggerJobGroupId},#{item.triggerMaintenanceDate},#{item.vaildStatus},#{item.triggerRemark})
+				,#{item.triggerMaintenanceDate},#{item.vaildStatus},#{item.triggerRemark})
 		</foreach>
 	</insert>
 	<select id="selectOne1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
@@ -91,14 +88,16 @@
 		where trigger_id = #{triggerId} for update
 	</select>
 
-	<delete id="deleteOne1" parameterType="java.util.HashMap">
+	<delete id="deleteOne1" parameterType="org.mine.model.BatchTriggerConf">
 		delete from batch_trigger_conf
-		where trigger_id = #{triggerId}
+		where
+		trigger_id = #{triggerId}
 	</delete>
 
-	<delete id="deleteOne1L" parameterType="java.util.HashMap">
+	<delete id="deleteOne1L" parameterType="org.mine.model.BatchTriggerConf">
 		delete from batch_trigger_conf
-		where trigger_id = #{triggerId} for update
+		where
+		trigger_id = #{triggerId} for update
 	</delete>
 
 	<update id="updateOne1" parameterType="org.mine.model.BatchTriggerConf">
@@ -108,7 +107,6 @@
 			<if test="triggerStartTime != null">trigger_start_time = #{triggerStartTime},</if>
 			<if test="triggerEndTime != null">trigger_end_time = #{triggerEndTime},</if>
 			<if test="triggerCrontrigger != null">trigger_crontrigger = #{triggerCrontrigger},</if>
-			<if test="triggerJobGroupId != null">trigger_job_group_id = #{triggerJobGroupId},</if>
 			<if test="triggerMaintenanceDate != null">trigger_maintenance_date = #{triggerMaintenanceDate},</if>
 			<if test="vaildStatus != null">vaild_status = #{vaildStatus},</if>
 			<if test="triggerRemark != null">trigger_remark = #{triggerRemark},</if>
@@ -123,7 +121,6 @@
 			<if test="triggerStartTime != null">trigger_start_time = #{triggerStartTime},</if>
 			<if test="triggerEndTime != null">trigger_end_time = #{triggerEndTime},</if>
 			<if test="triggerCrontrigger != null">trigger_crontrigger = #{triggerCrontrigger},</if>
-			<if test="triggerJobGroupId != null">trigger_job_group_id = #{triggerJobGroupId},</if>
 			<if test="triggerMaintenanceDate != null">trigger_maintenance_date = #{triggerMaintenanceDate},</if>
 			<if test="vaildStatus != null">vaild_status = #{vaildStatus},</if>
 			<if test="triggerRemark != null">trigger_remark = #{triggerRemark},</if>
@@ -138,7 +135,6 @@
 			<if test="triggerStartTime != null">trigger_start_time = #{triggerStartTime},</if>
 			<if test="triggerEndTime != null">trigger_end_time = #{triggerEndTime},</if>
 			<if test="triggerCrontrigger != null">trigger_crontrigger = #{triggerCrontrigger},</if>
-			<if test="triggerJobGroupId != null">trigger_job_group_id = #{triggerJobGroupId},</if>
 			<if test="triggerMaintenanceDate != null">trigger_maintenance_date = #{triggerMaintenanceDate},</if>
 			<if test="vaildStatus != null">vaild_status = #{vaildStatus},</if>
 			<if test="triggerRemark != null">trigger_remark = #{triggerRemark},</if>
@@ -176,13 +172,6 @@
 				</if>
 			</foreach>
 		</trim>
-		<trim prefix="trigger_job_group_id=case" suffix="end,">
-			<foreach collection="list" item="item" index="index">
-				<if test="item.triggerJobGroupId != null">
-					when trigger_id = #{item.triggerId} then #{item.triggerJobGroupId}
-				</if>
-			</foreach>
-		</trim>
 		<trim prefix="trigger_maintenance_date=case" suffix="end,">
 			<foreach collection="list" item="item" index="index">
 				<if test="item.triggerMaintenanceDate != null">
@@ -217,7 +206,6 @@
 			<if test="triggerStartTime != null">trigger_start_time = #{triggerStartTime},</if>
 			<if test="triggerEndTime != null">trigger_end_time = #{triggerEndTime},</if>
 			<if test="triggerCrontrigger != null">trigger_crontrigger = #{triggerCrontrigger},</if>
-			<if test="triggerJobGroupId != null">trigger_job_group_id = #{triggerJobGroupId},</if>
 			<if test="triggerMaintenanceDate != null">trigger_maintenance_date = #{triggerMaintenanceDate},</if>
 			<if test="vaildStatus != null">vaild_status = #{vaildStatus},</if>
 			<if test="triggerRemark != null">trigger_remark = #{triggerRemark},</if>
@@ -229,21 +217,21 @@
 		select
 		<include refid="BatchTriggerConf.Base_Select_List"/>
 		from batch_trigger_conf
-		where trigger_job_group_id = #{triggerJobGroupId}
+		where null = #{queueAutoFlag}
 	</select>
 
 	<select id="selectAll1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
 		select
 		<include refid="BatchTriggerConf.Base_Select_List"/>
 		from batch_trigger_conf
-		where trigger_job_group_id = #{triggerJobGroupId} and vaild_status = '0'
+		where null = #{queueAutoFlag} and vaild_status = '0'
 	</select>
 
 	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
 		select
 		<include refid="BatchTriggerConf.Base_Select_List"/>
 		from batch_trigger_conf
-		where trigger_job_group_id = #{triggerJobGroupId} for update
+		where null = #{queueAutoFlag} for update
 	</select>
 
 </mapper>

@@ -27,7 +27,7 @@
 			<ref bean="jonDetail2" />
 		</property>
 		<property name="cronExpression">
-			<value>0/10 * * * * ?</value>
+			<value>*/10 * * * * ?</value>
 		</property>
 	</bean>
 	
@@ -39,13 +39,13 @@
 <!-- 		<property name=""></property> -->
 <!-- 	</bean> -->
 	
-	<bean id="demo01" parent="p">
-		<property name="className" value="sonDemo01"></property>
-		<property name="classPath" value="com.quartz.job.abs.SonDemo01"></property>
-	</bean>
+<!-- 	<bean id="demo01" parent="p"> -->
+<!-- 		<property name="className" value="sonDemo01"></property> -->
+<!-- 		<property name="classPath" value="com.quartz.job.abs.SonDemo01"></property> -->
+<!-- 	</bean> -->
 	
-	<bean id="demo02" parent="p">
-		<property name="className" value="sonDemo02"></property>
-		<property name="classPath" value="com.quartz.job.abs.SonDemo02"></property>
-	</bean>
+<!-- 	<bean id="demo02" parent="p"> -->
+<!-- 		<property name="className" value="sonDemo02"></property> -->
+<!-- 		<property name="classPath" value="com.quartz.job.abs.SonDemo02"></property> -->
+<!-- 	</bean> -->
 </beans>

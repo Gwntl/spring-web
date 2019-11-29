@@ -1,16 +1,24 @@
 package org.mine.quartz.trigger;
 
+import java.text.ParseException;
 import java.util.List;
+import java.util.Map;
 
 import org.mine.aplt.constant.ApltContanst;
+import org.mine.aplt.enumqz.JobExcutorEnum;
+import org.mine.aplt.exception.GitWebException;
+import org.mine.aplt.exception.MineBizException;
 import org.mine.aplt.util.CommonUtils;
-import org.mine.model.BatchRunQueue;
+import org.mine.dao.BatchJobGroupConfDao;
+import org.mine.dao.BatchQueueConfDao;
+import org.mine.dao.BatchTriggerConfDao;
+import org.mine.model.BatchJobGroupConf;
+import org.mine.model.BatchQueueConf;
+import org.mine.model.BatchTriggerConf;
 import org.mine.quartz.ExcutorBase;
-import org.mine.quartz.job.ConcurrentExcutorJob;
-import org.mine.service.BatchRunQueueService;
 import org.quartz.JobDataMap;
 import org.quartz.JobKey;
-import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.quartz.impl.JobDetailImpl;
 import org.quartz.impl.triggers.CronTriggerImpl;
 import org.slf4j.Logger;
@@ -27,7 +35,11 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 	private static final Logger logger = LoggerFactory.getLogger(ExcutorTrigger.class);
 	
 	@Autowired
-	private BatchRunQueueService queueService;
+	private BatchQueueConfDao queueConfDao;
+	@Autowired
+	private BatchTriggerConfDao triggerConfDao;
+	@Autowired
+	private BatchJobGroupConfDao jobGroupConfDao;
 	
 
 	/* 
@@ -37,41 +49,71 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 	 */
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		Scheduler scheduler = ExcutorBase.getSchedulerFactoryBean().getScheduler();
-//		List<BatchRunQueue> queues = queueService.selectAllQueues();
-		List<BatchRunQueue> queues = null;
-		logger.debug(">>>>>>> : {}", CommonUtils.isNotEmpty(queues) ? CommonUtils.toString(queues) : "");
-		BatchRunQueue queue = null;
-		if(CommonUtils.isNotEmpty(queues)){
-			for(int i = 0, size = queues.size(); i < size; i ++){
-				queue = queues.get(i);
-				System.out.println(">>>>>>>>> : " + queue.toString());
-				JobDetailImpl detail = new JobDetailImpl();
-				detail.setName(ApltContanst.DEFAULT_JOB_NAME + queue.getQueueId());
-				detail.setKey(new JobKey(detail.getName(), ApltContanst.DEFAULT_JOB_GROUP));
-				detail.setJobClass(ConcurrentExcutorJob.class);
-				JobDataMap detailDataMap = new JobDataMap();
-//				detail.setJobDataMap((JobDataMap) CommonUtils.initMapValue(detailDataMap, queue.getQueueInitValue()));
-				//确保job执行完后不从jobstore中移除
-				detail.setDurability(true);
+		loadTimingData();
+	}
+	
+	/**
+	 * 加载定时任务
+	 * @return
+	 */
+	public Map<JobDetailImpl, ExcutorTrigger> loadTimingData(){
+//		Map<JobDetailImpl, ExcutorTrigger> map = null;
+		try{
+//			map = new LinkedHashMap<>();
+			//查询出需定时执行的任务
+			List<BatchQueueConf> queueConfs = queueConfDao.selectAll1(JobExcutorEnum.AUTO_RUN);
+			for(int i = 0, size = queueConfs.size(); i < size; i++){
+				BatchQueueConf queueConf = queueConfs.get(i);
+				Long jobGroupId = queueConf.getQueueJobGroupId();
+				BatchJobGroupConf groupConf = jobGroupConfDao.selectOne1(jobGroupId);
 				
-				ExcutorTrigger trigger = new ExcutorTrigger();
-				trigger.setName(ApltContanst.DEFAULT_TRIGGER_NAME + queue.getQueueId());
-				trigger.setGroup(ApltContanst.DEFAULT_TRIGGER_GROUP);
-				trigger.setCronExpression(queue.getQueueCrontrigger());
-				if(CommonUtils.isNotEmpty(queue.getQueueStartTime())){
-					trigger.setStartTime(CommonUtils.stringToDate(queue.getQueueStartTime()));
+				if(groupConf.getJobGroupNumber() > 1){
+					throw GitWebException.GIT_CONFIGUARTION("batch_job_group_conf", "job_group_number", "请联系技术人员或业务人员修复!!!");
 				}
-				if(CommonUtils.isNotEmpty(queue.getQueueEndTime())){
-					trigger.setEndTime(CommonUtils.stringToDate(queue.getQueueEndTime()));
+				
+				if(CommonUtils.isEmpty(groupConf.getJobGroupTriggerId())){
+					throw GitWebException.GIT1002("batch_job_group_cof.job_group_trigger_id 触发器ID");
+				}
+				
+				JobDetailImpl detailImpl = new JobDetailImpl();
+				detailImpl.setName(ApltContanst.DEFAULT_JOB_NAME + groupConf.getJobGroupId());
+				detailImpl.setKey(new JobKey(detailImpl.getName(), ApltContanst.DEFAULT_JOB_GROUP));
+				detailImpl.setJobClass(ExcutorBase.getExcutorJob(groupConf.getJobGroupIsconcurrent()));
+				JobDataMap dataMap = new JobDataMap();
+				dataMap.put("savelog", groupConf.getJobGroupSavelog());
+				dataMap.put("group_id", jobGroupId);
+				detailImpl.setJobDataMap((JobDataMap)CommonUtils.initMapValue(dataMap, groupConf.getJobGroupInitValue()));
+				//确保job执行完后不从jobstore中移除
+				detailImpl.setDurability(true);
+				
+				BatchTriggerConf triggerConf = triggerConfDao.selectOne1R(groupConf.getJobGroupTriggerId());
+				if(CommonUtils.isEmpty(triggerConf.getTriggerCrontrigger())){
+					throw GitWebException.GIT1002("batch_trigger_conf.trigger_crontrigger 触发器参数");
+				}
+				ExcutorTrigger trigger = new ExcutorTrigger();
+				trigger.setName(triggerConf.getTriggerName());
+				trigger.setGroup(ApltContanst.DEFAULT_TRIGGER_GROUP);
+				trigger.setCronExpression(triggerConf.getTriggerCrontrigger());
+				if(CommonUtils.isNotEmpty(triggerConf.getTriggerStartTime())){
+					trigger.setStartTime(CommonUtils.stringToDate(triggerConf.getTriggerStartTime(), "yyyy-MM-dd HH:mm:ss"));
+				}
+				if(CommonUtils.isNotEmpty(triggerConf.getTriggerEndTime())){
+					trigger.setEndTime(CommonUtils.stringToDate(triggerConf.getTriggerEndTime(), "yyyy-MM-dd HH:mm:ss"));
 				}
 				/*
-				 * Spring根据配置文件配置trigger时,可以将job配置在trigger的datamap中.
+				 * Spring当使用bean配置触发器的形式的时候,将jobdetail放至trigger的dataMap中.
 				 * 当注册时若发现未配置Job信息, Spring会从Map中自动获取jobDetail的值,注册进Schedule中.
 				 * */
 //				getJobDataMap().put("jobDetail", detail);
-				scheduler.scheduleJob(detail, trigger);
+				ExcutorBase.getSchedulerFactoryBean().getScheduler().scheduleJob(detailImpl, trigger);
+				
+//				map.put(detailImpl, trigger);
 			}
+		} catch(ParseException | SchedulerException e){
+			logger.error("加载Quartz信息失败: {}" + MineBizException.getStackTrace(e));
+//			throw GitWebException.GIT_PARSE(e.getMessage());
 		}
+		
+		return null;
 	}
 }

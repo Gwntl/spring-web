@@ -105,6 +105,8 @@ public class BaseDaoSupport implements ApplicationContextAware{
 					session.insert(statement, t);
 				} else if(operator.equalsIgnoreCase("update")){
 					session.update(statement, t);
+				} else if(operator.equalsIgnoreCase("delete")){
+					session.delete(statement, t);
 				}
 //				//没commitSize次提交一次
 //				if(i % commitSize == 0 || i == commitSize - 1){

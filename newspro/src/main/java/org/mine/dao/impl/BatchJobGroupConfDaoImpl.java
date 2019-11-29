@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
  * 
  * @filename BatchJobGroupConfDaoImpl.java
  * @author wzaUsers
- * @date 2019-11-14 20:11:04
+ * @date 2019-11-26 15:11:20
  * @version v1.0
 */
 @Repository
@@ -44,8 +44,9 @@ public class BatchJobGroupConfDaoImpl extends BaseDaoSupport implements BatchJob
 	public void batchInsertXML(List<BatchJobGroupConf> list){
 		BatchInsertByXML(list, "list", 20, new BatchOperator() {
 			@Override
-			public void call(Map<String, Object> map) {
+			public Object call(Map<String, Object> map) {
 				getSqlSessionTemplate().insert("BatchJobGroupConf.batchInsertXML", map);
+				return null;
 			};
 		});
 	}
@@ -140,8 +141,9 @@ public class BatchJobGroupConfDaoImpl extends BaseDaoSupport implements BatchJob
 	public void batchUpdateXML1(List<BatchJobGroupConf> list){
 		BatchInsertByXML(list, "list", 20, new BatchOperator() {
 			@Override
-			public void call(Map<String, Object> map) {
+			public Object call(Map<String, Object> map) {
 				getSqlSessionTemplate().update("BatchJobGroupConf.batchUpdateXML1", map);
+				return null;
 			};
 		});
 	}
@@ -153,6 +155,15 @@ public class BatchJobGroupConfDaoImpl extends BaseDaoSupport implements BatchJob
 	@Override
 	public void batchUpdate(List<BatchJobGroupConf> list){
 		batchExcutor("BatchJobGroupConf.batchUpdate", list, "update", 20);
+	}
+
+	/**
+	 * 批量删除(直接调用Mybatis代码)
+	 * @param BatchJobGroupConf 
+	 */
+	@Override
+	public void batchDelete(List<BatchJobGroupConf> list){
+		batchExcutor("BatchJobGroupConf.deleteOne1", list, "delete", 20);
 	}
 
 }

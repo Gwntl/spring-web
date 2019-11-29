@@ -7,7 +7,7 @@ import org.mine.model.BatchJobGroupConf;
  * 
  * @filename BatchJobGroupConfDao.java
  * @author wzaUsers
- * @date 2019-11-14 20:11:04
+ * @date 2019-11-26 15:11:20
  * @version v1.0
 */
 
@@ -77,4 +77,9 @@ public interface BatchJobGroupConfDao {
 	 * @param BatchJobGroupConf 
 	 */
 	void batchUpdate(List<BatchJobGroupConf> list);
+	/**
+	 * 批量删除(直接调用Mybatis代码)
+	 * @param BatchJobGroupConf 
+	 */
+	void batchDelete(List<BatchJobGroupConf> list);
 }

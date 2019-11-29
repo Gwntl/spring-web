@@ -1,4 +1,4 @@
-package org.mine.aplt.support.bean;
+package org.mine.aplt.util;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
@@ -13,13 +13,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.mine.aplt.util.CommonUtils;
+import org.mine.aplt.support.BaseServiceTasketExcutor;
 import org.mine.controller.dto.UserDto;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.FatalBeanException;
 
 public class BeanUtil extends BeanUtils{
 
+	public static BaseServiceTasketExcutor getObj(String className){
+		BaseServiceTasketExcutor obj = null;
+		try{
+			obj = (BaseServiceTasketExcutor) Class.forName(className).newInstance();
+		} catch(ClassNotFoundException | IllegalAccessException | InstantiationException e){
+			throw new FatalBeanException("Could not newinstance clazz : " + className);
+		}
+		return obj;
+	}
+	
 	/**
 	 * 为对象初始化值
 	 * @param clazz

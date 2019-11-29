@@ -52,7 +52,5 @@ public class CodeGeneratorTest {
 //		}
 //		confDao.batchInsertXML(list);
 //		confDao.batchUpdateXML1(list);
-		List<BatchTriggerConf> list = confDao.selectAll1(5001L);
-		System.out.println(">>>>>" + CommonUtils.toString(list));
 	}
 }

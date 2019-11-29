@@ -10,7 +10,9 @@ public class ApltContanst {
 	
 	public static final String DEFAULT_TRIGGER_GROUP = "excutor_trigger_groups";
 	
+	public static final String ASYNC_RESULT_SUCCESS = "0";
 	
+	public static final String ASYNC_RESULT_FAIL = "1";
 	/*------------------------DAO层代码生成工具相关常量BEGIN-----------------------*/
 	/**
 	 * app路径
@@ -40,6 +42,7 @@ public class ApltContanst {
 	public static final String BATCHUPDATEXML = "batchUpdateXML";
 	public static final String DELETEONE = "deleteOne";
 	public static final String DELETEONEL = "deleteOneL";
+	public static final String BATCHDELETE = "batchDelete";
 	public static final String SELECTALL = "selectAll";
 	public static final String SELECTALLR = "selectAllR";
 	public static final String SELECTALLL = "selectAllL";

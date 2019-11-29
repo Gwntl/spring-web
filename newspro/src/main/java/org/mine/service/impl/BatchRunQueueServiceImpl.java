@@ -1,7 +1,9 @@
 package org.mine.service.impl;
 
 import java.util.List;
+import java.util.Map;
 
+import org.mine.aplt.support.BaseServiceTasketExcutor;
 import org.mine.dao.BatchRunJobDetailDao;
 import org.mine.dao.BatchRunQueueDao;
 import org.mine.model.BatchRunJobDetail;

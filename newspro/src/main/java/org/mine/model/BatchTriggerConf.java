@@ -4,7 +4,7 @@ package org.mine.model;
  * batch_trigger_conf--定时任务触发器定义表
  * @filename BatchTriggerConf.java
  * @author wzaUsers
- * @date 2019-11-14 19:11:57
+ * @date 2019-11-26 15:11:20
  * @version v1.0
 */
 public class BatchTriggerConf {
@@ -29,10 +29,6 @@ public class BatchTriggerConf {
 	 */
 	private String triggerCrontrigger;
 	/**
-	 * JOB作业组ID
-	 */
-	private Long triggerJobGroupId;
-	/**
 	 * 维护日期
 	 */
 	private String triggerMaintenanceDate;
@@ -51,7 +47,6 @@ public class BatchTriggerConf {
 		this.triggerStartTime = null;
 		this.triggerEndTime = null;
 		this.triggerCrontrigger = "";
-		this.triggerJobGroupId = 1001L;
 		this.triggerMaintenanceDate = "";
 		this.vaildStatus = "0";
 		this.triggerRemark = "";
@@ -128,20 +123,6 @@ public class BatchTriggerConf {
 		this.triggerCrontrigger = triggerCrontrigger;
 	}
 	/**
-	 * JOB作业组ID
-	 * @return thetriggerJobGroupId
-	 */
-	public Long getTriggerJobGroupId() {
-		return triggerJobGroupId;
-	}
-	/**
-	 * JOB作业组ID
-	 * @param triggerJobGroupId the triggerJobGroupId to set
-	 */
-	public void setTriggerJobGroupId(Long triggerJobGroupId) {
-		this.triggerJobGroupId = triggerJobGroupId;
-	}
-	/**
 	 * 维护日期
 	 * @return thetriggerMaintenanceDate
 	 */
@@ -191,7 +172,7 @@ public class BatchTriggerConf {
 	public String toString() {
 		return "BatchTriggerConf[" + 
 		"triggerId=" + triggerId + ", triggerName=" + triggerName + ", triggerStartTime=" + triggerStartTime + ", triggerEndTime=" + triggerEndTime + 
-		", triggerCrontrigger=" + triggerCrontrigger + ", triggerJobGroupId=" + triggerJobGroupId + ", triggerMaintenanceDate=" + triggerMaintenanceDate + 
-		", vaildStatus=" + vaildStatus + ", triggerRemark=" + triggerRemark + "]";
+		", triggerCrontrigger=" + triggerCrontrigger + ", triggerMaintenanceDate=" + triggerMaintenanceDate + ", vaildStatus=" + vaildStatus + 
+		", triggerRemark=" + triggerRemark + "]";
 	}
 }

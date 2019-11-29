@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
  * 
  * @filename BatchTriggerConfDaoImpl.java
  * @author wzaUsers
- * @date 2019-11-14 19:11:57
+ * @date 2019-11-26 15:11:20
  * @version v1.0
 */
 @Repository
@@ -44,8 +44,9 @@ public class BatchTriggerConfDaoImpl extends BaseDaoSupport implements BatchTrig
 	public void batchInsertXML(List<BatchTriggerConf> list){
 		BatchInsertByXML(list, "list", 20, new BatchOperator() {
 			@Override
-			public void call(Map<String, Object> map) {
+			public Object call(Map<String, Object> map) {
 				getSqlSessionTemplate().insert("BatchTriggerConf.batchInsertXML", map);
+				return null;
 			};
 		});
 	}
@@ -140,8 +141,9 @@ public class BatchTriggerConfDaoImpl extends BaseDaoSupport implements BatchTrig
 	public void batchUpdateXML1(List<BatchTriggerConf> list){
 		BatchInsertByXML(list, "list", 20, new BatchOperator() {
 			@Override
-			public void call(Map<String, Object> map) {
+			public Object call(Map<String, Object> map) {
 				getSqlSessionTemplate().update("BatchTriggerConf.batchUpdateXML1", map);
+				return null;
 			};
 		});
 	}
@@ -156,36 +158,12 @@ public class BatchTriggerConfDaoImpl extends BaseDaoSupport implements BatchTrig
 	}
 
 	/**
-	 * 查询多笔数据
-	 * @param triggerJobGroupId JOB作业组ID
+	 * 批量删除(直接调用Mybatis代码)
+	 * @param BatchTriggerConf 
 	 */
 	@Override
-	public List<BatchTriggerConf> selectAll1(Long triggerJobGroupId){
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("triggerJobGroupId", triggerJobGroupId);
-		return getSqlSessionTemplate().selectList("BatchTriggerConf.selectAll1", map);
-	}
-
-	/**
-	 * 查询多笔数据(正常状态 valid_status = 0)
-	 * @param triggerJobGroupId JOB作业组ID
-	 */
-	@Override
-	public List<BatchTriggerConf> selectAll1R(Long triggerJobGroupId){
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("triggerJobGroupId", triggerJobGroupId);
-		return getSqlSessionTemplate().selectList("BatchTriggerConf.selectAll1R", map);
-	}
-
-	/**
-	 * 查询多笔数据(加锁  for update: 当使用索引时锁行, 其他锁表)
-	 * @param triggerJobGroupId JOB作业组ID
-	 */
-	@Override
-	public List<BatchTriggerConf> selectAll1L(Long triggerJobGroupId){
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("triggerJobGroupId", triggerJobGroupId);
-		return getSqlSessionTemplate().selectList("BatchTriggerConf.selectAll1L", map);
+	public void batchDelete(List<BatchTriggerConf> list){
+		batchExcutor("BatchTriggerConf.deleteOne1", list, "delete", 20);
 	}
 
 }

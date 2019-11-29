@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
  * 
  * @filename BatchQueueConfDaoImpl.java
  * @author wzaUsers
- * @date 2019-11-14 20:11:21
+ * @date 2019-11-26 15:11:20
  * @version v1.0
 */
 @Repository
@@ -44,8 +44,9 @@ public class BatchQueueConfDaoImpl extends BaseDaoSupport implements BatchQueueC
 	public void batchInsertXML(List<BatchQueueConf> list){
 		BatchInsertByXML(list, "list", 20, new BatchOperator() {
 			@Override
-			public void call(Map<String, Object> map) {
+			public Object call(Map<String, Object> map) {
 				getSqlSessionTemplate().insert("BatchQueueConf.batchInsertXML", map);
+				return null;
 			};
 		});
 	}
@@ -140,8 +141,9 @@ public class BatchQueueConfDaoImpl extends BaseDaoSupport implements BatchQueueC
 	public void batchUpdateXML1(List<BatchQueueConf> list){
 		BatchInsertByXML(list, "list", 20, new BatchOperator() {
 			@Override
-			public void call(Map<String, Object> map) {
+			public Object call(Map<String, Object> map) {
 				getSqlSessionTemplate().update("BatchQueueConf.batchUpdateXML1", map);
+				return null;
 			};
 		});
 	}
@@ -153,6 +155,48 @@ public class BatchQueueConfDaoImpl extends BaseDaoSupport implements BatchQueueC
 	@Override
 	public void batchUpdate(List<BatchQueueConf> list){
 		batchExcutor("BatchQueueConf.batchUpdate", list, "update", 20);
+	}
+
+	/**
+	 * 批量删除(直接调用Mybatis代码)
+	 * @param BatchQueueConf 
+	 */
+	@Override
+	public void batchDelete(List<BatchQueueConf> list){
+		batchExcutor("BatchQueueConf.deleteOne1", list, "delete", 20);
+	}
+
+	/**
+	 * 查询多笔数据
+	 * @param queueAutoFlag 是否自动执行 0-是 1-否
+	 */
+	@Override
+	public List<BatchQueueConf> selectAll1(Integer queueAutoFlag){
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("queueAutoFlag", queueAutoFlag);
+		return getSqlSessionTemplate().selectList("BatchQueueConf.selectAll1", map);
+	}
+
+	/**
+	 * 查询多笔数据(正常状态 valid_status = 0)
+	 * @param queueAutoFlag 是否自动执行 0-是 1-否
+	 */
+	@Override
+	public List<BatchQueueConf> selectAll1R(Integer queueAutoFlag){
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("queueAutoFlag", queueAutoFlag);
+		return getSqlSessionTemplate().selectList("BatchQueueConf.selectAll1R", map);
+	}
+
+	/**
+	 * 查询多笔数据(加锁  for update: 当使用索引时锁行, 其他锁表)
+	 * @param queueAutoFlag 是否自动执行 0-是 1-否
+	 */
+	@Override
+	public List<BatchQueueConf> selectAll1L(Integer queueAutoFlag){
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("queueAutoFlag", queueAutoFlag);
+		return getSqlSessionTemplate().selectList("BatchQueueConf.selectAll1L", map);
 	}
 
 }

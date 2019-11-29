@@ -5,9 +5,24 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class JobExcutorAble{
+public class JobExcutorFactory{
 	
-	public volatile static ThreadPoolExecutor executor = null;
+	private static JobExcutorFactory factory = null;
+	
+	public static ThreadPoolExecutor executor = null;
+	
+	private JobExcutorFactory(){}
+	
+	public static JobExcutorFactory getFactory(){
+		if(factory == null){
+			synchronized(JobExcutorFactory.class){
+				if(factory == null){
+					factory = new JobExcutorFactory();
+				}
+			}
+		}
+		return factory;
+	}
 	
 	/**
 	 * 单例方法, 供Job调度作业时使用
@@ -15,7 +30,7 @@ public class JobExcutorAble{
 	 */
 	public static ThreadPoolExecutor getNewInstance(){
 		if(executor == null){
-			synchronized (JobExcutorAble.class) {
+			synchronized (JobExcutorFactory.class) {
 				if(executor == null){
 					executor = new ThreadPoolExecutor(20, 30, 50L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(20));
 				}
@@ -24,7 +39,7 @@ public class JobExcutorAble{
 		return executor;
 	}
 	
-	public <T> T call(Callable<T> callable){
-		return (T) getNewInstance().submit(callable);
+	public void call(Runnable runnable){
+		getNewInstance().execute(runnable);
 	}
 }

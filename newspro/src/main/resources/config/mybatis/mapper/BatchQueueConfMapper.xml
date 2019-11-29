@@ -5,13 +5,13 @@
 		<result column="queue_id" property="queueId"/>
 		<result column="queue_name" property="queueName"/>
 		<result column="queue_job_group_id" property="queueJobGroupId"/>
-		<result column="queue_trigger_id" property="queueTriggerId"/>
+		<result column="queue_auto_flag" property="queueAutoFlag"/>
 		<result column="vaild_status" property="vaildStatus"/>
 		<result column="queue_remark" property="queueRemark"/>
 	</resultMap>
 
 	<sql id="Base_Select_List">
-		queue_id,queue_name,queue_job_group_id,queue_trigger_id,vaild_status,queue_remark
+		queue_id,queue_name,queue_job_group_id,queue_auto_flag,vaild_status,queue_remark
 	</sql>
 
 	<sql id="Base_Insert_Column">
@@ -19,7 +19,7 @@
 			<if test="queueId != null">queue_id,</if>
 			<if test="queueName != null">queue_name,</if>
 			<if test="queueJobGroupId != null">queue_job_group_id,</if>
-			<if test="queueTriggerId != null">queue_trigger_id,</if>
+			<if test="queueAutoFlag != null">queue_auto_flag,</if>
 			<if test="vaildStatus != null">vaild_status,</if>
 			<if test="queueRemark != null">queue_remark,</if>
 		</trim>
@@ -30,7 +30,7 @@
 			<if test="queueId != null">#{queueId},</if>
 			<if test="queueName != null">#{queueName},</if>
 			<if test="queueJobGroupId != null">#{queueJobGroupId},</if>
-			<if test="queueTriggerId != null">#{queueTriggerId},</if>
+			<if test="queueAutoFlag != null">#{queueAutoFlag},</if>
 			<if test="vaildStatus != null">#{vaildStatus},</if>
 			<if test="queueRemark != null">#{queueRemark},</if>
 		</trim>
@@ -52,11 +52,11 @@
 
 	<insert id="batchInsertXML" parameterType="java.util.List">
 		insert into batch_queue_conf
-		(queue_id,queue_name,queue_job_group_id,queue_trigger_id,vaild_status
+		(queue_id,queue_name,queue_job_group_id,queue_auto_flag,vaild_status
 			,queue_remark)
 		values
 		<foreach collection="list" item="item" index="index" separator=",">
-			(#{item.queueId},#{item.queueName},#{item.queueJobGroupId},#{item.queueTriggerId},#{item.vaildStatus}
+			(#{item.queueId},#{item.queueName},#{item.queueJobGroupId},#{item.queueAutoFlag},#{item.vaildStatus}
 				,#{item.queueRemark})
 		</foreach>
 	</insert>
@@ -81,14 +81,16 @@
 		where queue_id = #{queueId} for update
 	</select>
 
-	<delete id="deleteOne1" parameterType="java.util.HashMap">
+	<delete id="deleteOne1" parameterType="org.mine.model.BatchQueueConf">
 		delete from batch_queue_conf
-		where queue_id = #{queueId}
+		where
+		queue_id = #{queueId}
 	</delete>
 
-	<delete id="deleteOne1L" parameterType="java.util.HashMap">
+	<delete id="deleteOne1L" parameterType="org.mine.model.BatchQueueConf">
 		delete from batch_queue_conf
-		where queue_id = #{queueId} for update
+		where
+		queue_id = #{queueId} for update
 	</delete>
 
 	<update id="updateOne1" parameterType="org.mine.model.BatchQueueConf">
@@ -96,7 +98,7 @@
 		<trim prefix="set" suffixOverrides=",">
 			<if test="queueName != null">queue_name = #{queueName},</if>
 			<if test="queueJobGroupId != null">queue_job_group_id = #{queueJobGroupId},</if>
-			<if test="queueTriggerId != null">queue_trigger_id = #{queueTriggerId},</if>
+			<if test="queueAutoFlag != null">queue_auto_flag = #{queueAutoFlag},</if>
 			<if test="vaildStatus != null">vaild_status = #{vaildStatus},</if>
 			<if test="queueRemark != null">queue_remark = #{queueRemark},</if>
 		</trim>
@@ -108,7 +110,7 @@
 		<trim prefix="set" suffixOverrides=",">
 			<if test="queueName != null">queue_name = #{queueName},</if>
 			<if test="queueJobGroupId != null">queue_job_group_id = #{queueJobGroupId},</if>
-			<if test="queueTriggerId != null">queue_trigger_id = #{queueTriggerId},</if>
+			<if test="queueAutoFlag != null">queue_auto_flag = #{queueAutoFlag},</if>
 			<if test="vaildStatus != null">vaild_status = #{vaildStatus},</if>
 			<if test="queueRemark != null">queue_remark = #{queueRemark},</if>
 		</trim>
@@ -120,7 +122,7 @@
 		<trim prefix="set" suffixOverrides=",">
 			<if test="queueName != null">queue_name = #{queueName},</if>
 			<if test="queueJobGroupId != null">queue_job_group_id = #{queueJobGroupId},</if>
-			<if test="queueTriggerId != null">queue_trigger_id = #{queueTriggerId},</if>
+			<if test="queueAutoFlag != null">queue_auto_flag = #{queueAutoFlag},</if>
 			<if test="vaildStatus != null">vaild_status = #{vaildStatus},</if>
 			<if test="queueRemark != null">queue_remark = #{queueRemark},</if>
 		</trim>
@@ -143,10 +145,10 @@
 				</if>
 			</foreach>
 		</trim>
-		<trim prefix="queue_trigger_id=case" suffix="end,">
+		<trim prefix="queue_auto_flag=case" suffix="end,">
 			<foreach collection="list" item="item" index="index">
-				<if test="item.queueTriggerId != null">
-					when queue_id = #{item.queueId} then #{item.queueTriggerId}
+				<if test="item.queueAutoFlag != null">
+					when queue_id = #{item.queueId} then #{item.queueAutoFlag}
 				</if>
 			</foreach>
 		</trim>
@@ -175,11 +177,32 @@
 		<trim prefix="set" suffixOverrides=",">
 			<if test="queueName != null">queue_name = #{queueName},</if>
 			<if test="queueJobGroupId != null">queue_job_group_id = #{queueJobGroupId},</if>
-			<if test="queueTriggerId != null">queue_trigger_id = #{queueTriggerId},</if>
+			<if test="queueAutoFlag != null">queue_auto_flag = #{queueAutoFlag},</if>
 			<if test="vaildStatus != null">vaild_status = #{vaildStatus},</if>
 			<if test="queueRemark != null">queue_remark = #{queueRemark},</if>
 		</trim>
 		where queue_id = #{queueId}
 	</update>
+
+	<select id="selectAll1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchQueueConf.Base_Select_List"/>
+		from batch_queue_conf
+		where queue_auto_flag = #{queueAutoFlag}
+	</select>
+
+	<select id="selectAll1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchQueueConf.Base_Select_List"/>
+		from batch_queue_conf
+		where queue_auto_flag = #{queueAutoFlag} and vaild_status = '0'
+	</select>
+
+	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchQueueConf.Base_Select_List"/>
+		from batch_queue_conf
+		where queue_auto_flag = #{queueAutoFlag} for update
+	</select>
 
 </mapper>

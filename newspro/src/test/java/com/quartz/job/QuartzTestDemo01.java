@@ -5,7 +5,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class QuartzTestDemo01 {
-
 	@Test
 	public void test() {
 //		fail("Not yet implemented");

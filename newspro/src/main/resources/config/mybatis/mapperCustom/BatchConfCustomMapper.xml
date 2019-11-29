@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BatchConfCustom">
+	<select id="getMaxQueueId" resultType="java.lang.Long">
+		select IFNULL(max(queue_id) + 1,1) from batch_queue_conf
+	</select>
+	
+	<select id="getTriggerConfMaxId" resultType="java.lang.Long">
+		select IFNULL(max(trigger_id) + 1,1) from batch_trigger_conf
+	</select>
+	
+	<select id="getJobGroupConfMaxId" resultType="java.lang.Long">
+		select IFNULL(max(job_group_id) + 1,1) from batch_job_group_conf
+	</select>
+	
+	<select id="getJobDetailConfMaxId" resultType="java.lang.Long">
+		select IFNULL(count(jobdetail_id) + 1,1) from batch_job_detail_conf where jobdetail_id like '${id}00%'
+	</select>
+	
+	<select id="getBatchSequence" resultType="java.lang.Long">
+		select nextVal(#{seqName})
+	</select>
+</mapper>

@@ -4,7 +4,7 @@ package org.mine.model;
  * batch_job_group_conf--JOB作业组定义表
  * @filename BatchJobGroupConf.java
  * @author wzaUsers
- * @date 2019-11-14 20:11:04
+ * @date 2019-11-26 15:11:20
  * @version v1.0
 */
 public class BatchJobGroupConf {
@@ -20,6 +20,18 @@ public class BatchJobGroupConf {
 	 * 是否记录日志
 	 */
 	private String jobGroupSavelog;
+	/**
+	 * 该作业是否并发 0-并发 1-不并发
+	 */
+	private String jobGroupIsconcurrent;
+	/**
+	 * 初始化值,定时任务时设置
+	 */
+	private String jobGroupInitValue;
+	/**
+	 * 触发器ID,定时任务时设置
+	 */
+	private Long jobGroupTriggerId;
 	/**
 	 * 是否支持重跑 0-是 1-否
 	 */
@@ -45,6 +57,9 @@ public class BatchJobGroupConf {
 		this.jobGroupId = 0L;
 		this.jobGroupName = "";
 		this.jobGroupSavelog = "";
+		this.jobGroupIsconcurrent = "0";
+		this.jobGroupInitValue = "";
+		this.jobGroupTriggerId = 0L;
 		this.jobGroupRerun = "";
 		this.jobGroupNumber = 0;
 		this.jobGroupMaintenanceDate = "";
@@ -93,6 +108,48 @@ public class BatchJobGroupConf {
 	 */
 	public void setJobGroupSavelog(String jobGroupSavelog) {
 		this.jobGroupSavelog = jobGroupSavelog;
+	}
+	/**
+	 * 该作业是否并发 0-并发 1-不并发
+	 * @return thejobGroupIsconcurrent
+	 */
+	public String getJobGroupIsconcurrent() {
+		return jobGroupIsconcurrent;
+	}
+	/**
+	 * 该作业是否并发 0-并发 1-不并发
+	 * @param jobGroupIsconcurrent the jobGroupIsconcurrent to set
+	 */
+	public void setJobGroupIsconcurrent(String jobGroupIsconcurrent) {
+		this.jobGroupIsconcurrent = jobGroupIsconcurrent;
+	}
+	/**
+	 * 初始化值,定时任务时设置
+	 * @return thejobGroupInitValue
+	 */
+	public String getJobGroupInitValue() {
+		return jobGroupInitValue;
+	}
+	/**
+	 * 初始化值,定时任务时设置
+	 * @param jobGroupInitValue the jobGroupInitValue to set
+	 */
+	public void setJobGroupInitValue(String jobGroupInitValue) {
+		this.jobGroupInitValue = jobGroupInitValue;
+	}
+	/**
+	 * 触发器ID,定时任务时设置
+	 * @return thejobGroupTriggerId
+	 */
+	public Long getJobGroupTriggerId() {
+		return jobGroupTriggerId;
+	}
+	/**
+	 * 触发器ID,定时任务时设置
+	 * @param jobGroupTriggerId the jobGroupTriggerId to set
+	 */
+	public void setJobGroupTriggerId(Long jobGroupTriggerId) {
+		this.jobGroupTriggerId = jobGroupTriggerId;
 	}
 	/**
 	 * 是否支持重跑 0-是 1-否
@@ -171,7 +228,8 @@ public class BatchJobGroupConf {
 	@Override
 	public String toString() {
 		return "BatchJobGroupConf[" + 
-		"jobGroupId=" + jobGroupId + ", jobGroupName=" + jobGroupName + ", jobGroupSavelog=" + jobGroupSavelog + ", jobGroupRerun=" + jobGroupRerun + 
+		"jobGroupId=" + jobGroupId + ", jobGroupName=" + jobGroupName + ", jobGroupSavelog=" + jobGroupSavelog + ", jobGroupIsconcurrent=" + jobGroupIsconcurrent + 
+		", jobGroupInitValue=" + jobGroupInitValue + ", jobGroupTriggerId=" + jobGroupTriggerId + ", jobGroupRerun=" + jobGroupRerun + 
 		", jobGroupNumber=" + jobGroupNumber + ", jobGroupMaintenanceDate=" + jobGroupMaintenanceDate + ", vaildStatus=" + vaildStatus + 
 		", jobGroupRemark=" + jobGroupRemark + "]";
 	}

@@ -4,7 +4,7 @@ package org.mine.model;
  * batch_queue_conf--执行队列定义表
  * @filename BatchQueueConf.java
  * @author wzaUsers
- * @date 2019-11-14 20:11:21
+ * @date 2019-11-26 15:11:20
  * @version v1.0
 */
 public class BatchQueueConf {
@@ -21,9 +21,9 @@ public class BatchQueueConf {
 	 */
 	private Long queueJobGroupId;
 	/**
-	 * 触发器ID
+	 * 是否自动执行 0-是 1-否
 	 */
-	private Long queueTriggerId;
+	private Integer queueAutoFlag;
 	/**
 	 * 有效状态
 	 */
@@ -37,7 +37,7 @@ public class BatchQueueConf {
 		this.queueId = 0L;
 		this.queueName = "";
 		this.queueJobGroupId = 0L;
-		this.queueTriggerId = 0L;
+		this.queueAutoFlag = 0;
 		this.vaildStatus = "0";
 		this.queueRemark = "";
 	}
@@ -85,18 +85,18 @@ public class BatchQueueConf {
 		this.queueJobGroupId = queueJobGroupId;
 	}
 	/**
-	 * 触发器ID
-	 * @return thequeueTriggerId
+	 * 是否自动执行 0-是 1-否
+	 * @return thequeueAutoFlag
 	 */
-	public Long getQueueTriggerId() {
-		return queueTriggerId;
+	public Integer getQueueAutoFlag() {
+		return queueAutoFlag;
 	}
 	/**
-	 * 触发器ID
-	 * @param queueTriggerId the queueTriggerId to set
+	 * 是否自动执行 0-是 1-否
+	 * @param queueAutoFlag the queueAutoFlag to set
 	 */
-	public void setQueueTriggerId(Long queueTriggerId) {
-		this.queueTriggerId = queueTriggerId;
+	public void setQueueAutoFlag(Integer queueAutoFlag) {
+		this.queueAutoFlag = queueAutoFlag;
 	}
 	/**
 	 * 有效状态
@@ -133,7 +133,7 @@ public class BatchQueueConf {
 	@Override
 	public String toString() {
 		return "BatchQueueConf[" + 
-		"queueId=" + queueId + ", queueName=" + queueName + ", queueJobGroupId=" + queueJobGroupId + ", queueTriggerId=" + queueTriggerId + 
+		"queueId=" + queueId + ", queueName=" + queueName + ", queueJobGroupId=" + queueJobGroupId + ", queueAutoFlag=" + queueAutoFlag + 
 		", vaildStatus=" + vaildStatus + ", queueRemark=" + queueRemark + "]";
 	}
 }

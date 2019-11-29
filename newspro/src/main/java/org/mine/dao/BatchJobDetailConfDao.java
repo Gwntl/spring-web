@@ -7,7 +7,7 @@ import org.mine.model.BatchJobDetailConf;
  * 
  * @filename BatchJobDetailConfDao.java
  * @author wzaUsers
- * @date 2019-11-14 20:11:21
+ * @date 2019-11-26 15:11:20
  * @version v1.0
 */
 
@@ -77,4 +77,24 @@ public interface BatchJobDetailConfDao {
 	 * @param BatchJobDetailConf 
 	 */
 	void batchUpdate(List<BatchJobDetailConf> list);
+	/**
+	 * 批量删除(直接调用Mybatis代码)
+	 * @param BatchJobDetailConf 
+	 */
+	void batchDelete(List<BatchJobDetailConf> list);
+	/**
+	 * 查询多笔数据
+	 * @param jobdetailGroupId JOB作业组ID
+	 */
+	List<BatchJobDetailConf> selectAll1(Long jobdetailGroupId);
+	/**
+	 * 查询多笔数据(正常状态 valid_status = 0)
+	 * @param jobdetailGroupId JOB作业组ID
+	 */
+	List<BatchJobDetailConf> selectAll1R(Long jobdetailGroupId);
+	/**
+	 * 查询多笔数据(加锁  for update: 当使用索引时锁行, 其他锁表)
+	 * @param jobdetailGroupId JOB作业组ID
+	 */
+	List<BatchJobDetailConf> selectAll1L(Long jobdetailGroupId);
 }

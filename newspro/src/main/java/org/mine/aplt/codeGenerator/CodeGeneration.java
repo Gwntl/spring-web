@@ -28,11 +28,15 @@ public class CodeGeneration {
 	private static final String PROPERTIES_PATH = "config/code/template/InterfaceMethodTemplate.properties";
 	public static Map<String, String> interfaceMethodMap = new HashMap<String, String>();
 	public static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:MM:ss");
-	public static ThreadLocal<List<String>> isOneIndex = new ThreadLocal<List<String>>(){
+	private static ThreadLocal<List<String>> isOneIndex = new ThreadLocal<List<String>>(){
 		 protected List<String> initialValue() {
 			 return new ArrayList<String>();
 		 }
 	};
+	
+	public static void setIsOneIndex(){
+		isOneIndex.set(new ArrayList<String>());
+	}
 	/**
 	 * 增加对象来实现值去重
 	 * duplicateRemoval
@@ -298,11 +302,15 @@ public class CodeGeneration {
 					isOneIndex.get().add(columns[0]);
 				}
 			}
+			System.out.println(">>>>>zhujian>>>>>>>>> " + CommonUtils.toString(isOneIndex.get()));
 			//更新批量方法
 			for(int i = 0, size = isOneIndex.get().size(); i < size; i ++){
 				appendInterfaceMethod(javaFile, interfaceMethodMap.get(ApltContanst.BATCHUPDATEXML), ApltContanst.BATCHUPDATEXML + (i + 1), new String[]{javaFileName}, dto, javaFileName, false, daoImplFlag);
 			}
+//			isOneIndex.set(new ArrayList<>());
 			appendInterfaceMethod(javaFile, interfaceMethodMap.get(ApltContanst.BATCHUPDATE), ApltContanst.BATCHUPDATE, new String[]{javaFileName}, dto, javaFileName, false, daoImplFlag);
+			appendInterfaceMethod(javaFile, interfaceMethodMap.get(ApltContanst.BATCHDELETE), ApltContanst.BATCHDELETE, new String[]{javaFileName}, dto, javaFileName, false, daoImplFlag);
+
 		}
 		//普通索引查询
 		if(normalCount > 0){
@@ -383,7 +391,8 @@ public class CodeGeneration {
 		} else if (methodName.indexOf(ApltContanst.DELETEONE) != -1 || methodName.indexOf(ApltContanst.UPDATEONE) != -1
 				|| methodName.indexOf(ApltContanst.INSERTONE) != -1) {
 			returnType = "int";
-		} else if (methodName.indexOf(ApltContanst.BATCHUPDATE) != -1 || methodName.indexOf(ApltContanst.BATCHINSERT) != -1) {
+		} else if (methodName.indexOf(ApltContanst.BATCHUPDATE) != -1 || methodName.indexOf(ApltContanst.BATCHINSERT) != -1
+				|| methodName.indexOf(ApltContanst.BATCHDELETE) != -1) {
 			returnType = "void";
 		}
 		return returnType;
@@ -419,7 +428,8 @@ public class CodeGeneration {
 				.append("\", map)").append(ApltContanst.LINE_SUFFIX);
 				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append(ApltContanst.TABS).append("}").append(ApltContanst.LINE_SUFFIX);
 				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append("})").append(ApltContanst.LINE_SUFFIX);
-			} else if((methodName.startsWith(ApltContanst.BATCHINSERT) || methodName.startsWith(ApltContanst.BATCHUPDATE)) && !methodName.endsWith("XML")){
+			} else if((methodName.startsWith(ApltContanst.BATCHINSERT) || methodName.startsWith(ApltContanst.BATCHUPDATE)
+					|| methodName.startsWith(ApltContanst.BATCHDELETE)) && !methodName.endsWith("XML")){
 				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append("batchExcutor(\"").append(javaFileName).append(".");
 				
 				if(methodName.startsWith(ApltContanst.BATCHINSERT)){
@@ -428,6 +438,9 @@ public class CodeGeneration {
 				} else if(methodName.startsWith(ApltContanst.BATCHUPDATE)){
 					javaFile.append(methodName).append("\", list, \"update\", ")
 							.append(interfaceMethodMap.get(ApltContanst.BATCHCOMMITSIZE)).append(")").append(ApltContanst.LINE_SUFFIX);
+				} else if(methodName.startsWith(ApltContanst.BATCHDELETE)){
+					javaFile.append(ApltContanst.DELETEONE + 1).append("\", list, \"delete\", ")
+					.append(interfaceMethodMap.get(ApltContanst.BATCHCOMMITSIZE)).append(")").append(ApltContanst.LINE_SUFFIX);
 				}
 				
 			} else {
@@ -614,29 +627,6 @@ public class CodeGeneration {
 		}
 	}
 	
-	public static void appendDeleteSql(StringBuffer javaFile, String methodName, List<String> params, String tableName,
-			Map<String, String> orginalColumns, String javaFileName){
-		StringBuffer buffer = new StringBuffer();
-		javaFile.append(ApltContanst.TABS).append("<delete id=\"").append(methodName)
-				.append("\" parameterType=\"java.util.HashMap\">").append(ApltContanst.NEWLINE);
-		javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append("delete ").append("from ").append(tableName).append(ApltContanst.NEWLINE)
-		.append(ApltContanst.TABS).append(ApltContanst.TABS).append("where ");
-		for(int i = 0, size = params.size(); i < size; i ++){
-			String param = params.get(i);
-			if(i == 0){
-				buffer.append(orginalColumns.get(param)).append(" = #{").append(param).append("}");
-			} else {
-				buffer.append(ApltContanst.AND).append(orginalColumns.get(param)).append(" = #{").append(param).append("}");
-			}
-			
-			if((i % 3 == 0) && i > 0  && i < (size - 1)){
-				buffer.append(ApltContanst.NEWLINE).append(ApltContanst.TABS).append(ApltContanst.TABS);
-			}
-		}
-		javaFile.append(buffer).append(getSqlSuffix(methodName)).append(ApltContanst.NEWLINE);
-		javaFile.append(ApltContanst.TABS).append("</delete>").append(ApltContanst.NEWLINE).append(ApltContanst.NEWLINE);
-	}
-	
 	public static void appendBatchInsertSql(StringBuffer javaFile, String methodName, CodeDto dto, String javaFileName,
 			String tableName) {
 		StringBuffer buffer = new StringBuffer();
@@ -705,6 +695,28 @@ public class CodeGeneration {
 		javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append(ApltContanst.TABS).append("#{item.").append(unique).append("}").append(ApltContanst.NEWLINE);
 		javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append("</foreach>").append(ApltContanst.NEWLINE);
 		javaFile.append(ApltContanst.TABS).append("</update>").append(ApltContanst.NEWLINE);
+	}
+	
+	public static void appendDeleteSql(StringBuffer javaFile, String methodName, List<String> params, String tableName,
+			Map<String, String> orginalColumns, String javaFileName) {
+		StringBuffer buffer = new StringBuffer();
+		javaFile.append(ApltContanst.TABS).append("<delete id=\"").append(methodName).append("\" parameterType=\"")
+				.append(ApltContanst.PACKAGE_MODEL).append(".").append(javaFileName).append("\">").append(ApltContanst.NEWLINE);
+		javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append("delete from ").append(tableName).append(ApltContanst.NEWLINE);
+		javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append("where").append(ApltContanst.NEWLINE);
+		for(int i = 0, size = params.size(); i < size; i ++){
+			String param = params.get(i);
+			if(i == 0){
+				buffer.append(orginalColumns.get(param)).append(" = #{").append(param).append("}");
+			} else {
+				buffer.append(ApltContanst.AND).append(orginalColumns.get(param)).append(" = #{").append(param).append("}");
+			}
+			if((i % 3 == 0) && i > 0  && i < (size - 1)){
+				buffer.append(ApltContanst.NEWLINE).append(ApltContanst.TABS).append(ApltContanst.TABS);
+			}
+		}
+		javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append(buffer).append(getSqlSuffix(methodName)).append(ApltContanst.NEWLINE);
+		javaFile.append(ApltContanst.TABS).append("</delete>").append(ApltContanst.NEWLINE).append(ApltContanst.NEWLINE);
 	}
 	
 	public static String getSqlSuffix(String methodName){

@@ -7,7 +7,7 @@ import org.mine.model.BatchTriggerConf;
  * 
  * @filename BatchTriggerConfDao.java
  * @author wzaUsers
- * @date 2019-11-14 14:11:06
+ * @date 2019-11-26 15:11:20
  * @version v1.0
 */
 
@@ -78,18 +78,8 @@ public interface BatchTriggerConfDao {
 	 */
 	void batchUpdate(List<BatchTriggerConf> list);
 	/**
-	 * 查询多笔数据
-	 * @param triggerJobGroupId JOB作业组ID
+	 * 批量删除(直接调用Mybatis代码)
+	 * @param BatchTriggerConf 
 	 */
-	List<BatchTriggerConf> selectAll1(Long triggerJobGroupId);
-	/**
-	 * 查询多笔数据(正常状态 valid_status = 0)
-	 * @param triggerJobGroupId JOB作业组ID
-	 */
-	List<BatchTriggerConf> selectAll1R(Long triggerJobGroupId);
-	/**
-	 * 查询多笔数据(加锁  for update: 当使用索引时锁行, 其他锁表)
-	 * @param triggerJobGroupId JOB作业组ID
-	 */
-	List<BatchTriggerConf> selectAll1L(Long triggerJobGroupId);
+	void batchDelete(List<BatchTriggerConf> list);
 }

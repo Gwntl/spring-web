@@ -7,7 +7,7 @@ import org.mine.model.BatchQueueConf;
  * 
  * @filename BatchQueueConfDao.java
  * @author wzaUsers
- * @date 2019-11-14 20:11:21
+ * @date 2019-11-26 15:11:20
  * @version v1.0
 */
 
@@ -77,4 +77,24 @@ public interface BatchQueueConfDao {
 	 * @param BatchQueueConf 
 	 */
 	void batchUpdate(List<BatchQueueConf> list);
+	/**
+	 * 批量删除(直接调用Mybatis代码)
+	 * @param BatchQueueConf 
+	 */
+	void batchDelete(List<BatchQueueConf> list);
+	/**
+	 * 查询多笔数据
+	 * @param queueAutoFlag 是否自动执行 0-是 1-否
+	 */
+	List<BatchQueueConf> selectAll1(Integer queueAutoFlag);
+	/**
+	 * 查询多笔数据(正常状态 valid_status = 0)
+	 * @param queueAutoFlag 是否自动执行 0-是 1-否
+	 */
+	List<BatchQueueConf> selectAll1R(Integer queueAutoFlag);
+	/**
+	 * 查询多笔数据(加锁  for update: 当使用索引时锁行, 其他锁表)
+	 * @param queueAutoFlag 是否自动执行 0-是 1-否
+	 */
+	List<BatchQueueConf> selectAll1L(Integer queueAutoFlag);
 }

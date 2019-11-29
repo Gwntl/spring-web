@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
  * 
  * @filename BatchJobDetailConfDaoImpl.java
  * @author wzaUsers
- * @date 2019-11-14 20:11:21
+ * @date 2019-11-26 15:11:20
  * @version v1.0
 */
 @Repository
@@ -44,8 +44,9 @@ public class BatchJobDetailConfDaoImpl extends BaseDaoSupport implements BatchJo
 	public void batchInsertXML(List<BatchJobDetailConf> list){
 		BatchInsertByXML(list, "list", 20, new BatchOperator() {
 			@Override
-			public void call(Map<String, Object> map) {
+			public Object call(Map<String, Object> map) {
 				getSqlSessionTemplate().insert("BatchJobDetailConf.batchInsertXML", map);
+				return null;
 			};
 		});
 	}
@@ -140,8 +141,9 @@ public class BatchJobDetailConfDaoImpl extends BaseDaoSupport implements BatchJo
 	public void batchUpdateXML1(List<BatchJobDetailConf> list){
 		BatchInsertByXML(list, "list", 20, new BatchOperator() {
 			@Override
-			public void call(Map<String, Object> map) {
+			public Object call(Map<String, Object> map) {
 				getSqlSessionTemplate().update("BatchJobDetailConf.batchUpdateXML1", map);
+				return null;
 			};
 		});
 	}
@@ -153,6 +155,48 @@ public class BatchJobDetailConfDaoImpl extends BaseDaoSupport implements BatchJo
 	@Override
 	public void batchUpdate(List<BatchJobDetailConf> list){
 		batchExcutor("BatchJobDetailConf.batchUpdate", list, "update", 20);
+	}
+
+	/**
+	 * 批量删除(直接调用Mybatis代码)
+	 * @param BatchJobDetailConf 
+	 */
+	@Override
+	public void batchDelete(List<BatchJobDetailConf> list){
+		batchExcutor("BatchJobDetailConf.deleteOne1", list, "delete", 20);
+	}
+
+	/**
+	 * 查询多笔数据
+	 * @param jobdetailGroupId JOB作业组ID
+	 */
+	@Override
+	public List<BatchJobDetailConf> selectAll1(Long jobdetailGroupId){
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("jobdetailGroupId", jobdetailGroupId);
+		return getSqlSessionTemplate().selectList("BatchJobDetailConf.selectAll1", map);
+	}
+
+	/**
+	 * 查询多笔数据(正常状态 valid_status = 0)
+	 * @param jobdetailGroupId JOB作业组ID
+	 */
+	@Override
+	public List<BatchJobDetailConf> selectAll1R(Long jobdetailGroupId){
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("jobdetailGroupId", jobdetailGroupId);
+		return getSqlSessionTemplate().selectList("BatchJobDetailConf.selectAll1R", map);
+	}
+
+	/**
+	 * 查询多笔数据(加锁  for update: 当使用索引时锁行, 其他锁表)
+	 * @param jobdetailGroupId JOB作业组ID
+	 */
+	@Override
+	public List<BatchJobDetailConf> selectAll1L(Long jobdetailGroupId){
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("jobdetailGroupId", jobdetailGroupId);
+		return getSqlSessionTemplate().selectList("BatchJobDetailConf.selectAll1L", map);
 	}
 
 }

@@ -6,16 +6,16 @@
 		<result column="jobdetail_name" property="jobdetailName"/>
 		<result column="jobdetail_provider" property="jobdetailProvider"/>
 		<result column="jobdetail_init_value" property="jobdetailInitValue"/>
-		<result column="jobdetail_isConcurrent" property="jobdetailIsconcurrent"/>
-		<result column="jobdetail_group" property="jobdetailGroup"/>
+		<result column="jobdetail_group_id" property="jobdetailGroupId"/>
 		<result column="jobdetail_actuator" property="jobdetailActuator"/>
+		<result column="jobdetail_trigger_id" property="jobdetailTriggerId"/>
 		<result column="vaild_status" property="vaildStatus"/>
 		<result column="jobdetail_remark" property="jobdetailRemark"/>
 	</resultMap>
 
 	<sql id="Base_Select_List">
-		jobdetail_id,jobdetail_name,jobdetail_provider,jobdetail_init_value,jobdetail_isConcurrent,jobdetail_group,
-		jobdetail_actuator,vaild_status,jobdetail_remark
+		jobdetail_id,jobdetail_name,jobdetail_provider,jobdetail_init_value,jobdetail_group_id,jobdetail_actuator,
+		jobdetail_trigger_id,vaild_status,jobdetail_remark
 	</sql>
 
 	<sql id="Base_Insert_Column">
@@ -24,9 +24,9 @@
 			<if test="jobdetailName != null">jobdetail_name,</if>
 			<if test="jobdetailProvider != null">jobdetail_provider,</if>
 			<if test="jobdetailInitValue != null">jobdetail_init_value,</if>
-			<if test="jobdetailIsconcurrent != null">jobdetail_isConcurrent,</if>
-			<if test="jobdetailGroup != null">jobdetail_group,</if>
+			<if test="jobdetailGroupId != null">jobdetail_group_id,</if>
 			<if test="jobdetailActuator != null">jobdetail_actuator,</if>
+			<if test="jobdetailTriggerId != null">jobdetail_trigger_id,</if>
 			<if test="vaildStatus != null">vaild_status,</if>
 			<if test="jobdetailRemark != null">jobdetail_remark,</if>
 		</trim>
@@ -38,9 +38,9 @@
 			<if test="jobdetailName != null">#{jobdetailName},</if>
 			<if test="jobdetailProvider != null">#{jobdetailProvider},</if>
 			<if test="jobdetailInitValue != null">#{jobdetailInitValue},</if>
-			<if test="jobdetailIsconcurrent != null">#{jobdetailIsconcurrent},</if>
-			<if test="jobdetailGroup != null">#{jobdetailGroup},</if>
+			<if test="jobdetailGroupId != null">#{jobdetailGroupId},</if>
 			<if test="jobdetailActuator != null">#{jobdetailActuator},</if>
+			<if test="jobdetailTriggerId != null">#{jobdetailTriggerId},</if>
 			<if test="vaildStatus != null">#{vaildStatus},</if>
 			<if test="jobdetailRemark != null">#{jobdetailRemark},</if>
 		</trim>
@@ -62,12 +62,12 @@
 
 	<insert id="batchInsertXML" parameterType="java.util.List">
 		insert into batch_job_detail_conf
-		(jobdetail_id,jobdetail_name,jobdetail_provider,jobdetail_init_value,jobdetail_isConcurrent
-			,jobdetail_group,jobdetail_actuator,vaild_status,jobdetail_remark)
+		(jobdetail_id,jobdetail_name,jobdetail_provider,jobdetail_init_value,jobdetail_group_id
+			,jobdetail_actuator,jobdetail_trigger_id,vaild_status,jobdetail_remark)
 		values
 		<foreach collection="list" item="item" index="index" separator=",">
-			(#{item.jobdetailId},#{item.jobdetailName},#{item.jobdetailProvider},#{item.jobdetailInitValue},#{item.jobdetailIsconcurrent}
-				,#{item.jobdetailGroup},#{item.jobdetailActuator},#{item.vaildStatus},#{item.jobdetailRemark})
+			(#{item.jobdetailId},#{item.jobdetailName},#{item.jobdetailProvider},#{item.jobdetailInitValue},#{item.jobdetailGroupId}
+				,#{item.jobdetailActuator},#{item.jobdetailTriggerId},#{item.vaildStatus},#{item.jobdetailRemark})
 		</foreach>
 	</insert>
 	<select id="selectOne1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
@@ -91,14 +91,16 @@
 		where jobdetail_id = #{jobdetailId} for update
 	</select>
 
-	<delete id="deleteOne1" parameterType="java.util.HashMap">
+	<delete id="deleteOne1" parameterType="org.mine.model.BatchJobDetailConf">
 		delete from batch_job_detail_conf
-		where jobdetail_id = #{jobdetailId}
+		where
+		jobdetail_id = #{jobdetailId}
 	</delete>
 
-	<delete id="deleteOne1L" parameterType="java.util.HashMap">
+	<delete id="deleteOne1L" parameterType="org.mine.model.BatchJobDetailConf">
 		delete from batch_job_detail_conf
-		where jobdetail_id = #{jobdetailId} for update
+		where
+		jobdetail_id = #{jobdetailId} for update
 	</delete>
 
 	<update id="updateOne1" parameterType="org.mine.model.BatchJobDetailConf">
@@ -107,9 +109,9 @@
 			<if test="jobdetailName != null">jobdetail_name = #{jobdetailName},</if>
 			<if test="jobdetailProvider != null">jobdetail_provider = #{jobdetailProvider},</if>
 			<if test="jobdetailInitValue != null">jobdetail_init_value = #{jobdetailInitValue},</if>
-			<if test="jobdetailIsconcurrent != null">jobdetail_isConcurrent = #{jobdetailIsconcurrent},</if>
-			<if test="jobdetailGroup != null">jobdetail_group = #{jobdetailGroup},</if>
+			<if test="jobdetailGroupId != null">jobdetail_group_id = #{jobdetailGroupId},</if>
 			<if test="jobdetailActuator != null">jobdetail_actuator = #{jobdetailActuator},</if>
+			<if test="jobdetailTriggerId != null">jobdetail_trigger_id = #{jobdetailTriggerId},</if>
 			<if test="vaildStatus != null">vaild_status = #{vaildStatus},</if>
 			<if test="jobdetailRemark != null">jobdetail_remark = #{jobdetailRemark},</if>
 		</trim>
@@ -122,9 +124,9 @@
 			<if test="jobdetailName != null">jobdetail_name = #{jobdetailName},</if>
 			<if test="jobdetailProvider != null">jobdetail_provider = #{jobdetailProvider},</if>
 			<if test="jobdetailInitValue != null">jobdetail_init_value = #{jobdetailInitValue},</if>
-			<if test="jobdetailIsconcurrent != null">jobdetail_isConcurrent = #{jobdetailIsconcurrent},</if>
-			<if test="jobdetailGroup != null">jobdetail_group = #{jobdetailGroup},</if>
+			<if test="jobdetailGroupId != null">jobdetail_group_id = #{jobdetailGroupId},</if>
 			<if test="jobdetailActuator != null">jobdetail_actuator = #{jobdetailActuator},</if>
+			<if test="jobdetailTriggerId != null">jobdetail_trigger_id = #{jobdetailTriggerId},</if>
 			<if test="vaildStatus != null">vaild_status = #{vaildStatus},</if>
 			<if test="jobdetailRemark != null">jobdetail_remark = #{jobdetailRemark},</if>
 		</trim>
@@ -137,9 +139,9 @@
 			<if test="jobdetailName != null">jobdetail_name = #{jobdetailName},</if>
 			<if test="jobdetailProvider != null">jobdetail_provider = #{jobdetailProvider},</if>
 			<if test="jobdetailInitValue != null">jobdetail_init_value = #{jobdetailInitValue},</if>
-			<if test="jobdetailIsconcurrent != null">jobdetail_isConcurrent = #{jobdetailIsconcurrent},</if>
-			<if test="jobdetailGroup != null">jobdetail_group = #{jobdetailGroup},</if>
+			<if test="jobdetailGroupId != null">jobdetail_group_id = #{jobdetailGroupId},</if>
 			<if test="jobdetailActuator != null">jobdetail_actuator = #{jobdetailActuator},</if>
+			<if test="jobdetailTriggerId != null">jobdetail_trigger_id = #{jobdetailTriggerId},</if>
 			<if test="vaildStatus != null">vaild_status = #{vaildStatus},</if>
 			<if test="jobdetailRemark != null">jobdetail_remark = #{jobdetailRemark},</if>
 		</trim>
@@ -169,17 +171,10 @@
 				</if>
 			</foreach>
 		</trim>
-		<trim prefix="jobdetail_isConcurrent=case" suffix="end,">
+		<trim prefix="jobdetail_group_id=case" suffix="end,">
 			<foreach collection="list" item="item" index="index">
-				<if test="item.jobdetailIsconcurrent != null">
-					when jobdetail_id = #{item.jobdetailId} then #{item.jobdetailIsconcurrent}
-				</if>
-			</foreach>
-		</trim>
-		<trim prefix="jobdetail_group=case" suffix="end,">
-			<foreach collection="list" item="item" index="index">
-				<if test="item.jobdetailGroup != null">
-					when jobdetail_id = #{item.jobdetailId} then #{item.jobdetailGroup}
+				<if test="item.jobdetailGroupId != null">
+					when jobdetail_id = #{item.jobdetailId} then #{item.jobdetailGroupId}
 				</if>
 			</foreach>
 		</trim>
@@ -187,6 +182,13 @@
 			<foreach collection="list" item="item" index="index">
 				<if test="item.jobdetailActuator != null">
 					when jobdetail_id = #{item.jobdetailId} then #{item.jobdetailActuator}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="jobdetail_trigger_id=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.jobdetailTriggerId != null">
+					when jobdetail_id = #{item.jobdetailId} then #{item.jobdetailTriggerId}
 				</if>
 			</foreach>
 		</trim>
@@ -216,13 +218,34 @@
 			<if test="jobdetailName != null">jobdetail_name = #{jobdetailName},</if>
 			<if test="jobdetailProvider != null">jobdetail_provider = #{jobdetailProvider},</if>
 			<if test="jobdetailInitValue != null">jobdetail_init_value = #{jobdetailInitValue},</if>
-			<if test="jobdetailIsconcurrent != null">jobdetail_isConcurrent = #{jobdetailIsconcurrent},</if>
-			<if test="jobdetailGroup != null">jobdetail_group = #{jobdetailGroup},</if>
+			<if test="jobdetailGroupId != null">jobdetail_group_id = #{jobdetailGroupId},</if>
 			<if test="jobdetailActuator != null">jobdetail_actuator = #{jobdetailActuator},</if>
+			<if test="jobdetailTriggerId != null">jobdetail_trigger_id = #{jobdetailTriggerId},</if>
 			<if test="vaildStatus != null">vaild_status = #{vaildStatus},</if>
 			<if test="jobdetailRemark != null">jobdetail_remark = #{jobdetailRemark},</if>
 		</trim>
 		where jobdetail_id = #{jobdetailId}
 	</update>
+
+	<select id="selectAll1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchJobDetailConf.Base_Select_List"/>
+		from batch_job_detail_conf
+		where jobdetail_group_id = #{jobdetailGroupId}
+	</select>
+
+	<select id="selectAll1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchJobDetailConf.Base_Select_List"/>
+		from batch_job_detail_conf
+		where jobdetail_group_id = #{jobdetailGroupId} and vaild_status = '0'
+	</select>
+
+	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchJobDetailConf.Base_Select_List"/>
+		from batch_job_detail_conf
+		where jobdetail_group_id = #{jobdetailGroupId} for update
+	</select>
 
 </mapper>

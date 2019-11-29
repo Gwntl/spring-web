@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.mine.aplt.exception.GitWebException;
-import org.mine.aplt.support.bean.BeanUtil;
 import org.mine.aplt.support.dao.BaseDaoSupport;
+import org.mine.aplt.util.BeanUtil;
 import org.mine.aplt.util.CommonUtils;
 import org.mine.dao.TuserDao;
 import org.mine.model.Tuser;

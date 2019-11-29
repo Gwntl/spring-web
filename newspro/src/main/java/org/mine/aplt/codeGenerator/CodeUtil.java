@@ -488,13 +488,19 @@ public class CodeUtil {
 	}
 	
 	public static void main(String[] args) {
-		String tableName = "batch_job_detail_conf";
 		getConnect();
-		CodeDto codeDto = columnInfos(tableName);
-		createJavaFile(codeDto, tableName);
-		createDaoJavaFile(codeDto, tableName, false);
-		createDaoJavaFile(codeDto, tableName, true);
-		createMyBatisMapperXml(codeDto, tableName);
+//		String[] tables = {"batch_queue_conf", "batch_trigger_conf", "batch_job_group_conf", 
+//				"batch_job_detail_conf","scheduler_runner_history"};
+		String[] tables = {"scheduler_runner_history"};
+//		String[] tables = {"batch_trigger_conf"};
+		for(String tableName : tables){
+			CodeDto codeDto = columnInfos(tableName);
+			createJavaFile(codeDto, tableName);
+			createDaoJavaFile(codeDto, tableName, false);
+			createDaoJavaFile(codeDto, tableName, true);
+			createMyBatisMapperXml(codeDto, tableName);
+			CodeGeneration.setIsOneIndex();
+		}
 		destory();
 	}
 }

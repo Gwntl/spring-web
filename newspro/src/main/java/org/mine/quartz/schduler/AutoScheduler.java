@@ -34,17 +34,17 @@ public class AutoScheduler{
 			JobDetailImpl detailImpl = new JobDetailImpl();
 			detailImpl.setName(ApltContanst.DEFAULT_JOB_NAME + queueId);
 			detailImpl.setKey(new JobKey(detailImpl.getName(), ApltContanst.DEFAULT_JOB_GROUP));
-			detailImpl.setJobClass(ExcutorBase.getScheduleJobClass(curr));
+			detailImpl.setJobClass(ExcutorBase.getExcutorJob(curr));
 			
 			CronTriggerImpl triggerImpl = new CronTriggerImpl();
 			triggerImpl.setName(ApltContanst.DEFAULT_TRIGGER_NAME + queueId);
 			triggerImpl.setGroup(ApltContanst.DEFAULT_TRIGGER_GROUP);
 			triggerImpl.setCronExpression(cronExpression);
 			if(CommonUtils.isNotEmpty(startTime)){
-				triggerImpl.setStartTime(CommonUtils.stringToDate(startTime));
+				triggerImpl.setStartTime(CommonUtils.stringToDate(startTime, "yyyy-MM-dd HH:mm:ss"));
 			}
 			if(CommonUtils.isNotEmpty(endTime)){
-				triggerImpl.setStartTime(CommonUtils.stringToDate(endTime));
+				triggerImpl.setStartTime(CommonUtils.stringToDate(endTime, "yyyy-MM-dd HH:mm:ss"));
 			}
 			
 			ExcutorBase.getSchedulerFactoryBean().getScheduler().scheduleJob(detailImpl, triggerImpl);
@@ -80,10 +80,10 @@ public class AutoScheduler{
 			newTrigger.setGroup(ApltContanst.DEFAULT_TRIGGER_GROUP);
 			newTrigger.setCronExpression(cronExpression);
 			if(CommonUtils.isNotEmpty(startTime)){
-				newTrigger.setStartTime(CommonUtils.stringToDate(startTime));
+				newTrigger.setStartTime(CommonUtils.stringToDate(startTime, "yyyy-MM-dd HH:mm:ss"));
 			}
 			if(CommonUtils.isNotEmpty(endTime)){
-				newTrigger.setStartTime(CommonUtils.stringToDate(endTime));
+				newTrigger.setStartTime(CommonUtils.stringToDate(endTime, "yyyy-MM-dd HH:mm:ss"));
 			}
 			
 			scheduler.rescheduleJob(triggerKey, newTrigger);

@@ -15,11 +15,24 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mine.aplt.enumqz.JobExcutorEnum;
+import org.mine.aplt.support.bean.GitContext;
+import org.mine.aplt.util.CommonUtils;
 import org.mine.controller.login.RegisterUserController;
+import org.mine.dao.BatchJobDetailConfDao;
+import org.mine.dao.BatchJobGroupConfDao;
+import org.mine.dao.BatchQueueConfDao;
 import org.mine.dao.BatchRunJobDetailDao;
 import org.mine.dao.BatchRunQueueDao;
+import org.mine.dao.BatchTriggerConfDao;
+import org.mine.dao.custom.BatchConfCostomDao;
+import org.mine.dao.custom.impl.BatchConfCostomDaoImpl;
+import org.mine.model.BatchJobDetailConf;
+import org.mine.model.BatchJobGroupConf;
+import org.mine.model.BatchQueueConf;
 import org.mine.model.BatchRunJobDetail;
 import org.mine.model.BatchRunQueue;
+import org.mine.model.BatchTriggerConf;
 import org.mine.model.Tuser;
 import org.mine.service.BatchRunQueueService;
 import org.mine.service.TuserService;
@@ -126,18 +139,60 @@ public class JdbcConnectToMysqlTest {
 	private BatchRunJobDetailDao jobDetailDao;
 	@Autowired
 	private RegisterUserController register;
+	@Autowired
+	private BatchQueueConfDao queueConfDao;
+	@Autowired
+	private BatchConfCostomDao confCostomDao;
+	@Autowired
+	private BatchTriggerConfDao triggerConfDao;
+	@Autowired
+	private BatchJobGroupConfDao jobGroupConfDao;
+	@Autowired
+	private BatchJobDetailConfDao jobDetailConfDao;
 	@Test
-	public void test5(){
-		List<BatchRunJobDetail> details = new ArrayList<>();
-		BatchRunJobDetail detail = null;
-		for(int i = 0; i < 20; i++){
-			detail = new BatchRunJobDetail();
-			detail.setJobId(1000L + i);
-			detail.setJobName("test_update19" + i);
-			detail.setJobProvider("org.mine.quartz.job.NoConcurrentExcutorJob");
-			detail.setJobIsConcurrent("1");
-			details.add(detail);
-		}
-		jobDetailDao.batchUpdate(details);
+	public void test5() throws Exception{
+//		BatchQueueConf conf = new BatchQueueConf();
+//		conf.setQueueId(confCostomDao.getMaxQueueId());
+//		conf.setQueueAutoFlag(JobExcutorEnum.AUTO_RUN);
+//		conf.setQueueName("测试");
+//		queueConfDao.insertOne(conf);
+//		
+//		BatchJobGroupConf groupConf = new BatchJobGroupConf();
+//		groupConf.setJobGroupId(confCostomDao.getJobGroupConfMaxId());
+//		groupConf.setJobGroupName("测试组");
+//		groupConf.setJobGroupSavelog("0");
+//		groupConf.setJobGroupRerun("1");
+//		groupConf.setJobGroupNumber(1);
+//		groupConf.setJobGroupMaintenanceDate(CommonUtils.dateToString(new Date(), "yyyyMMdd"));
+//		groupConf.setJobGroupInitValue("trade=testGroup");
+//		jobGroupConfDao.insertOne(groupConf);
+//		
+//		BatchQueueConf conf2 = queueConfDao.selectOne1R(conf.getQueueId());
+//		conf2.setQueueJobGroupId(groupConf.getJobGroupId());
+//		queueConfDao.updateOne1R(conf2);
+//		
+//		BatchTriggerConf triggerConf = new BatchTriggerConf();
+//		triggerConf.setTriggerId(confCostomDao.getTriggerConfMaxId());
+//		triggerConf.setTriggerName("测试用触发器");
+//		triggerConf.setTriggerCrontrigger("*/5 * * * * ?");
+//		triggerConf.setTriggerMaintenanceDate(CommonUtils.dateToString(new Date(), "yyyyMMdd"));
+//		triggerConfDao.insertOne(triggerConf);
+//		
+//		BatchJobGroupConf groupConf2 = jobGroupConfDao.selectOne1R(1L);
+//		groupConf2.setJobGroupTriggerId(triggerConf.getTriggerId());
+//		jobGroupConfDao.updateOne1R(groupConf2);
+		
+//		BatchJobDetailConf detailConf = new BatchJobDetailConf();
+//		detailConf.setJobdetailId(CommonUtils.addZeroWithMiddle(groupConf2.getJobGroupId(), 
+//				confCostomDao.getJobDetailConfMaxId(groupConf2.getJobGroupId())));
+//		detailConf.setJobdetailName("测试JOB");
+//		detailConf.setJobdetailProvider("");
+//		detailConf.setJobdetailActuator("");
+//		detailConf.setJobdetailGroupId(groupConf2.getJobGroupId());
+//		jobDetailConfDao.insertOne(detailConf);
+		
+		BatchJobDetailConf detailConf = jobDetailConfDao.selectOne1R(1001L);
+		detailConf.setJobdetailProvider("org.mine.service.impl.DataPrintServiceImpl");
+		jobDetailConfDao.updateOne1R(detailConf);
 	}
 }

@@ -126,7 +126,7 @@ public final class CommonUtils {
 		for(int i = 0; i < list.size(); i++){
 			buffer.append(list.get(i)).append(",");
 		}
-		return buffer.substring(0,buffer.lastIndexOf(",")) + "}";
+		return (buffer.lastIndexOf(",") != -1 ? buffer.substring(0,buffer.lastIndexOf(",")) : buffer) + "}";
 	}
 	
 	public static String toString(Object[] obj){
@@ -155,9 +155,14 @@ public final class CommonUtils {
 		return list;
 	}
 	
-	public static Date stringToDate(String timeStr) throws ParseException{
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	public static Date stringToDate(String timeStr, String format) throws ParseException{
+		SimpleDateFormat dateFormat = new SimpleDateFormat(format);
 		return dateFormat.parse(timeStr);
+	}
+	
+	public static String dateToString(Date date, String format){
+		SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+		return dateFormat.format(date);
 	}
 	
 	/**
@@ -167,7 +172,7 @@ public final class CommonUtils {
 	 * @return
 	 */
 	public static Map<String, Object> initMapValue(Map<String, Object> map, String initValue){
-		if(isNotEmpty(map) && isNotEmpty(initValue)){
+		if(map != null && isNotEmpty(initValue)){
 			String[] values = initValue.split(";");
 			for(int i = 0, length = values.length; i < length; i++){
 				String[] key_value = values[i].split("=");
@@ -227,6 +232,31 @@ public final class CommonUtils {
 		return new String(chars);
 	}
 	
+	public static Long addZeroWithMiddle(Long l, Long count){
+		return new Long(l + "00" + count);
+	}
+	
+	/**
+	 * 判断当前字符串是否全为数字
+	 * @param str
+	 * @return
+	 */
+	public static boolean isNumber(String str){
+		if(str == null || str.length() <= 0){
+			return false;
+		}
+		
+		int length = str.toCharArray().length - 1;
+		while(length > 0){
+			if(!Character.isDigit(str.charAt(length))){
+				return false;
+			}
+			length--;
+		}
+		
+		return true;
+	}
+	
 	public static void main(String[] args){
 //		Map<String, Object> map = new HashMap<>();
 //		map.put("1", 100);
@@ -246,7 +276,8 @@ public final class CommonUtils {
 //		
 //		String[] a = {"94jueek","454","we1231"};
 //		System.out.println(toString(a));
-		System.out.println(underLineToHump("ass_bsd_vdd", false));
+//		System.out.println(underLineToHump("ass_bsd_vdd", false));
+		System.out.println(isNumber("1230.1"));
 	}
 	
 }

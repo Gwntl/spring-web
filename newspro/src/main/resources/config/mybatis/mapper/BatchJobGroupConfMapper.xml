@@ -5,6 +5,9 @@
 		<result column="job_group_id" property="jobGroupId"/>
 		<result column="job_group_name" property="jobGroupName"/>
 		<result column="job_group_savelog" property="jobGroupSavelog"/>
+		<result column="job_group_isConcurrent" property="jobGroupIsconcurrent"/>
+		<result column="job_group_init_value" property="jobGroupInitValue"/>
+		<result column="job_group_trigger_id" property="jobGroupTriggerId"/>
 		<result column="job_group_rerun" property="jobGroupRerun"/>
 		<result column="job_group_number" property="jobGroupNumber"/>
 		<result column="job_group_maintenance_date" property="jobGroupMaintenanceDate"/>
@@ -13,8 +16,8 @@
 	</resultMap>
 
 	<sql id="Base_Select_List">
-		job_group_id,job_group_name,job_group_savelog,job_group_rerun,job_group_number,job_group_maintenance_date,
-		vaild_status,job_group_remark
+		job_group_id,job_group_name,job_group_savelog,job_group_isConcurrent,job_group_init_value,job_group_trigger_id,
+		job_group_rerun,job_group_number,job_group_maintenance_date,vaild_status,job_group_remark
 	</sql>
 
 	<sql id="Base_Insert_Column">
@@ -22,6 +25,9 @@
 			<if test="jobGroupId != null">job_group_id,</if>
 			<if test="jobGroupName != null">job_group_name,</if>
 			<if test="jobGroupSavelog != null">job_group_savelog,</if>
+			<if test="jobGroupIsconcurrent != null">job_group_isConcurrent,</if>
+			<if test="jobGroupInitValue != null">job_group_init_value,</if>
+			<if test="jobGroupTriggerId != null">job_group_trigger_id,</if>
 			<if test="jobGroupRerun != null">job_group_rerun,</if>
 			<if test="jobGroupNumber != null">job_group_number,</if>
 			<if test="jobGroupMaintenanceDate != null">job_group_maintenance_date,</if>
@@ -35,6 +41,9 @@
 			<if test="jobGroupId != null">#{jobGroupId},</if>
 			<if test="jobGroupName != null">#{jobGroupName},</if>
 			<if test="jobGroupSavelog != null">#{jobGroupSavelog},</if>
+			<if test="jobGroupIsconcurrent != null">#{jobGroupIsconcurrent},</if>
+			<if test="jobGroupInitValue != null">#{jobGroupInitValue},</if>
+			<if test="jobGroupTriggerId != null">#{jobGroupTriggerId},</if>
 			<if test="jobGroupRerun != null">#{jobGroupRerun},</if>
 			<if test="jobGroupNumber != null">#{jobGroupNumber},</if>
 			<if test="jobGroupMaintenanceDate != null">#{jobGroupMaintenanceDate},</if>
@@ -59,12 +68,14 @@
 
 	<insert id="batchInsertXML" parameterType="java.util.List">
 		insert into batch_job_group_conf
-		(job_group_id,job_group_name,job_group_savelog,job_group_rerun,job_group_number
-			,job_group_maintenance_date,vaild_status,job_group_remark)
+		(job_group_id,job_group_name,job_group_savelog,job_group_isConcurrent,job_group_init_value
+			,job_group_trigger_id,job_group_rerun,job_group_number,job_group_maintenance_date
+			,vaild_status,job_group_remark)
 		values
 		<foreach collection="list" item="item" index="index" separator=",">
-			(#{item.jobGroupId},#{item.jobGroupName},#{item.jobGroupSavelog},#{item.jobGroupRerun},#{item.jobGroupNumber}
-				,#{item.jobGroupMaintenanceDate},#{item.vaildStatus},#{item.jobGroupRemark})
+			(#{item.jobGroupId},#{item.jobGroupName},#{item.jobGroupSavelog},#{item.jobGroupIsconcurrent},#{item.jobGroupInitValue}
+				,#{item.jobGroupTriggerId},#{item.jobGroupRerun},#{item.jobGroupNumber},#{item.jobGroupMaintenanceDate}
+				,#{item.vaildStatus},#{item.jobGroupRemark})
 		</foreach>
 	</insert>
 	<select id="selectOne1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
@@ -88,14 +99,16 @@
 		where job_group_id = #{jobGroupId} for update
 	</select>
 
-	<delete id="deleteOne1" parameterType="java.util.HashMap">
+	<delete id="deleteOne1" parameterType="org.mine.model.BatchJobGroupConf">
 		delete from batch_job_group_conf
-		where job_group_id = #{jobGroupId}
+		where
+		job_group_id = #{jobGroupId}
 	</delete>
 
-	<delete id="deleteOne1L" parameterType="java.util.HashMap">
+	<delete id="deleteOne1L" parameterType="org.mine.model.BatchJobGroupConf">
 		delete from batch_job_group_conf
-		where job_group_id = #{jobGroupId} for update
+		where
+		job_group_id = #{jobGroupId} for update
 	</delete>
 
 	<update id="updateOne1" parameterType="org.mine.model.BatchJobGroupConf">
@@ -103,6 +116,9 @@
 		<trim prefix="set" suffixOverrides=",">
 			<if test="jobGroupName != null">job_group_name = #{jobGroupName},</if>
 			<if test="jobGroupSavelog != null">job_group_savelog = #{jobGroupSavelog},</if>
+			<if test="jobGroupIsconcurrent != null">job_group_isConcurrent = #{jobGroupIsconcurrent},</if>
+			<if test="jobGroupInitValue != null">job_group_init_value = #{jobGroupInitValue},</if>
+			<if test="jobGroupTriggerId != null">job_group_trigger_id = #{jobGroupTriggerId},</if>
 			<if test="jobGroupRerun != null">job_group_rerun = #{jobGroupRerun},</if>
 			<if test="jobGroupNumber != null">job_group_number = #{jobGroupNumber},</if>
 			<if test="jobGroupMaintenanceDate != null">job_group_maintenance_date = #{jobGroupMaintenanceDate},</if>
@@ -117,6 +133,9 @@
 		<trim prefix="set" suffixOverrides=",">
 			<if test="jobGroupName != null">job_group_name = #{jobGroupName},</if>
 			<if test="jobGroupSavelog != null">job_group_savelog = #{jobGroupSavelog},</if>
+			<if test="jobGroupIsconcurrent != null">job_group_isConcurrent = #{jobGroupIsconcurrent},</if>
+			<if test="jobGroupInitValue != null">job_group_init_value = #{jobGroupInitValue},</if>
+			<if test="jobGroupTriggerId != null">job_group_trigger_id = #{jobGroupTriggerId},</if>
 			<if test="jobGroupRerun != null">job_group_rerun = #{jobGroupRerun},</if>
 			<if test="jobGroupNumber != null">job_group_number = #{jobGroupNumber},</if>
 			<if test="jobGroupMaintenanceDate != null">job_group_maintenance_date = #{jobGroupMaintenanceDate},</if>
@@ -131,6 +150,9 @@
 		<trim prefix="set" suffixOverrides=",">
 			<if test="jobGroupName != null">job_group_name = #{jobGroupName},</if>
 			<if test="jobGroupSavelog != null">job_group_savelog = #{jobGroupSavelog},</if>
+			<if test="jobGroupIsconcurrent != null">job_group_isConcurrent = #{jobGroupIsconcurrent},</if>
+			<if test="jobGroupInitValue != null">job_group_init_value = #{jobGroupInitValue},</if>
+			<if test="jobGroupTriggerId != null">job_group_trigger_id = #{jobGroupTriggerId},</if>
 			<if test="jobGroupRerun != null">job_group_rerun = #{jobGroupRerun},</if>
 			<if test="jobGroupNumber != null">job_group_number = #{jobGroupNumber},</if>
 			<if test="jobGroupMaintenanceDate != null">job_group_maintenance_date = #{jobGroupMaintenanceDate},</if>
@@ -153,6 +175,27 @@
 			<foreach collection="list" item="item" index="index">
 				<if test="item.jobGroupSavelog != null">
 					when job_group_id = #{item.jobGroupId} then #{item.jobGroupSavelog}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="job_group_isConcurrent=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.jobGroupIsconcurrent != null">
+					when job_group_id = #{item.jobGroupId} then #{item.jobGroupIsconcurrent}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="job_group_init_value=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.jobGroupInitValue != null">
+					when job_group_id = #{item.jobGroupId} then #{item.jobGroupInitValue}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="job_group_trigger_id=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.jobGroupTriggerId != null">
+					when job_group_id = #{item.jobGroupId} then #{item.jobGroupTriggerId}
 				</if>
 			</foreach>
 		</trim>
@@ -202,6 +245,9 @@
 		<trim prefix="set" suffixOverrides=",">
 			<if test="jobGroupName != null">job_group_name = #{jobGroupName},</if>
 			<if test="jobGroupSavelog != null">job_group_savelog = #{jobGroupSavelog},</if>
+			<if test="jobGroupIsconcurrent != null">job_group_isConcurrent = #{jobGroupIsconcurrent},</if>
+			<if test="jobGroupInitValue != null">job_group_init_value = #{jobGroupInitValue},</if>
+			<if test="jobGroupTriggerId != null">job_group_trigger_id = #{jobGroupTriggerId},</if>
 			<if test="jobGroupRerun != null">job_group_rerun = #{jobGroupRerun},</if>
 			<if test="jobGroupNumber != null">job_group_number = #{jobGroupNumber},</if>
 			<if test="jobGroupMaintenanceDate != null">job_group_maintenance_date = #{jobGroupMaintenanceDate},</if>
@@ -210,5 +256,26 @@
 		</trim>
 		where job_group_id = #{jobGroupId}
 	</update>
+
+	<select id="selectAll1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchJobGroupConf.Base_Select_List"/>
+		from batch_job_group_conf
+		where null = #{queueAutoFlag}
+	</select>
+
+	<select id="selectAll1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchJobGroupConf.Base_Select_List"/>
+		from batch_job_group_conf
+		where null = #{queueAutoFlag} and vaild_status = '0'
+	</select>
+
+	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchJobGroupConf.Base_Select_List"/>
+		from batch_job_group_conf
+		where null = #{queueAutoFlag} for update
+	</select>
 
 </mapper>
