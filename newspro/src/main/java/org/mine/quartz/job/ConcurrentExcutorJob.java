@@ -1,4 +1,4 @@
-package org.mine.quartz.job.impl;
+package org.mine.quartz.job;
 
 import java.util.List;
 import java.util.Map;
@@ -11,7 +11,7 @@ import org.mine.dao.custom.BatchConfCostomDao;
 import org.mine.model.BatchJobDetailConf;
 import org.mine.quartz.ExecutionLogicSubject;
 import org.mine.quartz.TaskRepositoryValues;
-import org.mine.quartz.job.JTaskExecutionUnit;
+import org.mine.quartz.job.logic.JTaskExecutionUnit;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
