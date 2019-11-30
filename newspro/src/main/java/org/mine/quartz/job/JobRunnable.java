@@ -18,7 +18,7 @@ public class JobRunnable implements Callable<CallableResult>{
 	}
 	
 	@Override
-	public CallableResult call() throws Exception {
+	public CallableResult call(){
 		CallableResult result = new CallableResult();
 		try{
 			excutor.excutor(excutorInfo);
@@ -26,6 +26,7 @@ public class JobRunnable implements Callable<CallableResult>{
 		} catch(Throwable e){
 			result.setResult(false);
 			result.setMseeage(e instanceof MineException ? (((MineException)e).getError_msg()) : e.getMessage());
+			System.out.println(result.toString());
 		}
 		return result;
 	}

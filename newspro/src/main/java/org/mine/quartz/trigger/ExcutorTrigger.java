@@ -40,7 +40,6 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 	private BatchTriggerConfDao triggerConfDao;
 	@Autowired
 	private BatchJobGroupConfDao jobGroupConfDao;
-	
 
 	/* 
 	 * 此处将quartz需要的定时作业配置在数据库中, 每次加载时,从数据库中加载定时作业.
@@ -91,7 +90,7 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 					throw GitWebException.GIT1002("batch_trigger_conf.trigger_crontrigger 触发器参数");
 				}
 				ExcutorTrigger trigger = new ExcutorTrigger();
-				trigger.setName(triggerConf.getTriggerName());
+				trigger.setName(ApltContanst.DEFAULT_TRIGGER_NAME + triggerConf.getTriggerId());
 				trigger.setGroup(ApltContanst.DEFAULT_TRIGGER_GROUP);
 				trigger.setCronExpression(triggerConf.getTriggerCrontrigger());
 				if(CommonUtils.isNotEmpty(triggerConf.getTriggerStartTime())){
@@ -111,7 +110,6 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 			}
 		} catch(ParseException | SchedulerException e){
 			logger.error("加载Quartz信息失败: {}" + MineBizException.getStackTrace(e));
-//			throw GitWebException.GIT_PARSE(e.getMessage());
 		}
 		
 		return null;

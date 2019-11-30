@@ -40,7 +40,6 @@ public class MineBizException extends MineException{
 	public static String formatErrorMsg(Properties properties, String error_code, Object[] args){
 		
 		String resource = properties.getProperty(error_code,"(错误信息为定义)");
-		
 		return String.format(resource, args);
 	}
 	

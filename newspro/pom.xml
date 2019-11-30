@@ -98,11 +98,21 @@
 
 
 		<!-- 日志 -->
-		<dependency>
-			<groupId>log4j</groupId>
-			<artifactId>log4j</artifactId>
-			<version>${log4j.version}</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>log4j</groupId> -->
+<!-- 			<artifactId>log4j</artifactId> -->
+<!-- 			<version>${log4j.version}</version> -->
+<!-- 			<exclusions> -->
+<!-- 				<exclusion> -->
+<!-- 					<groupId>ch.qos.logback</groupId> -->
+<!-- 					<artifactId>logback-core</artifactId> -->
+<!-- 				</exclusion> -->
+<!-- 				<exclusion> -->
+<!-- 					<groupId>ch.qos.logback</groupId> -->
+<!-- 					<artifactId>logback-classic</artifactId> -->
+<!-- 				</exclusion> -->
+<!-- 			</exclusions> -->
+<!-- 		</dependency> -->
 		<!-- 格式化对象，方便输出日志 -->
 		<dependency>
 			<groupId>com.alibaba</groupId>
@@ -115,17 +125,6 @@
 			<version>${slf4j.version}</version>
 		</dependency>
 
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.slf4j</groupId> -->
-<!-- 			<artifactId>slf4j-log4j12</artifactId> -->
-<!-- 			<version>${slf4j.version}</version> -->
-<!-- 		</dependency> -->
-		
-<!-- 		<dependency> -->
-<!-- 			 <groupId>org.slf4j</groupId> -->
-<!-- 			 <artifactId>slf4j-simple</artifactId> -->
-<!-- 			 <version>${slf4j.version}</version> -->
-<!-- 		 </dependency> -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-core</artifactId>
@@ -138,19 +137,7 @@
 			<version>1.1.7</version>
 			<type>jar</type>
 		</dependency>
-		
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.logback-extensions</groupId> -->
-<!-- 			<artifactId>logback-ext-spring</artifactId> -->
-<!-- 			<version>0.1.2</version> -->
-<!-- 		</dependency> -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.slf4j</groupId> -->
-<!-- 			<artifactId>jcl-over-slf4j</artifactId> -->
-<!-- 			<version>1.7.12</version> -->
-<!-- 		</dependency> -->
 		<!-- log end -->
-
 
 		<dependency>
 			<groupId>commons-logging</groupId>
@@ -205,11 +192,11 @@
 			<artifactId>quartz</artifactId>
 			<version>2.2.3</version>
 		</dependency>
-		<dependency>
-			<groupId>org.quartz-scheduler</groupId>
-			<artifactId>quartz-jobs</artifactId>
-			<version>2.2.3</version>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.quartz-scheduler</groupId> -->
+<!-- 			<artifactId>quartz-jobs</artifactId> -->
+<!-- 			<version>2.2.3</version> -->
+<!-- 		</dependency> -->
 		<!-- 使用freemarker -->
 		<dependency>
 			<groupId>org.freemarker</groupId>

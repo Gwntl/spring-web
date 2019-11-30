@@ -4,7 +4,7 @@
 <configuration scan="true" debug="true">
 
 	<property name="RootLogLevel" value="ALL"></property>
-	<property name="StdoutLogLevel" value="ALL"></property>
+	<property name="StdoutLogLevel" value="INFO"></property>
 	<property name="FileLogLevel" value="DEBUG"></property>
 	<property name="ErrorLogLevel" value="ERROR"></property>
 

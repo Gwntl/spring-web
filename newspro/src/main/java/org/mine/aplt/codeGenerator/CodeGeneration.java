@@ -422,10 +422,11 @@ public class CodeGeneration {
 						.append(interfaceMethodMap.get(ApltContanst.BATCHCOMMITSIZE)).append(", new BatchOperator() {")
 						.append(ApltContanst.NEWLINE);
 				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append(ApltContanst.TABS).append("@Override").append(ApltContanst.NEWLINE);
-				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append(ApltContanst.TABS).append("public void call(Map<String, Object> map) {").append(ApltContanst.NEWLINE);
+				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append(ApltContanst.TABS).append("public Object call(Map<String, Object> map) {").append(ApltContanst.NEWLINE);
 				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append(ApltContanst.TABS).append(ApltContanst.TABS).append("getSqlSessionTemplate().")
 				.append(getSessionTypeName(methodName)).append("(\"").append(javaFileName).append(".").append(methodName)
 				.append("\", map)").append(ApltContanst.LINE_SUFFIX);
+				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append(ApltContanst.TABS).append("return null").append(ApltContanst.LINE_SUFFIX);
 				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append(ApltContanst.TABS).append("}").append(ApltContanst.LINE_SUFFIX);
 				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append("})").append(ApltContanst.LINE_SUFFIX);
 			} else if((methodName.startsWith(ApltContanst.BATCHINSERT) || methodName.startsWith(ApltContanst.BATCHUPDATE)

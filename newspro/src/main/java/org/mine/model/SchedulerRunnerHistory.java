@@ -4,7 +4,7 @@ package org.mine.model;
  * scheduler_runner_history--队列运行历史
  * @filename SchedulerRunnerHistory.java
  * @author wzaUsers
- * @date 2019-11-28 20:11:23
+ * @date 2019-11-29 13:11:23
  * @version v1.0
 */
 public class SchedulerRunnerHistory {

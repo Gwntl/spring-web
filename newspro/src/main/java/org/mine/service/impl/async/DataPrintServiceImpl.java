@@ -6,11 +6,10 @@ import java.util.Map;
 
 import org.mine.aplt.support.BaseServiceTasketExcutor;
 import org.mine.aplt.util.CommonUtils;
-import org.mine.service.DataPrintService;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class DataPrintServiceImpl extends BaseServiceTasketExcutor implements DataPrintService{
+public class DataPrintServiceImpl extends BaseServiceTasketExcutor{
 
 	@Override
 	public List<Map<String, Object>> grouping(Map<String, Object> map) {

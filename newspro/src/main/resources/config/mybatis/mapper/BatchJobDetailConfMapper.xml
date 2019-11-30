@@ -8,14 +8,13 @@
 		<result column="jobdetail_init_value" property="jobdetailInitValue"/>
 		<result column="jobdetail_group_id" property="jobdetailGroupId"/>
 		<result column="jobdetail_actuator" property="jobdetailActuator"/>
-		<result column="jobdetail_trigger_id" property="jobdetailTriggerId"/>
 		<result column="vaild_status" property="vaildStatus"/>
 		<result column="jobdetail_remark" property="jobdetailRemark"/>
 	</resultMap>
 
 	<sql id="Base_Select_List">
 		jobdetail_id,jobdetail_name,jobdetail_provider,jobdetail_init_value,jobdetail_group_id,jobdetail_actuator,
-		jobdetail_trigger_id,vaild_status,jobdetail_remark
+		vaild_status,jobdetail_remark
 	</sql>
 
 	<sql id="Base_Insert_Column">
@@ -26,7 +25,6 @@
 			<if test="jobdetailInitValue != null">jobdetail_init_value,</if>
 			<if test="jobdetailGroupId != null">jobdetail_group_id,</if>
 			<if test="jobdetailActuator != null">jobdetail_actuator,</if>
-			<if test="jobdetailTriggerId != null">jobdetail_trigger_id,</if>
 			<if test="vaildStatus != null">vaild_status,</if>
 			<if test="jobdetailRemark != null">jobdetail_remark,</if>
 		</trim>
@@ -40,7 +38,6 @@
 			<if test="jobdetailInitValue != null">#{jobdetailInitValue},</if>
 			<if test="jobdetailGroupId != null">#{jobdetailGroupId},</if>
 			<if test="jobdetailActuator != null">#{jobdetailActuator},</if>
-			<if test="jobdetailTriggerId != null">#{jobdetailTriggerId},</if>
 			<if test="vaildStatus != null">#{vaildStatus},</if>
 			<if test="jobdetailRemark != null">#{jobdetailRemark},</if>
 		</trim>
@@ -63,11 +60,11 @@
 	<insert id="batchInsertXML" parameterType="java.util.List">
 		insert into batch_job_detail_conf
 		(jobdetail_id,jobdetail_name,jobdetail_provider,jobdetail_init_value,jobdetail_group_id
-			,jobdetail_actuator,jobdetail_trigger_id,vaild_status,jobdetail_remark)
+			,jobdetail_actuator,vaild_status,jobdetail_remark)
 		values
 		<foreach collection="list" item="item" index="index" separator=",">
 			(#{item.jobdetailId},#{item.jobdetailName},#{item.jobdetailProvider},#{item.jobdetailInitValue},#{item.jobdetailGroupId}
-				,#{item.jobdetailActuator},#{item.jobdetailTriggerId},#{item.vaildStatus},#{item.jobdetailRemark})
+				,#{item.jobdetailActuator},#{item.vaildStatus},#{item.jobdetailRemark})
 		</foreach>
 	</insert>
 	<select id="selectOne1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
@@ -111,7 +108,6 @@
 			<if test="jobdetailInitValue != null">jobdetail_init_value = #{jobdetailInitValue},</if>
 			<if test="jobdetailGroupId != null">jobdetail_group_id = #{jobdetailGroupId},</if>
 			<if test="jobdetailActuator != null">jobdetail_actuator = #{jobdetailActuator},</if>
-			<if test="jobdetailTriggerId != null">jobdetail_trigger_id = #{jobdetailTriggerId},</if>
 			<if test="vaildStatus != null">vaild_status = #{vaildStatus},</if>
 			<if test="jobdetailRemark != null">jobdetail_remark = #{jobdetailRemark},</if>
 		</trim>
@@ -126,7 +122,6 @@
 			<if test="jobdetailInitValue != null">jobdetail_init_value = #{jobdetailInitValue},</if>
 			<if test="jobdetailGroupId != null">jobdetail_group_id = #{jobdetailGroupId},</if>
 			<if test="jobdetailActuator != null">jobdetail_actuator = #{jobdetailActuator},</if>
-			<if test="jobdetailTriggerId != null">jobdetail_trigger_id = #{jobdetailTriggerId},</if>
 			<if test="vaildStatus != null">vaild_status = #{vaildStatus},</if>
 			<if test="jobdetailRemark != null">jobdetail_remark = #{jobdetailRemark},</if>
 		</trim>
@@ -141,7 +136,6 @@
 			<if test="jobdetailInitValue != null">jobdetail_init_value = #{jobdetailInitValue},</if>
 			<if test="jobdetailGroupId != null">jobdetail_group_id = #{jobdetailGroupId},</if>
 			<if test="jobdetailActuator != null">jobdetail_actuator = #{jobdetailActuator},</if>
-			<if test="jobdetailTriggerId != null">jobdetail_trigger_id = #{jobdetailTriggerId},</if>
 			<if test="vaildStatus != null">vaild_status = #{vaildStatus},</if>
 			<if test="jobdetailRemark != null">jobdetail_remark = #{jobdetailRemark},</if>
 		</trim>
@@ -185,13 +179,6 @@
 				</if>
 			</foreach>
 		</trim>
-		<trim prefix="jobdetail_trigger_id=case" suffix="end,">
-			<foreach collection="list" item="item" index="index">
-				<if test="item.jobdetailTriggerId != null">
-					when jobdetail_id = #{item.jobdetailId} then #{item.jobdetailTriggerId}
-				</if>
-			</foreach>
-		</trim>
 		<trim prefix="vaild_status=case" suffix="end,">
 			<foreach collection="list" item="item" index="index">
 				<if test="item.vaildStatus != null">
@@ -220,7 +207,6 @@
 			<if test="jobdetailInitValue != null">jobdetail_init_value = #{jobdetailInitValue},</if>
 			<if test="jobdetailGroupId != null">jobdetail_group_id = #{jobdetailGroupId},</if>
 			<if test="jobdetailActuator != null">jobdetail_actuator = #{jobdetailActuator},</if>
-			<if test="jobdetailTriggerId != null">jobdetail_trigger_id = #{jobdetailTriggerId},</if>
 			<if test="vaildStatus != null">vaild_status = #{vaildStatus},</if>
 			<if test="jobdetailRemark != null">jobdetail_remark = #{jobdetailRemark},</if>
 		</trim>

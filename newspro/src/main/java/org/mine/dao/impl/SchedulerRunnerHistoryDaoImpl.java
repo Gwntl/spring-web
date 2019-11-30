@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
  * 
  * @filename SchedulerRunnerHistoryDaoImpl.java
  * @author wzaUsers
- * @date 2019-11-28 20:11:23
+ * @date 2019-11-29 13:11:23
  * @version v1.0
 */
 @Repository
@@ -46,7 +46,7 @@ public class SchedulerRunnerHistoryDaoImpl extends BaseDaoSupport implements Sch
 			@Override
 			public Object call(Map<String, Object> map) {
 				getSqlSessionTemplate().insert("SchedulerRunnerHistory.batchInsertXML", map);
-				return null;
+			return null;
 			};
 		});
 	}

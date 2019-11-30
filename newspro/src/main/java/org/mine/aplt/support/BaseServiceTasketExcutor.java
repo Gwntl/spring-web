@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.mine.aplt.exception.GitWebException;
 import org.mine.aplt.exception.MineBizException;
 import org.mine.aplt.exception.MineException;
 import org.mine.aplt.util.CommonUtils;
@@ -40,8 +39,8 @@ public abstract class BaseServiceTasketExcutor implements ExcutorTask, GroupTask
 		try {
 			call(map);
 		} catch (Throwable e) {
-			logger.error("异步job运行异常: {}", MineBizException.getStackTrace(e));
-			throw GitWebException.GIT_APPRUNEXC(parseException(e));
+			logger.error("JobdetailProvider运行异常: {}", MineBizException.getStackTrace(e));
+			throw e;
 		}
 		return null;
 	}

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
  * 
  * @filename BatchJobDetailConfDaoImpl.java
  * @author wzaUsers
- * @date 2019-11-26 15:11:20
+ * @date 2019-11-29 16:11:16
  * @version v1.0
 */
 @Repository
@@ -46,7 +46,7 @@ public class BatchJobDetailConfDaoImpl extends BaseDaoSupport implements BatchJo
 			@Override
 			public Object call(Map<String, Object> map) {
 				getSqlSessionTemplate().insert("BatchJobDetailConf.batchInsertXML", map);
-				return null;
+			return null;
 			};
 		});
 	}
@@ -143,7 +143,7 @@ public class BatchJobDetailConfDaoImpl extends BaseDaoSupport implements BatchJo
 			@Override
 			public Object call(Map<String, Object> map) {
 				getSqlSessionTemplate().update("BatchJobDetailConf.batchUpdateXML1", map);
-				return null;
+			return null;
 			};
 		});
 	}

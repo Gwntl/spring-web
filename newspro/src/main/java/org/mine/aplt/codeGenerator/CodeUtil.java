@@ -491,7 +491,7 @@ public class CodeUtil {
 		getConnect();
 //		String[] tables = {"batch_queue_conf", "batch_trigger_conf", "batch_job_group_conf", 
 //				"batch_job_detail_conf","scheduler_runner_history"};
-		String[] tables = {"scheduler_runner_history"};
+		String[] tables = {"batch_job_detail_conf"};
 //		String[] tables = {"batch_trigger_conf"};
 		for(String tableName : tables){
 			CodeDto codeDto = columnInfos(tableName);

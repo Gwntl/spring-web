@@ -4,7 +4,7 @@ package org.mine.model;
  * batch_job_detail_conf--JOb任务作业定义
  * @filename BatchJobDetailConf.java
  * @author wzaUsers
- * @date 2019-11-26 15:11:20
+ * @date 2019-11-29 16:11:16
  * @version v1.0
 */
 public class BatchJobDetailConf {
@@ -33,10 +33,6 @@ public class BatchJobDetailConf {
 	 */
 	private String jobdetailActuator;
 	/**
-	 * 触发器ID
-	 */
-	private Long jobdetailTriggerId;
-	/**
 	 * 有效状态
 	 */
 	private String vaildStatus;
@@ -52,7 +48,6 @@ public class BatchJobDetailConf {
 		this.jobdetailInitValue = "";
 		this.jobdetailGroupId = 0L;
 		this.jobdetailActuator = "";
-		this.jobdetailTriggerId = 0L;
 		this.vaildStatus = "0";
 		this.jobdetailRemark = "";
 	}
@@ -142,20 +137,6 @@ public class BatchJobDetailConf {
 		this.jobdetailActuator = jobdetailActuator;
 	}
 	/**
-	 * 触发器ID
-	 * @return thejobdetailTriggerId
-	 */
-	public Long getJobdetailTriggerId() {
-		return jobdetailTriggerId;
-	}
-	/**
-	 * 触发器ID
-	 * @param jobdetailTriggerId the jobdetailTriggerId to set
-	 */
-	public void setJobdetailTriggerId(Long jobdetailTriggerId) {
-		this.jobdetailTriggerId = jobdetailTriggerId;
-	}
-	/**
 	 * 有效状态
 	 * @return thevaildStatus
 	 */
@@ -191,7 +172,7 @@ public class BatchJobDetailConf {
 	public String toString() {
 		return "BatchJobDetailConf[" + 
 		"jobdetailId=" + jobdetailId + ", jobdetailName=" + jobdetailName + ", jobdetailProvider=" + jobdetailProvider + ", jobdetailInitValue=" + jobdetailInitValue + 
-		", jobdetailGroupId=" + jobdetailGroupId + ", jobdetailActuator=" + jobdetailActuator + ", jobdetailTriggerId=" + jobdetailTriggerId + 
-		", vaildStatus=" + vaildStatus + ", jobdetailRemark=" + jobdetailRemark + "]";
+		", jobdetailGroupId=" + jobdetailGroupId + ", jobdetailActuator=" + jobdetailActuator + ", vaildStatus=" + vaildStatus + 
+		", jobdetailRemark=" + jobdetailRemark + "]";
 	}
 }
