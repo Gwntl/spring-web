@@ -4,7 +4,7 @@ package org.mine.model;
  * scheduler_runner_history--队列运行历史
  * @filename SchedulerRunnerHistory.java
  * @author wzaUsers
- * @date 2019-11-29 13:11:23
+ * @date 2019-12-09 19:12:57
  * @version v1.0
 */
 public class SchedulerRunnerHistory {
@@ -33,6 +33,10 @@ public class SchedulerRunnerHistory {
 	 */
 	private String jobErrmsg;
 	/**
+	 * 运行日期
+	 */
+	private String jobMaintenanceDate;
+	/**
 	 * 有效状态
 	 */
 	private String vaildStatus;
@@ -44,6 +48,7 @@ public class SchedulerRunnerHistory {
 		this.endTime = null;
 		this.jobStatus = "";
 		this.jobErrmsg = "";
+		this.jobMaintenanceDate = "";
 		this.vaildStatus = "0";
 	}
 
@@ -132,6 +137,20 @@ public class SchedulerRunnerHistory {
 		this.jobErrmsg = jobErrmsg;
 	}
 	/**
+	 * 运行日期
+	 * @return thejobMaintenanceDate
+	 */
+	public String getJobMaintenanceDate() {
+		return jobMaintenanceDate;
+	}
+	/**
+	 * 运行日期
+	 * @param jobMaintenanceDate the jobMaintenanceDate to set
+	 */
+	public void setJobMaintenanceDate(String jobMaintenanceDate) {
+		this.jobMaintenanceDate = jobMaintenanceDate;
+	}
+	/**
 	 * 有效状态
 	 * @return thevaildStatus
 	 */
@@ -153,7 +172,7 @@ public class SchedulerRunnerHistory {
 	public String toString() {
 		return "SchedulerRunnerHistory[" + 
 		"runnerId=" + runnerId + ", jobId=" + jobId + ", startTime=" + startTime + ", endTime=" + endTime + 
-		", jobStatus=" + jobStatus + ", jobErrmsg=" + jobErrmsg + ", vaildStatus=" + vaildStatus + 
-		"]";
+		", jobStatus=" + jobStatus + ", jobErrmsg=" + jobErrmsg + ", jobMaintenanceDate=" + jobMaintenanceDate + 
+		", vaildStatus=" + vaildStatus + "]";
 	}
 }

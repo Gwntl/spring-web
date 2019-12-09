@@ -133,7 +133,7 @@ public class GitContext implements ApplicationContextAware{
 				Object r = null;
 				try{
 					logger.trace("IndependentTransAction begin");
-					operator.call(map);
+					r = operator.call(map);
 					logger.trace("IndependentTransAction call() end");
 					return r;
 				} catch(Exception e){

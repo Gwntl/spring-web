@@ -62,6 +62,14 @@ public class AutoScheduler{
 		queueConfDao.insertOne(conf);
 	}
 	
+	/**
+	 * 增加触发器
+	 * @param triggerId
+	 * @param triggerName
+	 * @param startTime
+	 * @param endTime
+	 * @param cronTrigger
+	 */
 	public void addTrigger(Long triggerId, String triggerName, String startTime, String endTime,
 			String cronTrigger){
 		if(triggerId == null || CommonUtils.isEmpty(cronTrigger)){
@@ -83,6 +91,18 @@ public class AutoScheduler{
 		triggerConfDao.insertOne(triggerConf);
 	}
 	
+	/**
+	 * 增加JOB作业组
+	 * @param groupId
+	 * @param groupName
+	 * @param isSaveLog
+	 * @param isConcurr
+	 * @param initValue
+	 * @param triggerId
+	 * @param reRun
+	 * @param groupNum
+	 * @param queueId
+	 */
 	public void addBatchGroup(Long groupId, String groupName, String isSaveLog, String isConcurr, 
 			String initValue, Long triggerId, String reRun, int groupNum, Long queueId){
 		if(groupId == null && triggerId == null){
@@ -94,7 +114,7 @@ public class AutoScheduler{
 		conf.setJobGroupInitValue(initValue);
 		conf.setJobGroupSavelog(isSaveLog);
 		conf.setJobGroupNumber(groupNum);
-		conf.setJobGroupIsconcurrent(isConcurr);
+		conf.setJobGroupJobpath(isConcurr);
 		conf.setJobGroupRerun(reRun);
 		conf.setJobGroupTriggerId(triggerId);
 		conf.setJobGroupMaintenanceDate(CommonUtils.dateToString(new Date(), "yyyyMMdd"));
@@ -132,7 +152,7 @@ public class AutoScheduler{
 			JobDetailImpl detailImpl = new JobDetailImpl();
 			detailImpl.setName(ApltContanst.DEFAULT_JOB_NAME + detailConf.getJobdetailId());
 			detailImpl.setKey(new JobKey(detailImpl.getName(), ApltContanst.DEFAULT_JOB_GROUP));
-			detailImpl.setJobClass(ExcutorBase.getExcutorJob(groupConf.getJobGroupIsconcurrent()));
+			detailImpl.setJobClass(ExcutorBase.getExcutorJob(groupConf.getJobGroupJobpath()));
 			JobDataMap dataMap = new JobDataMap();
 			dataMap.put("savelog", groupConf.getJobGroupSavelog());
 			dataMap.put("group_id", jobGroupId);

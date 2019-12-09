@@ -7,7 +7,7 @@ import org.mine.model.BatchJobGroupConf;
  * 
  * @filename BatchJobGroupConfDao.java
  * @author wzaUsers
- * @date 2019-11-26 15:11:20
+ * @date 2019-12-09 20:12:23
  * @version v1.0
 */
 

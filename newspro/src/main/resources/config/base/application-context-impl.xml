@@ -16,12 +16,47 @@
 	
 	<context:component-scan base-package="org.mine.*"/>
 	
-	<!-- 配置数据源 -->
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	<!-- 配置数据源 此处采用JDBC -->
+<!-- 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"> -->
+<!-- 		<property name="driverClassName" value="${jdbc.driverClassName}"></property> -->
+<!-- 		<property name="url" value="${jdbc.url}"></property> -->
+<!-- 		<property name="username" value="${jdbc.username}"></property> -->
+<!-- 		<property name="password" value="${jdbc.password}"></property> -->
+<!-- 	</bean> -->
+	
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+	init-method="init" destroy-method="close">
 		<property name="driverClassName" value="${jdbc.driverClassName}"></property>
 		<property name="url" value="${jdbc.url}"></property>
 		<property name="username" value="${jdbc.username}"></property>
 		<property name="password" value="${jdbc.password}"></property>
+		
+		<!-- 配置初始化大小、最小、最大 -->
+		<property name="initialSize" value="${jdbc.initialSize}"></property>
+		<property name="minIdle" value="${jdbc.minIdle}"></property>
+		<property name="maxActive" value="${jdbc.maxActive}"></property>
+		
+		<!-- 配置获取连接等待超时的时间 以毫秒为单位 -->
+		<property name="maxWait" value="${jdbc.maxWait}"></property>
+		
+		<!-- 开启游标  PSCache对支持游标的数据库性能提升巨大-->
+		<property name="poolPreparedStatements" value="true"></property>
+		<property name="maxPoolPreparedStatementPerConnectionSize" value="20"></property>
+		<property name="maxOpenPreparedStatements" value="20"></property>
+		
+		<!-- 超过设定时间 将数据库断开 -->
+		<!-- 此值为true的时候会降低效率 -->
+		<property name="removeAbandoned" value="false"></property>
+		<!-- 超时时间(以秒数为单位) -->
+		<property name="removeAbandonedTimeout" value="360000"></property>
+	<!-- 配置间隔多久启动一次DestroyThread，对连接池内的连接才进行一次检测，单位是毫秒。
+	 		检测时:
+	 		1.如果连接空闲并且超过minIdle以外的连接，如果空闲时间超过minEvictableIdleTimeMillis
+	 			设置的值则直接物理关闭。
+	 		2.在minIdle以内的不处理。 -->
+		<property name="timeBetweenEvictionRunsMillis" value="360000000"></property>
+		<!-- 配置一个连接在池中最大空闲时间，单位是毫秒 -->
+		<property name="minEvictableIdleTimeMillis" value="360000000"></property>
 	</bean>
 	
 	<!-- 配置SqlSessionFactory -->
@@ -55,9 +90,13 @@
 		<property name="dataSource" ref="dataSource"></property>
 	</bean>
 	
+	<!-- 独立事务管理 -->
 	<bean id="transActionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
 		<property name="transactionManager" ref="transactionManager"></property>
 		<property name="timeout" value="86000"></property>
+	</bean>
+	<bean id="jdncTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource"></property>
 	</bean>
 	
 	<!-- 使用tx标签判定那些方法需要加上事务管理 controller方法 -->

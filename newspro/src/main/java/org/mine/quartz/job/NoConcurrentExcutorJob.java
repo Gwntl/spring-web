@@ -1,9 +1,9 @@
 package org.mine.quartz.job;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
 
+import org.mine.aplt.support.bean.GitContext;
+import org.mine.aplt.support.dao.BatchOperator;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -15,6 +15,14 @@ public class NoConcurrentExcutorJob implements Job{
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		ThreadPoolExecutor executor = new ThreadPoolExecutor(30, 50, 10000, TimeUnit.SECONDS, new ArrayBlockingQueue<>(30));
+		GitContext.doIndependentTransActionControl(new BatchOperator() {
+
+			@Override
+			public Object call(Map<String, Object> map) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+			
+		}, context.getJobDetail().getJobDataMap());
 	}
 }

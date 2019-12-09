@@ -77,7 +77,7 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 				JobDetailImpl detailImpl = new JobDetailImpl();
 				detailImpl.setName(ApltContanst.DEFAULT_JOB_NAME + groupConf.getJobGroupId());
 				detailImpl.setKey(new JobKey(detailImpl.getName(), ApltContanst.DEFAULT_JOB_GROUP));
-				detailImpl.setJobClass(ExcutorBase.getExcutorJob(groupConf.getJobGroupIsconcurrent()));
+				detailImpl.setJobClass(ExcutorBase.getExcutorJob(groupConf.getJobGroupJobpath()));
 				JobDataMap dataMap = new JobDataMap();
 				dataMap.put("savelog", groupConf.getJobGroupSavelog());
 				dataMap.put("group_id", jobGroupId);

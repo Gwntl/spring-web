@@ -1,0 +1,34 @@
+root： wzl1968.%%
+msba: msba (msbadb)
+
+创建函数的命令:
+CREATE ([DEFINER = { USER | CURRENT_USER }]：定义创建者，可以手动指定数据库中已经存在的用户，或者默认(使用当前用户))
+FUNCTION currval(seq_name VARCHAR(32)) -- 定义函数 CREATE FUNCTION 函数名(传参类型)
+
+RETURNS INTEGER                               -- 定义返回值
+LANGUAGE SQL								  -- 定义语言
+DETERMINISTIC CONTAINS SQL                    -- 使用DETERMINISTIC关键字,确定性函数
+											  -- CONTAINS SQL表示子程序不包含读或写数据的语句;
+											  -- NO SQL表示子程序不包含SQL语句。
+											  -- READS SQL DATA表示子程序包含读数据的语句，但不包含写数据的语句。
+											  -- MODIFIES SQL DATA表示子程序包含写数据的语句。
+											  -- 如果这些特征没有明确给定，默认的是CONTAINS SQL
+
+BEGIN										  -- BEGIN
+	DECLARE s INTEGER;						  -- DECLARE 定义变量
+	SET s = 0;								  -- SET设置变量值 (可直接从数据库中查出赋值 set a = (sql语句))
+	select current_val into s from sequence where seq_name = seq_name; -- 给变量赋值(从数据库表中)
+	RETURN s;								  -- 返回变量值
+END											  -- END结尾
+
+删除函数的命令:
+DROP FUNCTION IF EXISTS 函数名;
+
+调用函数:
+select 函数名(参数);
+
+DELIMITER  -- 修改sql执行结束标识.
+
+当创建function函数时,报（you *might* want to use the less safe log_bin_trust_function_creators variable）错误时,
+使用mysql -u root -p (数据库名)
+登录进mysql客户端中.然后执行set global log_bin_trust_function_creators = 1;即可
