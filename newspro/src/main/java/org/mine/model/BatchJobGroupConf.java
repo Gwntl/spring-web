@@ -4,7 +4,7 @@ package org.mine.model;
  * batch_job_group_conf--JOB作业组定义表
  * @filename BatchJobGroupConf.java
  * @author wzaUsers
- * @date 2019-11-26 15:11:20
+ * @date 2019-12-09 20:12:23
  * @version v1.0
 */
 public class BatchJobGroupConf {
@@ -17,13 +17,13 @@ public class BatchJobGroupConf {
 	 */
 	private String jobGroupName;
 	/**
-	 * 是否记录日志
+	 * 是否记录日志 0-是 1-否
 	 */
 	private String jobGroupSavelog;
 	/**
-	 * 该作业是否并发 0-并发 1-不并发
+	 * 该JOB执行类
 	 */
-	private String jobGroupIsconcurrent;
+	private String jobGroupJobpath;
 	/**
 	 * 初始化值,定时任务时设置
 	 */
@@ -56,8 +56,8 @@ public class BatchJobGroupConf {
 	public BatchJobGroupConf() {
 		this.jobGroupId = 0L;
 		this.jobGroupName = "";
-		this.jobGroupSavelog = "";
-		this.jobGroupIsconcurrent = "0";
+		this.jobGroupSavelog = "0";
+		this.jobGroupJobpath = "";
 		this.jobGroupInitValue = "";
 		this.jobGroupTriggerId = 0L;
 		this.jobGroupRerun = "";
@@ -96,32 +96,32 @@ public class BatchJobGroupConf {
 		this.jobGroupName = jobGroupName;
 	}
 	/**
-	 * 是否记录日志
+	 * 是否记录日志 0-是 1-否
 	 * @return thejobGroupSavelog
 	 */
 	public String getJobGroupSavelog() {
 		return jobGroupSavelog;
 	}
 	/**
-	 * 是否记录日志
+	 * 是否记录日志 0-是 1-否
 	 * @param jobGroupSavelog the jobGroupSavelog to set
 	 */
 	public void setJobGroupSavelog(String jobGroupSavelog) {
 		this.jobGroupSavelog = jobGroupSavelog;
 	}
 	/**
-	 * 该作业是否并发 0-并发 1-不并发
-	 * @return thejobGroupIsconcurrent
+	 * 该JOB执行类
+	 * @return thejobGroupJobpath
 	 */
-	public String getJobGroupIsconcurrent() {
-		return jobGroupIsconcurrent;
+	public String getJobGroupJobpath() {
+		return jobGroupJobpath;
 	}
 	/**
-	 * 该作业是否并发 0-并发 1-不并发
-	 * @param jobGroupIsconcurrent the jobGroupIsconcurrent to set
+	 * 该JOB执行类
+	 * @param jobGroupJobpath the jobGroupJobpath to set
 	 */
-	public void setJobGroupIsconcurrent(String jobGroupIsconcurrent) {
-		this.jobGroupIsconcurrent = jobGroupIsconcurrent;
+	public void setJobGroupJobpath(String jobGroupJobpath) {
+		this.jobGroupJobpath = jobGroupJobpath;
 	}
 	/**
 	 * 初始化值,定时任务时设置
@@ -228,7 +228,7 @@ public class BatchJobGroupConf {
 	@Override
 	public String toString() {
 		return "BatchJobGroupConf[" + 
-		"jobGroupId=" + jobGroupId + ", jobGroupName=" + jobGroupName + ", jobGroupSavelog=" + jobGroupSavelog + ", jobGroupIsconcurrent=" + jobGroupIsconcurrent + 
+		"jobGroupId=" + jobGroupId + ", jobGroupName=" + jobGroupName + ", jobGroupSavelog=" + jobGroupSavelog + ", jobGroupJobpath=" + jobGroupJobpath + 
 		", jobGroupInitValue=" + jobGroupInitValue + ", jobGroupTriggerId=" + jobGroupTriggerId + ", jobGroupRerun=" + jobGroupRerun + 
 		", jobGroupNumber=" + jobGroupNumber + ", jobGroupMaintenanceDate=" + jobGroupMaintenanceDate + ", vaildStatus=" + vaildStatus + 
 		", jobGroupRemark=" + jobGroupRemark + "]";

@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
  * 
  * @filename SchedulerRunnerHistoryDaoImpl.java
  * @author wzaUsers
- * @date 2019-11-29 13:11:23
+ * @date 2019-12-09 19:12:57
  * @version v1.0
 */
 @Repository
@@ -159,6 +159,51 @@ public class SchedulerRunnerHistoryDaoImpl extends BaseDaoSupport implements Sch
 	@Override
 	public void batchDelete(List<SchedulerRunnerHistory> list){
 		batchExcutor("SchedulerRunnerHistory.deleteOne1", list, "delete", 20);
+	}
+
+	/**
+	 * 查询多笔数据
+	 * @param jobId JOB任务ID
+	 * @param jobStatus JOB任务状态,COMPLETED-处理中, SUCCSS-成功, FAILED-失败,UNKOWN-非正常状态
+	 * @param jobMaintenanceDate 运行日期
+	 */
+	@Override
+	public List<SchedulerRunnerHistory> selectAll1(Long jobId, String jobStatus, String jobMaintenanceDate){
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("jobId", jobId);
+		map.put("jobStatus", jobStatus);
+		map.put("jobMaintenanceDate", jobMaintenanceDate);
+		return getSqlSessionTemplate().selectList("SchedulerRunnerHistory.selectAll1", map);
+	}
+
+	/**
+	 * 查询多笔数据(正常状态 valid_status = 0)
+	 * @param jobId JOB任务ID
+	 * @param jobStatus JOB任务状态,COMPLETED-处理中, SUCCSS-成功, FAILED-失败,UNKOWN-非正常状态
+	 * @param jobMaintenanceDate 运行日期
+	 */
+	@Override
+	public List<SchedulerRunnerHistory> selectAll1R(Long jobId, String jobStatus, String jobMaintenanceDate){
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("jobId", jobId);
+		map.put("jobStatus", jobStatus);
+		map.put("jobMaintenanceDate", jobMaintenanceDate);
+		return getSqlSessionTemplate().selectList("SchedulerRunnerHistory.selectAll1R", map);
+	}
+
+	/**
+	 * 查询多笔数据(加锁  for update: 当使用索引时锁行, 其他锁表)
+	 * @param jobId JOB任务ID
+	 * @param jobStatus JOB任务状态,COMPLETED-处理中, SUCCSS-成功, FAILED-失败,UNKOWN-非正常状态
+	 * @param jobMaintenanceDate 运行日期
+	 */
+	@Override
+	public List<SchedulerRunnerHistory> selectAll1L(Long jobId, String jobStatus, String jobMaintenanceDate){
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("jobId", jobId);
+		map.put("jobStatus", jobStatus);
+		map.put("jobMaintenanceDate", jobMaintenanceDate);
+		return getSqlSessionTemplate().selectList("SchedulerRunnerHistory.selectAll1L", map);
 	}
 
 }

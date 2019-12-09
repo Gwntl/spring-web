@@ -66,47 +66,47 @@ public class JTaskExecutionUnit implements InitializingBean{
 										break;
 									}
 									Long jobDetailId = jobRunnerMonitorMap.get(runnid);
-									Iterator<FutureTask<CallableResult>> iteratorTask = excutorTaskMap.get(runnid).iterator();
-									//判断是否全部运行完成
-									boolean isAllRun = true;
-									//判断任务是否执行成功
-									boolean isSuccess = false;
-									//获取任务返回信息
-									String message = "";
-									while(iteratorTask.hasNext()){
-										FutureTask<CallableResult> task = iteratorTask.next();
-										//当获取到返回值时
-										if(task.isDone()){
-											try {
-												CallableResult result = task.get(1, TimeUnit.SECONDS);
-												if(result.isResult()){
-													isSuccess = true;
+									
+									SchedulerRunnerHistory history = GitContext.getBean(SchedulerRunnerHistoryDao.class).selectOne1(runnid, jobDetailId);
+									if(history != null){
+										Iterator<FutureTask<CallableResult>> iteratorTask = excutorTaskMap.get(runnid).iterator();
+										//判断是否全部运行完成
+										boolean isAllRun = true;
+										//判断任务是否执行成功
+										boolean isSuccess = false;
+										//获取任务返回信息
+										String message = "";
+										while(iteratorTask.hasNext()){
+											FutureTask<CallableResult> task = iteratorTask.next();
+											//当获取到返回值时
+											if(task.isDone()){
+												try {
+													CallableResult result = task.get(1, TimeUnit.SECONDS);
+													isSuccess = result.isResult();
+													message = result.getMseeage();
+												} catch (InterruptedException | ExecutionException | TimeoutException e) {
+													logger.error("Failed to get the return value!!!!!");
 												}
-												message = result.getMseeage();
-											} catch (InterruptedException | ExecutionException | TimeoutException e) {
-												logger.error("Failed to get the return value!!!!!");
+											} else {
+												isAllRun = false;
+												break;
 											}
-										} else {
-											isAllRun = false;
-											break;
 										}
-									}
-									if(isAllRun){
-										SchedulerRunnerHistory history = GitContext.getBean(SchedulerRunnerHistoryDao.class).selectOne1(runnid, jobDetailId);
-										
-										if(CommonUtils.isEmpty(history)){
-											TimeUnit.SECONDS.sleep(1);
+										//当全部运行完成之后,更新历史记录状态.
+										if(isAllRun){
+											//重新获取值
+											history = GitContext.getBean(SchedulerRunnerHistoryDao.class).selectOne1(runnid, jobDetailId);
+											
+											if(isSuccess){
+												history.setJobStatus(JobExcutorEnum.SEECUSS.getId());
+											} else {
+												history.setJobStatus(JobExcutorEnum.FAILED.getId());
+												history.setJobErrmsg(message);
+											}
+											history.setEndTime(CommonUtils.dateToString(new Date(), "yyyy-MM-dd HH:mm:ss"));
+											GitContext.getBean(SchedulerRunnerHistoryDao.class).updateOne1R(history);
+											iterator.remove();
 										}
-										
-										if(isSuccess){
-											history.setJobStatus(JobExcutorEnum.SEECUSS.getId());
-										} else {
-											history.setJobStatus(JobExcutorEnum.FAILED.getId());
-											history.setJobErrmsg(message);
-										}
-										history.setEndTime(CommonUtils.dateToString(new Date(), "yyyy-MM-dd HH:mm:ss"));
-										GitContext.getBean(SchedulerRunnerHistoryDao.class).updateOne1R(history);
-										iterator.remove();
 									}
 								}
 							} else {
@@ -184,7 +184,6 @@ public class JTaskExecutionUnit implements InitializingBean{
 					GitContext.getBean(SchedulerRunnerHistoryDao.class).updateOne1R(history);
 				}
 			}
-			
 		} catch(Throwable e){
 			System.out.println(System.currentTimeMillis());
 			logger.error("异步job调用异常: {}", MineBizException.getStackTrace(e));

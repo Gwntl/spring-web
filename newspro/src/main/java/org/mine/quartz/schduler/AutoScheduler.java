@@ -113,7 +113,7 @@ public class AutoScheduler{
 		conf.setJobGroupInitValue(initValue);
 		conf.setJobGroupSavelog(isSaveLog);
 		conf.setJobGroupNumber(groupNum);
-		conf.setJobGroupIsconcurrent(isConcurr);
+		conf.setJobGroupJobpath(isConcurr);
 		conf.setJobGroupRerun(reRun);
 		conf.setJobGroupTriggerId(triggerId);
 		conf.setJobGroupMaintenanceDate(CommonUtils.dateToString(new Date(), "yyyyMMdd"));
@@ -154,7 +154,7 @@ public class AutoScheduler{
 			JobDetailImpl detailImpl = new JobDetailImpl();
 			detailImpl.setName(ApltContanst.DEFAULT_JOB_NAME + detailConf.getJobdetailId());
 			detailImpl.setKey(new JobKey(detailImpl.getName(), ApltContanst.DEFAULT_JOB_GROUP));
-			detailImpl.setJobClass(ExcutorBase.getExcutorJob(groupConf.getJobGroupIsconcurrent()));
+			detailImpl.setJobClass(ExcutorBase.getExcutorJob(groupConf.getJobGroupJobpath()));
 			JobDataMap dataMap = new JobDataMap();
 			dataMap.put("savelog", groupConf.getJobGroupSavelog());
 			dataMap.put("group_id", jobGroupId);

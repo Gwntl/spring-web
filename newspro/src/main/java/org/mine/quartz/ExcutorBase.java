@@ -1,6 +1,7 @@
 package org.mine.quartz;
 
 import org.mine.aplt.enumqz.JobExcutorEnum;
+import org.mine.aplt.exception.GitWebException;
 import org.mine.quartz.job.ConcurrentExcutorJob;
 import org.mine.quartz.job.NoConcurrentExcutorJob;
 import org.quartz.Job;
@@ -27,16 +28,11 @@ public class ExcutorBase implements ApplicationContextAware{
 		return (SchedulerFactoryBean) applicationContext.getBean("&quartzSch_bean");
 	}
 	
-	public static Class<? extends Job> getExcutorJob(String isConccurrent){
-		Class<? extends Job> job = null;
-		switch (isConccurrent) {
-		case JobExcutorEnum.CURR_JOB:
-			job = ConcurrentExcutorJob.class;
-			break;
-		case JobExcutorEnum.NO_CURR_JOB:
-			job = NoConcurrentExcutorJob.class;
-			break;
+	public static Class<? extends Job> getExcutorJob(String jobPath){
+		try {
+			return (Class<? extends Job>) Class.forName(jobPath);
+		} catch (ClassNotFoundException e) {
+			throw GitWebException.GIT1001(jobPath + "不存在");
 		}
-		return job;
 	}
 }

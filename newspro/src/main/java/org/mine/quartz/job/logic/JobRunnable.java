@@ -5,6 +5,8 @@ import java.util.concurrent.Callable;
 
 import org.mine.aplt.exception.MineException;
 import org.mine.aplt.support.BaseServiceTasketExcutor;
+import org.mine.aplt.support.bean.GitContext;
+import org.mine.aplt.support.dao.BatchOperator;
 
 public class JobRunnable implements Callable<CallableResult>{
 
@@ -21,12 +23,19 @@ public class JobRunnable implements Callable<CallableResult>{
 	public CallableResult call(){
 		CallableResult result = new CallableResult();
 		try{
-			excutor.excutor(excutorInfo);
+			GitContext.doIndependentTransActionControl(new BatchOperator() {
+				
+				@Override
+				public Object call(Map<String, Object> map) {
+					// TODO Auto-generated method stub
+					excutor.excutor(map);
+					return null;
+				}
+			}, excutorInfo);
 			result.setResult(true);
 		} catch(Throwable e){
 			result.setResult(false);
 			result.setMseeage(e instanceof MineException ? (((MineException)e).getError_msg()) : e.getMessage());
-			System.out.println(result.toString());
 		}
 		return result;
 	}
