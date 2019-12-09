@@ -93,6 +93,11 @@ public class JTaskExecutionUnit implements InitializingBean{
 									}
 									if(isAllRun){
 										SchedulerRunnerHistory history = GitContext.getBean(SchedulerRunnerHistoryDao.class).selectOne1(runnid, jobDetailId);
+										
+										if(CommonUtils.isEmpty(history)){
+											TimeUnit.SECONDS.sleep(1);
+										}
+										
 										if(isSuccess){
 											history.setJobStatus(JobExcutorEnum.SEECUSS.getId());
 										} else {
@@ -121,6 +126,12 @@ public class JTaskExecutionUnit implements InitializingBean{
 		thread.start();
 	}
 	
+	/**
+	 * Job作业执行逻辑
+	 * @param subject
+	 * @param values
+	 * @param map
+	 */
 	public static void performsConcreteLogic(ExecutionLogicSubject subject, TaskRepositoryValues values, Map<String, Object> map){
 		SchedulerRunnerHistory history = null;
 		String isSaveLog = values.getIsSaveLog();

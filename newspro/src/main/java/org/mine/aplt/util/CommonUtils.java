@@ -1,5 +1,8 @@
 package org.mine.aplt.util;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -255,6 +258,19 @@ public final class CommonUtils {
 		}
 		
 		return true;
+	}
+	
+	/**
+	 * 四舍五入
+	 * @param o
+	 * @param scale
+	 * @return
+	 */
+	public static String round(Object o, int scale){
+		if(o == null){
+			return "";
+		}
+		return new BigDecimal(o + "").setScale(scale, RoundingMode.HALF_UP) + "";
 	}
 	
 	public static void main(String[] args){
