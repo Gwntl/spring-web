@@ -1,4 +1,4 @@
-package org.mine.quartz.job;
+package org.mine.quartz.job.logic;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;

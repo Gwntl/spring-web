@@ -1,4 +1,4 @@
-package org.mine.quartz.job;
+package org.mine.quartz.job.logic;
 
 import java.util.Map;
 import java.util.concurrent.Callable;

@@ -1,4 +1,4 @@
-package org.mine.quartz.job;
+package org.mine.quartz.job.logic;
 
 public class CallableResult {
 	/**
