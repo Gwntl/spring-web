@@ -16,6 +16,6 @@ public class ThreadA implements Runnable{
 //		service.printa("aa");
 //		service.staticPrintA("aa");
 //		service.noCurrStaticPrintA("aa");
-		service.noSynPrinta("testaaa");
+//		service.noSynPrinta("testaaa");
 	}
 }

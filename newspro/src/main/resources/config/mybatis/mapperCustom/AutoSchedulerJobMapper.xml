@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper>
+	<update id="updateTriggerStatus" parameterType="java.util.HashMap">
+		update batch_trigger_conf set vaild_status = #{vaild_status} where trigger_id = #{trigger_id}
+	</update>
+</mapper>

@@ -20,6 +20,7 @@ import org.mine.quartz.ExcutorBase;
 import org.quartz.JobDataMap;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.quartz.TriggerKey;
 import org.quartz.impl.JobDetailImpl;
 import org.quartz.impl.triggers.CronTriggerImpl;
@@ -117,8 +118,6 @@ public class AutoScheduler{
 	public void addScheduleJob(Long queueId, Long jobDetailId, String jobDetailName, Long triggerId
 			, String provider){
 		try {
-			
-			//先插表.
 			BatchQueueConf queueConf = queueConfDao.selectOne1R(queueId);
 			Long jobGroupId = queueConf.getQueueJobGroupId();
 			BatchJobDetailConf detailConf = new BatchJobDetailConf();
@@ -128,7 +127,6 @@ public class AutoScheduler{
 					+ "- DEFAULT" : jobDetailName);
 			detailConf.setJobdetailGroupId(jobGroupId);
 			detailConf.setJobdetailProvider(provider);
-			detailConfDao.insertOne(detailConf);
 			
 			BatchJobGroupConf groupConf = jobGroupConfDao.selectOne1R(jobGroupId);
 			JobDetailImpl detailImpl = new JobDetailImpl();
@@ -153,7 +151,8 @@ public class AutoScheduler{
 				triggerImpl.setStartTime(CommonUtils.stringToDate(triggerConf.getTriggerEndTime(), "yyyy-MM-dd HH:mm:ss"));
 			}
 			ExcutorBase.getSchedulerFactoryBean().getScheduler().scheduleJob(detailImpl, triggerImpl);
-			
+			//插表.
+			detailConfDao.insertOne(detailConf);
 		} catch (Exception e) {
 			logger.error("设置定时任务失败!!!! 错误信息: {}", MineException.getStackTrace(e));
 			throw GitWebException.GIT1001("设置定时任务失败!!!!");
@@ -171,17 +170,15 @@ public class AutoScheduler{
 	public void rescheduleJob(Long triggerId, String cronExpression, String startTime, String endTime){
 		try{
 			//数据的校验放在Controller中
-			//更新表
 			BatchTriggerConf conf = triggerConfDao.selectOne1R(triggerId);
 			conf.setTriggerStartTime(CommonUtils.isEmpty(startTime)? null : startTime);
 			conf.setTriggerEndTime(CommonUtils.isEmpty(endTime)? null : endTime);
 			conf.setTriggerCrontrigger(cronExpression);
 			conf.setTriggerMaintenanceDate(CommonUtils.dateToString(new Date(), "yyyyMMdd"));
-			triggerConfDao.updateOne1R(conf);
 			
 			TriggerKey triggerKey = new TriggerKey(ApltContanst.DEFAULT_TRIGGER_NAME + conf.getTriggerId(), ApltContanst.DEFAULT_TRIGGER_GROUP);
 			Scheduler scheduler = ExcutorBase.getSchedulerFactoryBean().getScheduler();
-			if(scheduler.getTrigger(triggerKey) == null){
+			if(scheduler.checkExists(triggerKey)){
 				throw GitWebException.GIT1001("指定定时任务不存在!!!!!");
 			}
 			
@@ -197,10 +194,46 @@ public class AutoScheduler{
 			}
 			
 			scheduler.rescheduleJob(triggerKey, newTrigger);
+			//更新表
+			triggerConfDao.updateOne1R(conf);
 		}catch(Exception e){
 			logger.error("重新设置定时任务失败!!!! 错误信息: {}", MineException.getStackTrace(e));
 			throw GitWebException.GIT1001("重新设置定时任务失败!!!!" 
 			+ ((e instanceof MineException) ? ((MineException)e).getError_msg() : ""));
 		}
 	}
+	
+	public void dropJob(Long jobDetailId){
+		if(jobDetailId == null){
+			throw GitWebException.GIT1002("作业ID");
+		}
+		try {
+			BatchJobDetailConf detailConf = detailConfDao.selectOne1R(jobDetailId);
+			Scheduler scheduler = ExcutorBase.getSchedulerFactoryBean().getScheduler();
+			JobKey jobKey = new JobKey(ApltContanst.DEFAULT_JOB_NAME + jobDetailId, ApltContanst.DEFAULT_JOB_GROUP);
+			if(!scheduler.checkExists(jobKey)){
+				throw GitWebException.GIT1001("指定JOB任务不存在!!!!!");
+			}
+			
+			BatchJobGroupConf conf = jobGroupConfDao.selectOne1R(detailConf.getJobdetailGroupId());
+			Long triggerId = conf.getJobGroupTriggerId();
+			TriggerKey triggerKey = new TriggerKey(ApltContanst.DEFAULT_TRIGGER_NAME + triggerId, ApltContanst.DEFAULT_TRIGGER_GROUP);
+			if(scheduler.checkExists(triggerKey)){
+				throw GitWebException.GIT1001("指定定时任务不存在!!!!!");
+			}
+			
+			//该方法会将Job和与其相关联的Trigger从JobStore中删除
+			scheduler.deleteJob(jobKey);
+			
+			detailConf.setVaildStatus("1");
+			detailConfDao.updateOne1(detailConf);
+			conf.setVaildStatus("1");
+			jobGroupConfDao.updateOne1(conf);
+		} catch (Exception e) {
+			logger.error("删除定时任务失败!!!! 错误信息: {}", MineException.getStackTrace(e));
+			throw GitWebException.GIT1001("删除定时任务失败!!!!" 
+			+ ((e instanceof MineException) ? ((MineException)e).getError_msg() : ""));
+		}
+	}
+	
 }

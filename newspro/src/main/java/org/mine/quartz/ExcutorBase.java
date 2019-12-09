@@ -10,6 +10,16 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Repository;
 
+/**  
+ * 定时任务执行基类
+ * @Description:
+ * @Title:  ExcutorBase.java   
+ * @Package org.mine.quartz   
+ * @author: wntl    
+ * @date:   2019年12月2日 下午10:55:20   
+ * @version V1.0 
+ * @Copyright: 2019 org.mine.* newspro
+ */  
 @Repository
 public class ExcutorBase implements ApplicationContextAware{
 

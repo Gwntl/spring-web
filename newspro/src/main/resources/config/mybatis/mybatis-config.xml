@@ -7,5 +7,6 @@
 	</settings>
 	<mappers>
 		<mapper resource="config/mybatis/mapperCustom/BatchConfCustomMapper.xml"/>
+		<mapper resource="config/mybatis/mapperCustom/AutoSchedulerJobMapper.xml"/>
 	</mappers>
 </configuration>
