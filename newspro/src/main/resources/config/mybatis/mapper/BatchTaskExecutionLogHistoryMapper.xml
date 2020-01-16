@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BatchTaskExecutionLogHistory">
+	<resultMap type="org.mine.model.BatchTaskExecutionLogHistory" id="BaseResultMap">
+		<result column="history_task_execution_id" property="historyTaskExecutionId"/>
+		<result column="history_task_job_id" property="historyTaskJobId"/>
+		<result column="history_task_job_name" property="historyTaskJobName"/>
+		<result column="history_task_start_time" property="historyTaskStartTime"/>
+		<result column="history_task_end_time" property="historyTaskEndTime"/>
+		<result column="history_task_job_status" property="historyTaskJobStatus"/>
+		<result column="history_task_job_errmsg" property="historyTaskJobErrmsg"/>
+		<result column="create_date" property="createDate"/>
+		<result column="valid_status" property="validStatus"/>
+		<result column="remark" property="remark"/>
+	</resultMap>
+
+	<sql id="Base_Select_List">
+		history_task_execution_id,history_task_job_id,history_task_job_name,history_task_start_time,history_task_end_time,history_task_job_status,
+		history_task_job_errmsg,create_date,valid_status,remark
+	</sql>
+
+	<sql id="Base_Insert_Column">
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="historyTaskExecutionId != null">history_task_execution_id,</if>
+			<if test="historyTaskJobId != null">history_task_job_id,</if>
+			<if test="historyTaskJobName != null">history_task_job_name,</if>
+			<if test="historyTaskStartTime != null">history_task_start_time,</if>
+			<if test="historyTaskEndTime != null">history_task_end_time,</if>
+			<if test="historyTaskJobStatus != null">history_task_job_status,</if>
+			<if test="historyTaskJobErrmsg != null">history_task_job_errmsg,</if>
+			<if test="createDate != null">create_date,</if>
+			<if test="validStatus != null">valid_status,</if>
+			<if test="remark != null">remark,</if>
+		</trim>
+	</sql>
+
+	<sql id="Base_Insert_Values">
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="historyTaskExecutionId != null">#{historyTaskExecutionId},</if>
+			<if test="historyTaskJobId != null">#{historyTaskJobId},</if>
+			<if test="historyTaskJobName != null">#{historyTaskJobName},</if>
+			<if test="historyTaskStartTime != null">#{historyTaskStartTime},</if>
+			<if test="historyTaskEndTime != null">#{historyTaskEndTime},</if>
+			<if test="historyTaskJobStatus != null">#{historyTaskJobStatus},</if>
+			<if test="historyTaskJobErrmsg != null">#{historyTaskJobErrmsg},</if>
+			<if test="createDate != null">#{createDate},</if>
+			<if test="validStatus != null">#{validStatus},</if>
+			<if test="remark != null">#{remark},</if>
+		</trim>
+	</sql>
+
+	<insert id="insertOne" parameterType="org.mine.model.BatchTaskExecutionLogHistory">
+		insert into batch_task_execution_log_history
+		<include refid="BatchTaskExecutionLogHistory.Base_Insert_Column"/>
+		values 
+		<include refid="BatchTaskExecutionLogHistory.Base_Insert_Values"/>
+	</insert>
+
+	<insert id="batchInsert" parameterType="org.mine.model.BatchTaskExecutionLogHistory">
+		insert into batch_task_execution_log_history
+		<include refid="BatchTaskExecutionLogHistory.Base_Insert_Column"/>
+		values 
+		<include refid="BatchTaskExecutionLogHistory.Base_Insert_Values"/>
+	</insert>
+
+	<insert id="batchInsertXML" parameterType="java.util.List">
+		insert into batch_task_execution_log_history
+		(history_task_execution_id,history_task_job_id,history_task_job_name,history_task_start_time,history_task_end_time
+			,history_task_job_status,history_task_job_errmsg,create_date,valid_status
+			,remark)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.historyTaskExecutionId},#{item.historyTaskJobId},#{item.historyTaskJobName},#{item.historyTaskStartTime},#{item.historyTaskEndTime}
+				,#{item.historyTaskJobStatus},#{item.historyTaskJobErrmsg},#{item.createDate},#{item.validStatus}
+				,#{item.remark})
+		</foreach>
+	</insert>
+	<select id="selectOne1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchTaskExecutionLogHistory.Base_Select_List"/>
+		from batch_task_execution_log_history
+		where history_task_execution_id = #{historyTaskExecutionId}
+	</select>
+
+	<select id="selectOne1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchTaskExecutionLogHistory.Base_Select_List"/>
+		from batch_task_execution_log_history
+		where history_task_execution_id = #{historyTaskExecutionId} and vaild_status = '0'
+	</select>
+
+	<select id="selectOne1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchTaskExecutionLogHistory.Base_Select_List"/>
+		from batch_task_execution_log_history
+		where history_task_execution_id = #{historyTaskExecutionId} for update
+	</select>
+
+	<delete id="deleteOne1" parameterType="org.mine.model.BatchTaskExecutionLogHistory">
+		delete from batch_task_execution_log_history
+		where
+		history_task_execution_id = #{historyTaskExecutionId}
+	</delete>
+
+	<delete id="deleteOne1L" parameterType="org.mine.model.BatchTaskExecutionLogHistory">
+		delete from batch_task_execution_log_history
+		where
+		history_task_execution_id = #{historyTaskExecutionId} for update
+	</delete>
+
+	<update id="updateOne1" parameterType="org.mine.model.BatchTaskExecutionLogHistory">
+		update batch_task_execution_log_history
+		<trim prefix="set" suffixOverrides=",">
+			<if test="historyTaskJobId != null">history_task_job_id = #{historyTaskJobId},</if>
+			<if test="historyTaskJobName != null">history_task_job_name = #{historyTaskJobName},</if>
+			<if test="historyTaskStartTime != null">history_task_start_time = #{historyTaskStartTime},</if>
+			<if test="historyTaskEndTime != null">history_task_end_time = #{historyTaskEndTime},</if>
+			<if test="historyTaskJobStatus != null">history_task_job_status = #{historyTaskJobStatus},</if>
+			<if test="historyTaskJobErrmsg != null">history_task_job_errmsg = #{historyTaskJobErrmsg},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where history_task_execution_id = #{historyTaskExecutionId}
+	</update>
+
+	<update id="updateOne1R" parameterType="org.mine.model.BatchTaskExecutionLogHistory">
+		update batch_task_execution_log_history
+		<trim prefix="set" suffixOverrides=",">
+			<if test="historyTaskJobId != null">history_task_job_id = #{historyTaskJobId},</if>
+			<if test="historyTaskJobName != null">history_task_job_name = #{historyTaskJobName},</if>
+			<if test="historyTaskStartTime != null">history_task_start_time = #{historyTaskStartTime},</if>
+			<if test="historyTaskEndTime != null">history_task_end_time = #{historyTaskEndTime},</if>
+			<if test="historyTaskJobStatus != null">history_task_job_status = #{historyTaskJobStatus},</if>
+			<if test="historyTaskJobErrmsg != null">history_task_job_errmsg = #{historyTaskJobErrmsg},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where history_task_execution_id = #{historyTaskExecutionId} and vaild_status = '0'
+	</update>
+
+	<update id="updateOne1L" parameterType="org.mine.model.BatchTaskExecutionLogHistory">
+		update batch_task_execution_log_history
+		<trim prefix="set" suffixOverrides=",">
+			<if test="historyTaskJobId != null">history_task_job_id = #{historyTaskJobId},</if>
+			<if test="historyTaskJobName != null">history_task_job_name = #{historyTaskJobName},</if>
+			<if test="historyTaskStartTime != null">history_task_start_time = #{historyTaskStartTime},</if>
+			<if test="historyTaskEndTime != null">history_task_end_time = #{historyTaskEndTime},</if>
+			<if test="historyTaskJobStatus != null">history_task_job_status = #{historyTaskJobStatus},</if>
+			<if test="historyTaskJobErrmsg != null">history_task_job_errmsg = #{historyTaskJobErrmsg},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where history_task_execution_id = #{historyTaskExecutionId} for update
+	</update>
+
+	<update id="batchUpdateXML1" parameterType="java.util.List">
+		update batch_task_execution_log_history set
+		<trim prefix="history_task_job_id=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyTaskJobId != null">
+					when history_task_execution_id = #{item.historyTaskExecutionId} then #{item.historyTaskJobId}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="history_task_job_name=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyTaskJobName != null">
+					when history_task_execution_id = #{item.historyTaskExecutionId} then #{item.historyTaskJobName}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="history_task_start_time=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyTaskStartTime != null">
+					when history_task_execution_id = #{item.historyTaskExecutionId} then #{item.historyTaskStartTime}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="history_task_end_time=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyTaskEndTime != null">
+					when history_task_execution_id = #{item.historyTaskExecutionId} then #{item.historyTaskEndTime}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="history_task_job_status=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyTaskJobStatus != null">
+					when history_task_execution_id = #{item.historyTaskExecutionId} then #{item.historyTaskJobStatus}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="history_task_job_errmsg=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyTaskJobErrmsg != null">
+					when history_task_execution_id = #{item.historyTaskExecutionId} then #{item.historyTaskJobErrmsg}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="create_date=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.createDate != null">
+					when history_task_execution_id = #{item.historyTaskExecutionId} then #{item.createDate}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="valid_status=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.validStatus != null">
+					when history_task_execution_id = #{item.historyTaskExecutionId} then #{item.validStatus}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="remark=case" suffix="end">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.remark != null">
+					when history_task_execution_id = #{item.historyTaskExecutionId} then #{item.remark}
+				</if>
+			</foreach>
+		</trim>
+		where
+		history_task_execution_id in
+		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+			#{item.historyTaskExecutionId}
+		</foreach>
+	</update>
+	<update id="batchUpdate" parameterType="org.mine.model.BatchTaskExecutionLogHistory">
+		update batch_task_execution_log_history
+		<trim prefix="set" suffixOverrides=",">
+			<if test="historyTaskJobId != null">history_task_job_id = #{historyTaskJobId},</if>
+			<if test="historyTaskJobName != null">history_task_job_name = #{historyTaskJobName},</if>
+			<if test="historyTaskStartTime != null">history_task_start_time = #{historyTaskStartTime},</if>
+			<if test="historyTaskEndTime != null">history_task_end_time = #{historyTaskEndTime},</if>
+			<if test="historyTaskJobStatus != null">history_task_job_status = #{historyTaskJobStatus},</if>
+			<if test="historyTaskJobErrmsg != null">history_task_job_errmsg = #{historyTaskJobErrmsg},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where history_task_execution_id = #{historyTaskExecutionId}
+	</update>
+
+	<select id="selectAll1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchTaskExecutionLogHistory.Base_Select_List"/>
+		from batch_task_execution_log_history
+		where null = #{taskAssociateGroupId}
+	</select>
+
+	<select id="selectAll1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchTaskExecutionLogHistory.Base_Select_List"/>
+		from batch_task_execution_log_history
+		where null = #{taskAssociateGroupId} and vaild_status = '0'
+	</select>
+
+	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchTaskExecutionLogHistory.Base_Select_List"/>
+		from batch_task_execution_log_history
+		where null = #{taskAssociateGroupId} for update
+	</select>
+
+</mapper>

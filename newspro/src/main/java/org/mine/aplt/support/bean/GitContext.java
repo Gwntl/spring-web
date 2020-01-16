@@ -13,8 +13,10 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
@@ -26,6 +28,29 @@ public class GitContext implements ApplicationContextAware{
 	private static Map<String, Object> dataMap = new LinkedHashMap<String, Object>();
 	private static Lock lock = new ReentrantLock();
 	private static ApplicationContext applicationContext;
+	private static JdbcTemplate jdbcTemplate;
+	/**
+	 * 线程安全的执行环境对象实例
+	 */
+	private static final ThreadLocal<CurrThreadExecutionEnv> executionEnv = new ThreadLocal<CurrThreadExecutionEnv>(){
+		protected CurrThreadExecutionEnv initialValue() {
+			CurrThreadExecutionEnv env = new CurrThreadExecutionEnv();
+			env.setJdbcTemplate(jdbcTemplate);
+	        return env;
+	    }
+	};
+	
+	/**
+	 * @return the executionEnv
+	 */
+	private static CurrThreadExecutionEnv getExecutionEnv() {
+		return executionEnv.get();
+	}
+	
+	@Autowired
+	public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+		GitContext.jdbcTemplate = jdbcTemplate;
+	}
 	
 	/**
 	 * @return the transActionTemplate
@@ -33,8 +58,7 @@ public class GitContext implements ApplicationContextAware{
 	public static TransactionTemplate getTransActionTemplate() {
 		return (TransactionTemplate)applicationContext.getBean("transActionTemplate");
 	}
-
-
+	
 	public static Object put(String key, Object value){
 		try{
 			lock.lock();
@@ -71,7 +95,7 @@ public class GitContext implements ApplicationContextAware{
 		try{
 			t = applicationContext.getBean(clazz);
 		} catch(Exception e){
-			System.out.println(GitWebException.getStackTrace(e));
+			logger.error(GitWebException.getStackTrace(e));
 		}
 		return t;
 	}
@@ -86,6 +110,16 @@ public class GitContext implements ApplicationContextAware{
 		return t;
 	}
 	
+	public static <T> Map<String, T> getBeansOfType(Class<T> clazz){
+		Map<String, T> t = null;
+		try{
+			t = (Map<String, T>) applicationContext.getBeansOfType(clazz);
+		} catch(Exception e){
+			logger.error(GitWebException.getStackTrace(e));
+		}
+		return t;
+	}
+	
 	/**
 	 * 环境内容初始化
 	 * @param dataMap
@@ -93,6 +127,14 @@ public class GitContext implements ApplicationContextAware{
 	public static void init(Map dataMap){
 		String transName = dataMap.get("transName") + "";
 		loadMDC(transName);
+	}
+	
+	public static void init(String transName){
+		loadMDC(transName);
+	}
+	
+	public static void clear(){
+		MDC.clear();
 	}
 	
 	/**
@@ -113,7 +155,7 @@ public class GitContext implements ApplicationContextAware{
 			threadNo = "0";
 		}
 		logger.debug("MDC put value : {}", transName + "_" +threadNo);
-		MDC.put("trade", transName + "_" +threadNo);
+		MDC.put("trade", transName + "_" + threadNo);
 	}
 	
 	/**
@@ -121,25 +163,30 @@ public class GitContext implements ApplicationContextAware{
 	 * @param operator
 	 * @param map
 	 */
-	public static void doIndependentTransActionControl(final BatchOperator operator, final Map<String, Object> map){
-		getTransActionTemplate().execute(new TransactionCallback<Object>() {
+	@SuppressWarnings("unchecked")
+	public static <R, I> R doIndependentTransActionControl(final BatchOperator<R, I> operator, final I input){
+		return (R)getTransActionTemplate().execute(new TransactionCallback<Object>() {
 
 			@Override
-			public Object doInTransaction(TransactionStatus status) {
+			public R doInTransaction(TransactionStatus status) {
 				if(logger.isTraceEnabled()){
-					logger.trace("IndependentTransAction input : BatchOperator : {}, map : {}"
-							, operator.getClass(), CommonUtils.toString(map));
+					logger.trace("IndependentTransAction input : BatchOperator : {}, clazz : {}"
+							, operator.getClass(), input.getClass());
 				}
-				Object r = null;
+				R r = null;
 				try{
 					logger.trace("IndependentTransAction begin");
-					r = operator.call(map);
+					getExecutionEnv().setStatus(status);
+					r = operator.call(input);
 					logger.trace("IndependentTransAction call() end");
 					return r;
 				} catch(Exception e){
 					logger.trace("IndependentTransAction call() exception");
 					status.setRollbackOnly();
 					throw e;
+				} finally{
+					logger.trace("IndependentTransAction call() finally");
+					getExecutionEnv().releaseTransactionStatus();
 				}
 			}
 		});

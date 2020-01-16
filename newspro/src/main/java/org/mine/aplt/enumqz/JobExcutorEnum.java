@@ -1,7 +1,7 @@
 package org.mine.aplt.enumqz;
 
 public enum JobExcutorEnum {
-	STARTED("STARTED"), COMPLETING("COMPLETING"), SEECUSS("SEECUSS"),FAILED("FAILED"),UNKOWN("UNKOWN");
+	STARTED("STARTED"), COMPLETING("COMPLETING"), SUCCESS("SUCCESS"),FAILED("FAILED"),UNKOWN("UNKOWN"),CANCEL("CANCLE_MANUAL");
 	
 	/**
 	 * JOB执行并发
@@ -14,12 +14,12 @@ public enum JobExcutorEnum {
 	 */
 	public static final String NO_CURR_JOB = "1";
 	/**
-	 * JOB自动执行
+	 * JOB自动执行-定时任务
 	 * AUTO_RUN
 	 */
 	public static final int AUTO_RUN = 0;
 	/**
-	 * JOB不自动执行
+	 * JOB不自动执行-非定时任务
 	 * NO_AUTO_RUN
 	 */
 	public static final int NO_AUTO_RUN = 1;

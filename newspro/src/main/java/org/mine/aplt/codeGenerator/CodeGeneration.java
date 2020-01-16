@@ -357,6 +357,9 @@ public class CodeGeneration {
 				}
 			} else if(CommonUtils.isNotEmpty(type)){
 				buffer.append(type).append(" ").append(column).append(", ");
+				if(methodName.startsWith(ApltContanst.SELECTONE)){
+					buffer.append("boolean nullException").append(", ");
+				}
 			}
 		}
 		javaFile.append(ApltContanst.TABS).append(" */").append(ApltContanst.NEWLINE);
@@ -408,25 +411,44 @@ public class CodeGeneration {
 	 */
 	public static void appendInterfaceMethodBody(StringBuffer javaFile, String methodName, String javaFileName, String[] columns, boolean isIndex){
 		if(isIndex){
-			javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS)
-					.append("Map<String, Object> map = new HashMap<String, Object>()").append(ApltContanst.LINE_SUFFIX);
-			for(String param : columns){
-				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append("map.put(\"").append(param)
-						.append("\", ").append(param).append(")").append(ApltContanst.LINE_SUFFIX);
+			if(methodName.startsWith(ApltContanst.SELECTONE)){
+				String firstLetter = CommonUtils.firstLetterLowerCase(javaFileName);
+				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS)
+						.append("Map<String, Object> map = new HashMap<String, Object>()").append(ApltContanst.LINE_SUFFIX);
+				for(String param : columns){
+					javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append("map.put(\"").append(param)
+							.append("\", ").append(param).append(")").append(ApltContanst.LINE_SUFFIX);
+				}
+				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append(javaFileName).append(" ")
+				.append(firstLetter).append(" = new ").append(javaFileName).append("()").append(ApltContanst.LINE_SUFFIX);
+				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append(firstLetter).append(" = (").append(javaFileName)
+				.append(")getSqlSessionTemplate().").append(getSessionTypeName(methodName)).append("(\"").append(javaFileName).append(".")
+				.append(methodName).append("\"").append(", map)").append(ApltContanst.LINE_SUFFIX);
+				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append("if (").append(firstLetter).append(" == null && nullException)")
+				.append("throw GitWebException.GIT_NOTFOUNT(\"").append(CommonUtils.humpToUnderLine(javaFileName)).append("\", CommonUtils.toString(map))")
+				.append(ApltContanst.LINE_SUFFIX);
+				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append("return ").append(firstLetter).append(ApltContanst.LINE_SUFFIX);
+			} else {
+				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS)
+				.append("Map<String, Object> map = new HashMap<String, Object>()").append(ApltContanst.LINE_SUFFIX);
+				for(String param : columns){
+					javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append("map.put(\"").append(param)
+					.append("\", ").append(param).append(")").append(ApltContanst.LINE_SUFFIX);
+				}
+				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append("return getSqlSessionTemplate().").append(getSessionTypeName(methodName))
+				.append("(\"").append(javaFileName).append(".").append(methodName).append("\"").append(", map)").append(ApltContanst.LINE_SUFFIX);
 			}
-			javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append("return getSqlSessionTemplate().").append(getSessionTypeName(methodName))
-			.append("(\"").append(javaFileName).append(".").append(methodName).append("\"").append(", map)").append(ApltContanst.LINE_SUFFIX);
 		} else {
 			if(methodName.startsWith(ApltContanst.BATCHINSERTXML) || methodName.startsWith(ApltContanst.BATCHUPDATEXML)){
 				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append("BatchInsertByXML(list, \"list\", ")
-						.append(interfaceMethodMap.get(ApltContanst.BATCHCOMMITSIZE)).append(", new BatchOperator() {")
+						.append(interfaceMethodMap.get(ApltContanst.BATCHCOMMITSIZE)).append(", new BatchOperator<Integer, Map<String, Object>>() {")
 						.append(ApltContanst.NEWLINE);
 				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append(ApltContanst.TABS).append("@Override").append(ApltContanst.NEWLINE);
-				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append(ApltContanst.TABS).append("public Object call(Map<String, Object> map) {").append(ApltContanst.NEWLINE);
-				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append(ApltContanst.TABS).append(ApltContanst.TABS).append("getSqlSessionTemplate().")
+				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append(ApltContanst.TABS).append("public Integer call(Map<String, Object> map) {").append(ApltContanst.NEWLINE);
+				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append(ApltContanst.TABS).append(ApltContanst.TABS).append("return getSqlSessionTemplate().")
 				.append(getSessionTypeName(methodName)).append("(\"").append(javaFileName).append(".").append(methodName)
 				.append("\", map)").append(ApltContanst.LINE_SUFFIX);
-				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append(ApltContanst.TABS).append("return null").append(ApltContanst.LINE_SUFFIX);
+//				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append(ApltContanst.TABS).append("return null").append(ApltContanst.LINE_SUFFIX);
 				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append(ApltContanst.TABS).append("}").append(ApltContanst.LINE_SUFFIX);
 				javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append("})").append(ApltContanst.LINE_SUFFIX);
 			} else if((methodName.startsWith(ApltContanst.BATCHINSERT) || methodName.startsWith(ApltContanst.BATCHUPDATE)

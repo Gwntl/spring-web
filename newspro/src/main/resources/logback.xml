@@ -93,11 +93,26 @@
 			<totalSizeCap>20GB</totalSizeCap>
 		</rollingPolicy>
 	</appender>
+	
+	<!-- 异步打印日志 STDINF -->
+	<appender name="ASYNCSTDINF" class="ch.qos.logback.classic.AsyncAppender">
+		<!-- 添加附加的appender,最多只能添加一个 -->
+		<appender-ref ref="STDINF" />
+	</appender>
+	
+	<!-- 异步打印日志 FILE -->
+	<appender name="ASYNCFILE" class="ch.qos.logback.classic.AsyncAppender">
+		<queueSize>512</queueSize>
+		<!-- 添加附加的appender,最多只能添加一个 -->
+		<appender-ref ref="FILE" />
+	</appender>
 
 	<root level="${RootLogLevel}">
 		<appender-ref ref="STDOUT" />
-		<appender-ref ref="STDINF" />
+		<appender-ref ref="ASYNCFILE" />
+		<appender-ref ref="ASYNCSTDINF" />
 		<appender-ref ref="STDERR" />
-		<appender-ref ref="FILE" />
+<!-- 		<appender-ref ref="STDINF" /> -->
+<!-- 		<appender-ref ref="FILE" /> -->
 	</root>
 </configuration>

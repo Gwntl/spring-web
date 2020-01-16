@@ -2,7 +2,6 @@ package org.mine.aplt.util;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -208,6 +207,22 @@ public final class CommonUtils {
 	}
 	
 	/**
+	 * 驼峰转为下划线格式字符串
+	 * */
+	public static String humpToUnderLine(String str){
+		str = firstLetterLowerCase(str);
+		char[] chars = str.toCharArray();
+		StringBuffer buffer = new StringBuffer(str);
+		for(int i = 0; i < chars.length; i ++){
+			if(Character.isUpperCase(chars[i])){
+				buffer = buffer.insert(i, '_');
+			}
+		}
+		
+		return buffer.toString().toLowerCase();
+	}
+	
+	/**
 	 * 首字母大写(前移为大写)
 	 * @param s
 	 * @return
@@ -273,6 +288,68 @@ public final class CommonUtils {
 		return new BigDecimal(o + "").setScale(scale, RoundingMode.HALF_UP) + "";
 	}
 	
+	/**
+	 * 将字符串根据指定分隔符分割成数组
+	 * @param str 源字符串
+	 * @param split 分割符
+	 * @param isLast 当分割符后一位为空时,是否读取
+	 * @return
+	 */
+	public static List<String> splitStrToList(String str, String split, boolean isLast){
+		if(isEmpty(str)){
+			return null;
+		}
+		List<String> list = new ArrayList<>();
+		int index = 0;
+		while((index = str.indexOf(split)) != -1){
+			list.add(str.substring(0, index));
+			str = str.substring(index + 1);
+		}
+		if(isLast || isNotEmpty(str)){
+			list.add(str);
+		}
+		return list;
+	}
+	
+	/**
+	 * list根据给定分割符转为String
+	 * @param list
+	 * @param split
+	 * @return
+	 */
+	public static String listToStr(List<String> list, String split){
+		if(isEmpty(list)){
+			return null;
+		}
+		StringBuffer buffer = new StringBuffer();
+		for(int i = 0, size = list.size(); i < size; i++){
+			String con = list.get(i);
+			if(isNotEmpty(con)){
+				buffer.append(con).append(split);
+			}
+		}
+		
+		return buffer.substring(0, buffer.length() -1);
+	}
+	
+	/**
+	 * 获取当前数据邻近的2幂次数(向上取值)
+	 * @param capacity
+	 * @return
+	 */
+	public static int initialSize(int capacity){
+		//判断是否为2的倍数
+		if((capacity & (capacity-1)) == 0){
+			return capacity;
+		}
+		capacity |= capacity >> 1;
+		capacity |= capacity >> 2;
+		capacity |= capacity >> 4;
+		capacity |= capacity >> 8;
+		capacity |= capacity >> 16;
+		return capacity + 1;
+	}
+	
 	public static void main(String[] args){
 //		Map<String, Object> map = new HashMap<>();
 //		map.put("1", 100);
@@ -286,14 +363,16 @@ public final class CommonUtils {
 //		list.add("qweqwe");
 //		list.add("qwe12e3qwe");
 //		list.add("qweqwqwe12e");
-//		list.add("qweeqe121qwe");
+//		list.add("");
 //		
-//		System.out.println(toString(list));
+//		System.out.println(listtoStr(list,","));
 //		
 //		String[] a = {"94jueek","454","we1231"};
 //		System.out.println(toString(a));
 //		System.out.println(underLineToHump("ass_bsd_vdd", false));
-		System.out.println(isNumber("1230.1"));
+//		System.out.println(isNumber("1230.1"));
+//		System.out.println(toString(splitStrToList("a|b|c|d|", "|", true)));
+		System.out.println(humpToUnderLine("RaBc"));
 	}
 	
 }

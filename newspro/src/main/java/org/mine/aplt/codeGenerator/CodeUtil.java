@@ -381,8 +381,10 @@ public class CodeUtil {
 		if(daoImplFlag){
 			javaFile.append("import java.util.Map").append(ApltContanst.LINE_SUFFIX);
 			javaFile.append("import java.util.HashMap").append(ApltContanst.LINE_SUFFIX);
+			javaFile.append("import org.mine.aplt.exception.GitWebException").append(ApltContanst.LINE_SUFFIX);
 			javaFile.append("import org.mine.aplt.support.dao.BaseDaoSupport").append(ApltContanst.LINE_SUFFIX);
 			javaFile.append("import org.mine.aplt.support.dao.BatchOperator").append(ApltContanst.LINE_SUFFIX);
+			javaFile.append("import org.mine.aplt.util.CommonUtils").append(ApltContanst.LINE_SUFFIX);
 			javaFile.append("import ").append(ApltContanst.PACKAGE_DAO).append(".").append(javaFileName + "Dao").append(ApltContanst.LINE_SUFFIX);
 			javaFile.append("import org.springframework.stereotype.Repository").append(ApltContanst.LINE_SUFFIX);
 		}
@@ -491,8 +493,13 @@ public class CodeUtil {
 		getConnect();
 //		String[] tables = {"batch_queue_conf", "batch_trigger_conf", "batch_job_group_conf", 
 //				"batch_job_detail_conf","scheduler_runner_history"};
-		String[] tables = {"batch_job_group_conf"};
-//		String[] tables = {"batch_trigger_conf"};
+		String[] tables = { "batch_queue_definition", "batch_group_definition", "batch_task_definition",
+				"batch_job_definition", "batch_step_definition", "batch_trigger_definition",
+				"batch_task_execution_log_register", "batch_task_execution_log_history",
+				"batch_step_execution_log_register", "batch_step_execution_log_history",
+				"batch_timing_task_log_register", "batch_timing_task_log_history", "batch_timing_step_log_register",
+				"batch_timing_step_log_history"};
+//		String[] tables = {"batch_task_execute", "batch_job_execute"};
 		for(String tableName : tables){
 			CodeDto codeDto = columnInfos(tableName);
 			createJavaFile(codeDto, tableName);

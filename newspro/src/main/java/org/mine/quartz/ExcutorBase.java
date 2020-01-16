@@ -1,9 +1,6 @@
 package org.mine.quartz;
 
-import org.mine.aplt.enumqz.JobExcutorEnum;
 import org.mine.aplt.exception.GitWebException;
-import org.mine.quartz.job.ConcurrentExcutorJob;
-import org.mine.quartz.job.NoConcurrentExcutorJob;
 import org.quartz.Job;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

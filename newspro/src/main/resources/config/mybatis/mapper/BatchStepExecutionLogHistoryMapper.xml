@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BatchStepExecutionLogHistory">
+	<resultMap type="org.mine.model.BatchStepExecutionLogHistory" id="BaseResultMap">
+		<result column="history_step_execution_id" property="historyStepExecutionId"/>
+		<result column="history_step_job_id" property="historyStepJobId"/>
+		<result column="history_step_job_name" property="historyStepJobName"/>
+		<result column="history_step_start_time" property="historyStepStartTime"/>
+		<result column="history_step_end_time" property="historyStepEndTime"/>
+		<result column="history_step_job_status" property="historyStepJobStatus"/>
+		<result column="history_step_job_errmsg" property="historyStepJobErrmsg"/>
+		<result column="history_step_associate_job_id" property="historyStepAssociateJobId"/>
+		<result column="create_date" property="createDate"/>
+		<result column="valid_status" property="validStatus"/>
+		<result column="remark" property="remark"/>
+	</resultMap>
+
+	<sql id="Base_Select_List">
+		history_step_execution_id,history_step_job_id,history_step_job_name,history_step_start_time,history_step_end_time,history_step_job_status,
+		history_step_job_errmsg,history_step_associate_job_id,create_date,valid_status,remark
+	</sql>
+
+	<sql id="Base_Insert_Column">
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="historyStepExecutionId != null">history_step_execution_id,</if>
+			<if test="historyStepJobId != null">history_step_job_id,</if>
+			<if test="historyStepJobName != null">history_step_job_name,</if>
+			<if test="historyStepStartTime != null">history_step_start_time,</if>
+			<if test="historyStepEndTime != null">history_step_end_time,</if>
+			<if test="historyStepJobStatus != null">history_step_job_status,</if>
+			<if test="historyStepJobErrmsg != null">history_step_job_errmsg,</if>
+			<if test="historyStepAssociateJobId != null">history_step_associate_job_id,</if>
+			<if test="createDate != null">create_date,</if>
+			<if test="validStatus != null">valid_status,</if>
+			<if test="remark != null">remark,</if>
+		</trim>
+	</sql>
+
+	<sql id="Base_Insert_Values">
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="historyStepExecutionId != null">#{historyStepExecutionId},</if>
+			<if test="historyStepJobId != null">#{historyStepJobId},</if>
+			<if test="historyStepJobName != null">#{historyStepJobName},</if>
+			<if test="historyStepStartTime != null">#{historyStepStartTime},</if>
+			<if test="historyStepEndTime != null">#{historyStepEndTime},</if>
+			<if test="historyStepJobStatus != null">#{historyStepJobStatus},</if>
+			<if test="historyStepJobErrmsg != null">#{historyStepJobErrmsg},</if>
+			<if test="historyStepAssociateJobId != null">#{historyStepAssociateJobId},</if>
+			<if test="createDate != null">#{createDate},</if>
+			<if test="validStatus != null">#{validStatus},</if>
+			<if test="remark != null">#{remark},</if>
+		</trim>
+	</sql>
+
+	<insert id="insertOne" parameterType="org.mine.model.BatchStepExecutionLogHistory">
+		insert into batch_step_execution_log_history
+		<include refid="BatchStepExecutionLogHistory.Base_Insert_Column"/>
+		values 
+		<include refid="BatchStepExecutionLogHistory.Base_Insert_Values"/>
+	</insert>
+
+	<insert id="batchInsert" parameterType="org.mine.model.BatchStepExecutionLogHistory">
+		insert into batch_step_execution_log_history
+		<include refid="BatchStepExecutionLogHistory.Base_Insert_Column"/>
+		values 
+		<include refid="BatchStepExecutionLogHistory.Base_Insert_Values"/>
+	</insert>
+
+	<insert id="batchInsertXML" parameterType="java.util.List">
+		insert into batch_step_execution_log_history
+		(history_step_execution_id,history_step_job_id,history_step_job_name,history_step_start_time,history_step_end_time
+			,history_step_job_status,history_step_job_errmsg,history_step_associate_job_id,create_date
+			,valid_status,remark)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.historyStepExecutionId},#{item.historyStepJobId},#{item.historyStepJobName},#{item.historyStepStartTime},#{item.historyStepEndTime}
+				,#{item.historyStepJobStatus},#{item.historyStepJobErrmsg},#{item.historyStepAssociateJobId},#{item.createDate}
+				,#{item.validStatus},#{item.remark})
+		</foreach>
+	</insert>
+	<select id="selectOne1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchStepExecutionLogHistory.Base_Select_List"/>
+		from batch_step_execution_log_history
+		where history_step_execution_id = #{historyStepExecutionId}
+	</select>
+
+	<select id="selectOne1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchStepExecutionLogHistory.Base_Select_List"/>
+		from batch_step_execution_log_history
+		where history_step_execution_id = #{historyStepExecutionId} and vaild_status = '0'
+	</select>
+
+	<select id="selectOne1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchStepExecutionLogHistory.Base_Select_List"/>
+		from batch_step_execution_log_history
+		where history_step_execution_id = #{historyStepExecutionId} for update
+	</select>
+
+	<delete id="deleteOne1" parameterType="org.mine.model.BatchStepExecutionLogHistory">
+		delete from batch_step_execution_log_history
+		where
+		history_step_execution_id = #{historyStepExecutionId}
+	</delete>
+
+	<delete id="deleteOne1L" parameterType="org.mine.model.BatchStepExecutionLogHistory">
+		delete from batch_step_execution_log_history
+		where
+		history_step_execution_id = #{historyStepExecutionId} for update
+	</delete>
+
+	<update id="updateOne1" parameterType="org.mine.model.BatchStepExecutionLogHistory">
+		update batch_step_execution_log_history
+		<trim prefix="set" suffixOverrides=",">
+			<if test="historyStepJobId != null">history_step_job_id = #{historyStepJobId},</if>
+			<if test="historyStepJobName != null">history_step_job_name = #{historyStepJobName},</if>
+			<if test="historyStepStartTime != null">history_step_start_time = #{historyStepStartTime},</if>
+			<if test="historyStepEndTime != null">history_step_end_time = #{historyStepEndTime},</if>
+			<if test="historyStepJobStatus != null">history_step_job_status = #{historyStepJobStatus},</if>
+			<if test="historyStepJobErrmsg != null">history_step_job_errmsg = #{historyStepJobErrmsg},</if>
+			<if test="historyStepAssociateJobId != null">history_step_associate_job_id = #{historyStepAssociateJobId},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where history_step_execution_id = #{historyStepExecutionId}
+	</update>
+
+	<update id="updateOne1R" parameterType="org.mine.model.BatchStepExecutionLogHistory">
+		update batch_step_execution_log_history
+		<trim prefix="set" suffixOverrides=",">
+			<if test="historyStepJobId != null">history_step_job_id = #{historyStepJobId},</if>
+			<if test="historyStepJobName != null">history_step_job_name = #{historyStepJobName},</if>
+			<if test="historyStepStartTime != null">history_step_start_time = #{historyStepStartTime},</if>
+			<if test="historyStepEndTime != null">history_step_end_time = #{historyStepEndTime},</if>
+			<if test="historyStepJobStatus != null">history_step_job_status = #{historyStepJobStatus},</if>
+			<if test="historyStepJobErrmsg != null">history_step_job_errmsg = #{historyStepJobErrmsg},</if>
+			<if test="historyStepAssociateJobId != null">history_step_associate_job_id = #{historyStepAssociateJobId},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where history_step_execution_id = #{historyStepExecutionId} and vaild_status = '0'
+	</update>
+
+	<update id="updateOne1L" parameterType="org.mine.model.BatchStepExecutionLogHistory">
+		update batch_step_execution_log_history
+		<trim prefix="set" suffixOverrides=",">
+			<if test="historyStepJobId != null">history_step_job_id = #{historyStepJobId},</if>
+			<if test="historyStepJobName != null">history_step_job_name = #{historyStepJobName},</if>
+			<if test="historyStepStartTime != null">history_step_start_time = #{historyStepStartTime},</if>
+			<if test="historyStepEndTime != null">history_step_end_time = #{historyStepEndTime},</if>
+			<if test="historyStepJobStatus != null">history_step_job_status = #{historyStepJobStatus},</if>
+			<if test="historyStepJobErrmsg != null">history_step_job_errmsg = #{historyStepJobErrmsg},</if>
+			<if test="historyStepAssociateJobId != null">history_step_associate_job_id = #{historyStepAssociateJobId},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where history_step_execution_id = #{historyStepExecutionId} for update
+	</update>
+
+	<update id="batchUpdateXML1" parameterType="java.util.List">
+		update batch_step_execution_log_history set
+		<trim prefix="history_step_job_id=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyStepJobId != null">
+					when history_step_execution_id = #{item.historyStepExecutionId} then #{item.historyStepJobId}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="history_step_job_name=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyStepJobName != null">
+					when history_step_execution_id = #{item.historyStepExecutionId} then #{item.historyStepJobName}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="history_step_start_time=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyStepStartTime != null">
+					when history_step_execution_id = #{item.historyStepExecutionId} then #{item.historyStepStartTime}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="history_step_end_time=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyStepEndTime != null">
+					when history_step_execution_id = #{item.historyStepExecutionId} then #{item.historyStepEndTime}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="history_step_job_status=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyStepJobStatus != null">
+					when history_step_execution_id = #{item.historyStepExecutionId} then #{item.historyStepJobStatus}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="history_step_job_errmsg=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyStepJobErrmsg != null">
+					when history_step_execution_id = #{item.historyStepExecutionId} then #{item.historyStepJobErrmsg}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="history_step_associate_job_id=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyStepAssociateJobId != null">
+					when history_step_execution_id = #{item.historyStepExecutionId} then #{item.historyStepAssociateJobId}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="create_date=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.createDate != null">
+					when history_step_execution_id = #{item.historyStepExecutionId} then #{item.createDate}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="valid_status=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.validStatus != null">
+					when history_step_execution_id = #{item.historyStepExecutionId} then #{item.validStatus}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="remark=case" suffix="end">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.remark != null">
+					when history_step_execution_id = #{item.historyStepExecutionId} then #{item.remark}
+				</if>
+			</foreach>
+		</trim>
+		where
+		history_step_execution_id in
+		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+			#{item.historyStepExecutionId}
+		</foreach>
+	</update>
+	<update id="batchUpdate" parameterType="org.mine.model.BatchStepExecutionLogHistory">
+		update batch_step_execution_log_history
+		<trim prefix="set" suffixOverrides=",">
+			<if test="historyStepJobId != null">history_step_job_id = #{historyStepJobId},</if>
+			<if test="historyStepJobName != null">history_step_job_name = #{historyStepJobName},</if>
+			<if test="historyStepStartTime != null">history_step_start_time = #{historyStepStartTime},</if>
+			<if test="historyStepEndTime != null">history_step_end_time = #{historyStepEndTime},</if>
+			<if test="historyStepJobStatus != null">history_step_job_status = #{historyStepJobStatus},</if>
+			<if test="historyStepJobErrmsg != null">history_step_job_errmsg = #{historyStepJobErrmsg},</if>
+			<if test="historyStepAssociateJobId != null">history_step_associate_job_id = #{historyStepAssociateJobId},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where history_step_execution_id = #{historyStepExecutionId}
+	</update>
+
+	<select id="selectAll1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchStepExecutionLogHistory.Base_Select_List"/>
+		from batch_step_execution_log_history
+		where null = #{taskAssociateGroupId}
+	</select>
+
+	<select id="selectAll1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchStepExecutionLogHistory.Base_Select_List"/>
+		from batch_step_execution_log_history
+		where null = #{taskAssociateGroupId} and vaild_status = '0'
+	</select>
+
+	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchStepExecutionLogHistory.Base_Select_List"/>
+		from batch_step_execution_log_history
+		where null = #{taskAssociateGroupId} for update
+	</select>
+
+</mapper>

@@ -1,14 +1,7 @@
 package com.jdbc;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mine.aplt.util.CommonUtils;
-import org.mine.dao.BatchTriggerConfDao;
-import org.mine.model.BatchTriggerConf;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -16,9 +9,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(locations={"classpath:config/base/application-context-impl.xml"})
 public class CodeGeneratorTest {
 
-	@Autowired
-	private BatchTriggerConfDao confDao;
-	
 	@Test
 	public void test() {
 //		BatchTriggerConf triggerConf = new BatchTriggerConf();

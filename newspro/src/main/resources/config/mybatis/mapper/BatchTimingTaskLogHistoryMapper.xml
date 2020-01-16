@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BatchTimingTaskLogHistory">
+	<resultMap type="org.mine.model.BatchTimingTaskLogHistory" id="BaseResultMap">
+		<result column="history_timing_execution_id" property="historyTimingExecutionId"/>
+		<result column="history_timing_job_id" property="historyTimingJobId"/>
+		<result column="history_timing_job_name" property="historyTimingJobName"/>
+		<result column="history_timing_associate_task_id" property="historyTimingAssociateTaskId"/>
+		<result column="history_timing_start_time" property="historyTimingStartTime"/>
+		<result column="history_timing_end_time" property="historyTimingEndTime"/>
+		<result column="history_timing_job_status" property="historyTimingJobStatus"/>
+		<result column="history_timing_job_errmsg" property="historyTimingJobErrmsg"/>
+		<result column="create_date" property="createDate"/>
+		<result column="valid_status" property="validStatus"/>
+		<result column="remark" property="remark"/>
+	</resultMap>
+
+	<sql id="Base_Select_List">
+		history_timing_execution_id,history_timing_job_id,history_timing_job_name,history_timing_associate_task_id,history_timing_start_time,history_timing_end_time,
+		history_timing_job_status,history_timing_job_errmsg,create_date,valid_status,remark
+	</sql>
+
+	<sql id="Base_Insert_Column">
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="historyTimingExecutionId != null">history_timing_execution_id,</if>
+			<if test="historyTimingJobId != null">history_timing_job_id,</if>
+			<if test="historyTimingJobName != null">history_timing_job_name,</if>
+			<if test="historyTimingAssociateTaskId != null">history_timing_associate_task_id,</if>
+			<if test="historyTimingStartTime != null">history_timing_start_time,</if>
+			<if test="historyTimingEndTime != null">history_timing_end_time,</if>
+			<if test="historyTimingJobStatus != null">history_timing_job_status,</if>
+			<if test="historyTimingJobErrmsg != null">history_timing_job_errmsg,</if>
+			<if test="createDate != null">create_date,</if>
+			<if test="validStatus != null">valid_status,</if>
+			<if test="remark != null">remark,</if>
+		</trim>
+	</sql>
+
+	<sql id="Base_Insert_Values">
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="historyTimingExecutionId != null">#{historyTimingExecutionId},</if>
+			<if test="historyTimingJobId != null">#{historyTimingJobId},</if>
+			<if test="historyTimingJobName != null">#{historyTimingJobName},</if>
+			<if test="historyTimingAssociateTaskId != null">#{historyTimingAssociateTaskId},</if>
+			<if test="historyTimingStartTime != null">#{historyTimingStartTime},</if>
+			<if test="historyTimingEndTime != null">#{historyTimingEndTime},</if>
+			<if test="historyTimingJobStatus != null">#{historyTimingJobStatus},</if>
+			<if test="historyTimingJobErrmsg != null">#{historyTimingJobErrmsg},</if>
+			<if test="createDate != null">#{createDate},</if>
+			<if test="validStatus != null">#{validStatus},</if>
+			<if test="remark != null">#{remark},</if>
+		</trim>
+	</sql>
+
+	<insert id="insertOne" parameterType="org.mine.model.BatchTimingTaskLogHistory">
+		insert into batch_timing_task_log_history
+		<include refid="BatchTimingTaskLogHistory.Base_Insert_Column"/>
+		values 
+		<include refid="BatchTimingTaskLogHistory.Base_Insert_Values"/>
+	</insert>
+
+	<insert id="batchInsert" parameterType="org.mine.model.BatchTimingTaskLogHistory">
+		insert into batch_timing_task_log_history
+		<include refid="BatchTimingTaskLogHistory.Base_Insert_Column"/>
+		values 
+		<include refid="BatchTimingTaskLogHistory.Base_Insert_Values"/>
+	</insert>
+
+	<insert id="batchInsertXML" parameterType="java.util.List">
+		insert into batch_timing_task_log_history
+		(history_timing_execution_id,history_timing_job_id,history_timing_job_name,history_timing_associate_task_id,history_timing_start_time
+			,history_timing_end_time,history_timing_job_status,history_timing_job_errmsg,create_date
+			,valid_status,remark)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.historyTimingExecutionId},#{item.historyTimingJobId},#{item.historyTimingJobName},#{item.historyTimingAssociateTaskId},#{item.historyTimingStartTime}
+				,#{item.historyTimingEndTime},#{item.historyTimingJobStatus},#{item.historyTimingJobErrmsg},#{item.createDate}
+				,#{item.validStatus},#{item.remark})
+		</foreach>
+	</insert>
+	<select id="selectOne1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchTimingTaskLogHistory.Base_Select_List"/>
+		from batch_timing_task_log_history
+		where history_timing_execution_id = #{historyTimingExecutionId}
+	</select>
+
+	<select id="selectOne1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchTimingTaskLogHistory.Base_Select_List"/>
+		from batch_timing_task_log_history
+		where history_timing_execution_id = #{historyTimingExecutionId} and vaild_status = '0'
+	</select>
+
+	<select id="selectOne1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchTimingTaskLogHistory.Base_Select_List"/>
+		from batch_timing_task_log_history
+		where history_timing_execution_id = #{historyTimingExecutionId} for update
+	</select>
+
+	<delete id="deleteOne1" parameterType="org.mine.model.BatchTimingTaskLogHistory">
+		delete from batch_timing_task_log_history
+		where
+		history_timing_execution_id = #{historyTimingExecutionId}
+	</delete>
+
+	<delete id="deleteOne1L" parameterType="org.mine.model.BatchTimingTaskLogHistory">
+		delete from batch_timing_task_log_history
+		where
+		history_timing_execution_id = #{historyTimingExecutionId} for update
+	</delete>
+
+	<update id="updateOne1" parameterType="org.mine.model.BatchTimingTaskLogHistory">
+		update batch_timing_task_log_history
+		<trim prefix="set" suffixOverrides=",">
+			<if test="historyTimingJobId != null">history_timing_job_id = #{historyTimingJobId},</if>
+			<if test="historyTimingJobName != null">history_timing_job_name = #{historyTimingJobName},</if>
+			<if test="historyTimingAssociateTaskId != null">history_timing_associate_task_id = #{historyTimingAssociateTaskId},</if>
+			<if test="historyTimingStartTime != null">history_timing_start_time = #{historyTimingStartTime},</if>
+			<if test="historyTimingEndTime != null">history_timing_end_time = #{historyTimingEndTime},</if>
+			<if test="historyTimingJobStatus != null">history_timing_job_status = #{historyTimingJobStatus},</if>
+			<if test="historyTimingJobErrmsg != null">history_timing_job_errmsg = #{historyTimingJobErrmsg},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where history_timing_execution_id = #{historyTimingExecutionId}
+	</update>
+
+	<update id="updateOne1R" parameterType="org.mine.model.BatchTimingTaskLogHistory">
+		update batch_timing_task_log_history
+		<trim prefix="set" suffixOverrides=",">
+			<if test="historyTimingJobId != null">history_timing_job_id = #{historyTimingJobId},</if>
+			<if test="historyTimingJobName != null">history_timing_job_name = #{historyTimingJobName},</if>
+			<if test="historyTimingAssociateTaskId != null">history_timing_associate_task_id = #{historyTimingAssociateTaskId},</if>
+			<if test="historyTimingStartTime != null">history_timing_start_time = #{historyTimingStartTime},</if>
+			<if test="historyTimingEndTime != null">history_timing_end_time = #{historyTimingEndTime},</if>
+			<if test="historyTimingJobStatus != null">history_timing_job_status = #{historyTimingJobStatus},</if>
+			<if test="historyTimingJobErrmsg != null">history_timing_job_errmsg = #{historyTimingJobErrmsg},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where history_timing_execution_id = #{historyTimingExecutionId} and vaild_status = '0'
+	</update>
+
+	<update id="updateOne1L" parameterType="org.mine.model.BatchTimingTaskLogHistory">
+		update batch_timing_task_log_history
+		<trim prefix="set" suffixOverrides=",">
+			<if test="historyTimingJobId != null">history_timing_job_id = #{historyTimingJobId},</if>
+			<if test="historyTimingJobName != null">history_timing_job_name = #{historyTimingJobName},</if>
+			<if test="historyTimingAssociateTaskId != null">history_timing_associate_task_id = #{historyTimingAssociateTaskId},</if>
+			<if test="historyTimingStartTime != null">history_timing_start_time = #{historyTimingStartTime},</if>
+			<if test="historyTimingEndTime != null">history_timing_end_time = #{historyTimingEndTime},</if>
+			<if test="historyTimingJobStatus != null">history_timing_job_status = #{historyTimingJobStatus},</if>
+			<if test="historyTimingJobErrmsg != null">history_timing_job_errmsg = #{historyTimingJobErrmsg},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where history_timing_execution_id = #{historyTimingExecutionId} for update
+	</update>
+
+	<update id="batchUpdateXML1" parameterType="java.util.List">
+		update batch_timing_task_log_history set
+		<trim prefix="history_timing_job_id=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyTimingJobId != null">
+					when history_timing_execution_id = #{item.historyTimingExecutionId} then #{item.historyTimingJobId}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="history_timing_job_name=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyTimingJobName != null">
+					when history_timing_execution_id = #{item.historyTimingExecutionId} then #{item.historyTimingJobName}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="history_timing_associate_task_id=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyTimingAssociateTaskId != null">
+					when history_timing_execution_id = #{item.historyTimingExecutionId} then #{item.historyTimingAssociateTaskId}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="history_timing_start_time=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyTimingStartTime != null">
+					when history_timing_execution_id = #{item.historyTimingExecutionId} then #{item.historyTimingStartTime}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="history_timing_end_time=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyTimingEndTime != null">
+					when history_timing_execution_id = #{item.historyTimingExecutionId} then #{item.historyTimingEndTime}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="history_timing_job_status=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyTimingJobStatus != null">
+					when history_timing_execution_id = #{item.historyTimingExecutionId} then #{item.historyTimingJobStatus}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="history_timing_job_errmsg=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyTimingJobErrmsg != null">
+					when history_timing_execution_id = #{item.historyTimingExecutionId} then #{item.historyTimingJobErrmsg}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="create_date=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.createDate != null">
+					when history_timing_execution_id = #{item.historyTimingExecutionId} then #{item.createDate}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="valid_status=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.validStatus != null">
+					when history_timing_execution_id = #{item.historyTimingExecutionId} then #{item.validStatus}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="remark=case" suffix="end">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.remark != null">
+					when history_timing_execution_id = #{item.historyTimingExecutionId} then #{item.remark}
+				</if>
+			</foreach>
+		</trim>
+		where
+		history_timing_execution_id in
+		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+			#{item.historyTimingExecutionId}
+		</foreach>
+	</update>
+	<update id="batchUpdate" parameterType="org.mine.model.BatchTimingTaskLogHistory">
+		update batch_timing_task_log_history
+		<trim prefix="set" suffixOverrides=",">
+			<if test="historyTimingJobId != null">history_timing_job_id = #{historyTimingJobId},</if>
+			<if test="historyTimingJobName != null">history_timing_job_name = #{historyTimingJobName},</if>
+			<if test="historyTimingAssociateTaskId != null">history_timing_associate_task_id = #{historyTimingAssociateTaskId},</if>
+			<if test="historyTimingStartTime != null">history_timing_start_time = #{historyTimingStartTime},</if>
+			<if test="historyTimingEndTime != null">history_timing_end_time = #{historyTimingEndTime},</if>
+			<if test="historyTimingJobStatus != null">history_timing_job_status = #{historyTimingJobStatus},</if>
+			<if test="historyTimingJobErrmsg != null">history_timing_job_errmsg = #{historyTimingJobErrmsg},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where history_timing_execution_id = #{historyTimingExecutionId}
+	</update>
+
+	<select id="selectAll1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchTimingTaskLogHistory.Base_Select_List"/>
+		from batch_timing_task_log_history
+		where null = #{taskAssociateGroupId}
+	</select>
+
+	<select id="selectAll1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchTimingTaskLogHistory.Base_Select_List"/>
+		from batch_timing_task_log_history
+		where null = #{taskAssociateGroupId} and vaild_status = '0'
+	</select>
+
+	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchTimingTaskLogHistory.Base_Select_List"/>
+		from batch_timing_task_log_history
+		where null = #{taskAssociateGroupId} for update
+	</select>
+
+</mapper>

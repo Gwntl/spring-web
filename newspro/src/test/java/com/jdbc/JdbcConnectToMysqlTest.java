@@ -6,42 +6,16 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mine.aplt.enumqz.JobExcutorEnum;
-import org.mine.aplt.support.bean.GitContext;
-import org.mine.aplt.util.CommonUtils;
-import org.mine.controller.login.RegisterUserController;
-import org.mine.dao.BatchJobDetailConfDao;
-import org.mine.dao.BatchJobGroupConfDao;
-import org.mine.dao.BatchQueueConfDao;
-import org.mine.dao.BatchRunJobDetailDao;
-import org.mine.dao.BatchRunQueueDao;
-import org.mine.dao.BatchTriggerConfDao;
-import org.mine.dao.custom.BatchConfCostomDao;
-import org.mine.dao.custom.impl.BatchConfCostomDaoImpl;
-import org.mine.model.BatchJobDetailConf;
-import org.mine.model.BatchJobGroupConf;
-import org.mine.model.BatchQueueConf;
-import org.mine.model.BatchRunJobDetail;
-import org.mine.model.BatchRunQueue;
-import org.mine.model.BatchTriggerConf;
 import org.mine.model.Tuser;
-import org.mine.service.BatchRunQueueService;
 import org.mine.service.TuserService;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={"classpath:config/base/application-context-impl.xml"})
@@ -105,9 +79,6 @@ public class JdbcConnectToMysqlTest {
 		System.out.println(service.isExist("test", "test"));
 	}
 	
-	@Autowired
-	private BatchRunQueueDao queueDao;
-	
 	@Test
 	public void test4(){
 //		MDC.put("trade", "atest");
@@ -119,7 +90,7 @@ public class JdbcConnectToMysqlTest {
 //		System.out.println(num);
 		System.out.println("success");
 //		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyymmddhhmmss");
-		BatchRunQueue queue = new BatchRunQueue();
+//		BatchRunQueue queue = new BatchRunQueue();
 //		Date startTime = null;
 //		try {
 //			startTime = dateFormat.parse("20191106111021");
@@ -127,29 +98,15 @@ public class JdbcConnectToMysqlTest {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
-		queue.setQueueId("1002");
-		queue.setQueueName("TEST_RUN_1");
-		queue.setQueueCrontrigger("15,55 * * ? * *");
+//		queue.setQueueId("1002");
+//		queue.setQueueName("TEST_RUN_1");
+//		queue.setQueueCrontrigger("15,55 * * ? * *");
 //		queue.setQueueJobId(1002L);
-		queue.setQueueRemark("每分钟的15秒,55秒执行一次");
+//		queue.setQueueRemark("每分钟的15秒,55秒执行一次");
 //		queueDao.insertOne(queue);
-		queueDao.updateOne(queue);
+//		queueDao.updateOne(queue);
 	}
 	
-	@Autowired
-	private BatchRunJobDetailDao jobDetailDao;
-	@Autowired
-	private RegisterUserController register;
-	@Autowired
-	private BatchQueueConfDao queueConfDao;
-	@Autowired
-	private BatchConfCostomDao confCostomDao;
-	@Autowired
-	private BatchTriggerConfDao triggerConfDao;
-	@Autowired
-	private BatchJobGroupConfDao jobGroupConfDao;
-	@Autowired
-	private BatchJobDetailConfDao jobDetailConfDao;
 	@Test
 	public void test5() throws Exception{
 //		BatchQueueConf conf = new BatchQueueConf();
@@ -191,9 +148,5 @@ public class JdbcConnectToMysqlTest {
 //		detailConf.setJobdetailActuator("");
 //		detailConf.setJobdetailGroupId(groupConf2.getJobGroupId());
 //		jobDetailConfDao.insertOne(detailConf);
-		
-		BatchJobDetailConf detailConf = jobDetailConfDao.selectOne1R(1001L);
-		detailConf.setJobdetailProvider("org.mine.service.impl.DataPrintServiceImpl");
-		jobDetailConfDao.updateOne1R(detailConf);
 	}
 }

@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BatchQueueDefinition">
+	<resultMap type="org.mine.model.BatchQueueDefinition" id="BaseResultMap">
+		<result column="queue_id" property="queueId"/>
+		<result column="queue_name" property="queueName"/>
+		<result column="queue_timingtask_flag" property="queueTimingtaskFlag"/>
+		<result column="create_date" property="createDate"/>
+		<result column="vaild_status" property="vaildStatus"/>
+		<result column="remark" property="remark"/>
+	</resultMap>
+
+	<sql id="Base_Select_List">
+		queue_id,queue_name,queue_timingtask_flag,create_date,vaild_status,remark
+	</sql>
+
+	<sql id="Base_Insert_Column">
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="queueId != null">queue_id,</if>
+			<if test="queueName != null">queue_name,</if>
+			<if test="queueTimingtaskFlag != null">queue_timingtask_flag,</if>
+			<if test="createDate != null">create_date,</if>
+			<if test="vaildStatus != null">vaild_status,</if>
+			<if test="remark != null">remark,</if>
+		</trim>
+	</sql>
+
+	<sql id="Base_Insert_Values">
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="queueId != null">#{queueId},</if>
+			<if test="queueName != null">#{queueName},</if>
+			<if test="queueTimingtaskFlag != null">#{queueTimingtaskFlag},</if>
+			<if test="createDate != null">#{createDate},</if>
+			<if test="vaildStatus != null">#{vaildStatus},</if>
+			<if test="remark != null">#{remark},</if>
+		</trim>
+	</sql>
+
+	<insert id="insertOne" parameterType="org.mine.model.BatchQueueDefinition">
+		insert into batch_queue_definition
+		<include refid="BatchQueueDefinition.Base_Insert_Column"/>
+		values 
+		<include refid="BatchQueueDefinition.Base_Insert_Values"/>
+	</insert>
+
+	<insert id="batchInsert" parameterType="org.mine.model.BatchQueueDefinition">
+		insert into batch_queue_definition
+		<include refid="BatchQueueDefinition.Base_Insert_Column"/>
+		values 
+		<include refid="BatchQueueDefinition.Base_Insert_Values"/>
+	</insert>
+
+	<insert id="batchInsertXML" parameterType="java.util.List">
+		insert into batch_queue_definition
+		(queue_id,queue_name,queue_timingtask_flag,create_date,vaild_status
+			,remark)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.queueId},#{item.queueName},#{item.queueTimingtaskFlag},#{item.createDate},#{item.vaildStatus}
+				,#{item.remark})
+		</foreach>
+	</insert>
+	<select id="selectOne1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchQueueDefinition.Base_Select_List"/>
+		from batch_queue_definition
+		where queue_id = #{queueId}
+	</select>
+
+	<select id="selectOne1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchQueueDefinition.Base_Select_List"/>
+		from batch_queue_definition
+		where queue_id = #{queueId} and vaild_status = '0'
+	</select>
+
+	<select id="selectOne1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchQueueDefinition.Base_Select_List"/>
+		from batch_queue_definition
+		where queue_id = #{queueId} for update
+	</select>
+
+	<delete id="deleteOne1" parameterType="org.mine.model.BatchQueueDefinition">
+		delete from batch_queue_definition
+		where
+		queue_id = #{queueId}
+	</delete>
+
+	<delete id="deleteOne1L" parameterType="org.mine.model.BatchQueueDefinition">
+		delete from batch_queue_definition
+		where
+		queue_id = #{queueId} for update
+	</delete>
+
+	<update id="updateOne1" parameterType="org.mine.model.BatchQueueDefinition">
+		update batch_queue_definition
+		<trim prefix="set" suffixOverrides=",">
+			<if test="queueName != null">queue_name = #{queueName},</if>
+			<if test="queueTimingtaskFlag != null">queue_timingtask_flag = #{queueTimingtaskFlag},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="vaildStatus != null">vaild_status = #{vaildStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where queue_id = #{queueId}
+	</update>
+
+	<update id="updateOne1R" parameterType="org.mine.model.BatchQueueDefinition">
+		update batch_queue_definition
+		<trim prefix="set" suffixOverrides=",">
+			<if test="queueName != null">queue_name = #{queueName},</if>
+			<if test="queueTimingtaskFlag != null">queue_timingtask_flag = #{queueTimingtaskFlag},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="vaildStatus != null">vaild_status = #{vaildStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where queue_id = #{queueId} and vaild_status = '0'
+	</update>
+
+	<update id="updateOne1L" parameterType="org.mine.model.BatchQueueDefinition">
+		update batch_queue_definition
+		<trim prefix="set" suffixOverrides=",">
+			<if test="queueName != null">queue_name = #{queueName},</if>
+			<if test="queueTimingtaskFlag != null">queue_timingtask_flag = #{queueTimingtaskFlag},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="vaildStatus != null">vaild_status = #{vaildStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where queue_id = #{queueId} for update
+	</update>
+
+	<update id="batchUpdateXML1" parameterType="java.util.List">
+		update batch_queue_definition set
+		<trim prefix="queue_name=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.queueName != null">
+					when queue_id = #{item.queueId} then #{item.queueName}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="queue_timingtask_flag=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.queueTimingtaskFlag != null">
+					when queue_id = #{item.queueId} then #{item.queueTimingtaskFlag}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="create_date=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.createDate != null">
+					when queue_id = #{item.queueId} then #{item.createDate}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="vaild_status=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.vaildStatus != null">
+					when queue_id = #{item.queueId} then #{item.vaildStatus}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="remark=case" suffix="end">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.remark != null">
+					when queue_id = #{item.queueId} then #{item.remark}
+				</if>
+			</foreach>
+		</trim>
+		where
+		queue_id in
+		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+			#{item.queueId}
+		</foreach>
+	</update>
+	<update id="batchUpdate" parameterType="org.mine.model.BatchQueueDefinition">
+		update batch_queue_definition
+		<trim prefix="set" suffixOverrides=",">
+			<if test="queueName != null">queue_name = #{queueName},</if>
+			<if test="queueTimingtaskFlag != null">queue_timingtask_flag = #{queueTimingtaskFlag},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="vaildStatus != null">vaild_status = #{vaildStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where queue_id = #{queueId}
+	</update>
+
+	<select id="selectAll1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchQueueDefinition.Base_Select_List"/>
+		from batch_queue_definition
+		where queue_timingtask_flag = #{queueTimingtaskFlag}
+	</select>
+
+	<select id="selectAll1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchQueueDefinition.Base_Select_List"/>
+		from batch_queue_definition
+		where queue_timingtask_flag = #{queueTimingtaskFlag} and vaild_status = '0'
+	</select>
+
+	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchQueueDefinition.Base_Select_List"/>
+		from batch_queue_definition
+		where queue_timingtask_flag = #{queueTimingtaskFlag} for update
+	</select>
+
+</mapper>

@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BatchTaskDefinition">
+	<resultMap type="org.mine.model.BatchTaskDefinition" id="BaseResultMap">
+		<result column="task_id" property="taskId"/>
+		<result column="task_name" property="taskName"/>
+		<result column="task_associate_group_id" property="taskAssociateGroupId"/>
+		<result column="task_skip_flag" property="taskSkipFlag"/>
+		<result column="task_init_value" property="taskInitValue"/>
+		<result column="create_date" property="createDate"/>
+		<result column="valid_status" property="validStatus"/>
+		<result column="remark" property="remark"/>
+	</resultMap>
+
+	<sql id="Base_Select_List">
+		task_id,task_name,task_associate_group_id,task_skip_flag,task_init_value,create_date,
+		valid_status,remark
+	</sql>
+
+	<sql id="Base_Insert_Column">
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="taskId != null">task_id,</if>
+			<if test="taskName != null">task_name,</if>
+			<if test="taskAssociateGroupId != null">task_associate_group_id,</if>
+			<if test="taskSkipFlag != null">task_skip_flag,</if>
+			<if test="taskInitValue != null">task_init_value,</if>
+			<if test="createDate != null">create_date,</if>
+			<if test="validStatus != null">valid_status,</if>
+			<if test="remark != null">remark,</if>
+		</trim>
+	</sql>
+
+	<sql id="Base_Insert_Values">
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="taskId != null">#{taskId},</if>
+			<if test="taskName != null">#{taskName},</if>
+			<if test="taskAssociateGroupId != null">#{taskAssociateGroupId},</if>
+			<if test="taskSkipFlag != null">#{taskSkipFlag},</if>
+			<if test="taskInitValue != null">#{taskInitValue},</if>
+			<if test="createDate != null">#{createDate},</if>
+			<if test="validStatus != null">#{validStatus},</if>
+			<if test="remark != null">#{remark},</if>
+		</trim>
+	</sql>
+
+	<insert id="insertOne" parameterType="org.mine.model.BatchTaskDefinition">
+		insert into batch_task_definition
+		<include refid="BatchTaskDefinition.Base_Insert_Column"/>
+		values 
+		<include refid="BatchTaskDefinition.Base_Insert_Values"/>
+	</insert>
+
+	<insert id="batchInsert" parameterType="org.mine.model.BatchTaskDefinition">
+		insert into batch_task_definition
+		<include refid="BatchTaskDefinition.Base_Insert_Column"/>
+		values 
+		<include refid="BatchTaskDefinition.Base_Insert_Values"/>
+	</insert>
+
+	<insert id="batchInsertXML" parameterType="java.util.List">
+		insert into batch_task_definition
+		(task_id,task_name,task_associate_group_id,task_skip_flag,task_init_value
+			,create_date,valid_status,remark)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.taskId},#{item.taskName},#{item.taskAssociateGroupId},#{item.taskSkipFlag},#{item.taskInitValue}
+				,#{item.createDate},#{item.validStatus},#{item.remark})
+		</foreach>
+	</insert>
+	<select id="selectOne1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchTaskDefinition.Base_Select_List"/>
+		from batch_task_definition
+		where task_id = #{taskId}
+	</select>
+
+	<select id="selectOne1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchTaskDefinition.Base_Select_List"/>
+		from batch_task_definition
+		where task_id = #{taskId} and vaild_status = '0'
+	</select>
+
+	<select id="selectOne1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchTaskDefinition.Base_Select_List"/>
+		from batch_task_definition
+		where task_id = #{taskId} for update
+	</select>
+
+	<delete id="deleteOne1" parameterType="org.mine.model.BatchTaskDefinition">
+		delete from batch_task_definition
+		where
+		task_id = #{taskId}
+	</delete>
+
+	<delete id="deleteOne1L" parameterType="org.mine.model.BatchTaskDefinition">
+		delete from batch_task_definition
+		where
+		task_id = #{taskId} for update
+	</delete>
+
+	<update id="updateOne1" parameterType="org.mine.model.BatchTaskDefinition">
+		update batch_task_definition
+		<trim prefix="set" suffixOverrides=",">
+			<if test="taskName != null">task_name = #{taskName},</if>
+			<if test="taskAssociateGroupId != null">task_associate_group_id = #{taskAssociateGroupId},</if>
+			<if test="taskSkipFlag != null">task_skip_flag = #{taskSkipFlag},</if>
+			<if test="taskInitValue != null">task_init_value = #{taskInitValue},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where task_id = #{taskId}
+	</update>
+
+	<update id="updateOne1R" parameterType="org.mine.model.BatchTaskDefinition">
+		update batch_task_definition
+		<trim prefix="set" suffixOverrides=",">
+			<if test="taskName != null">task_name = #{taskName},</if>
+			<if test="taskAssociateGroupId != null">task_associate_group_id = #{taskAssociateGroupId},</if>
+			<if test="taskSkipFlag != null">task_skip_flag = #{taskSkipFlag},</if>
+			<if test="taskInitValue != null">task_init_value = #{taskInitValue},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where task_id = #{taskId} and vaild_status = '0'
+	</update>
+
+	<update id="updateOne1L" parameterType="org.mine.model.BatchTaskDefinition">
+		update batch_task_definition
+		<trim prefix="set" suffixOverrides=",">
+			<if test="taskName != null">task_name = #{taskName},</if>
+			<if test="taskAssociateGroupId != null">task_associate_group_id = #{taskAssociateGroupId},</if>
+			<if test="taskSkipFlag != null">task_skip_flag = #{taskSkipFlag},</if>
+			<if test="taskInitValue != null">task_init_value = #{taskInitValue},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where task_id = #{taskId} for update
+	</update>
+
+	<update id="batchUpdateXML1" parameterType="java.util.List">
+		update batch_task_definition set
+		<trim prefix="task_name=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.taskName != null">
+					when task_id = #{item.taskId} then #{item.taskName}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="task_associate_group_id=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.taskAssociateGroupId != null">
+					when task_id = #{item.taskId} then #{item.taskAssociateGroupId}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="task_skip_flag=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.taskSkipFlag != null">
+					when task_id = #{item.taskId} then #{item.taskSkipFlag}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="task_init_value=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.taskInitValue != null">
+					when task_id = #{item.taskId} then #{item.taskInitValue}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="create_date=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.createDate != null">
+					when task_id = #{item.taskId} then #{item.createDate}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="valid_status=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.validStatus != null">
+					when task_id = #{item.taskId} then #{item.validStatus}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="remark=case" suffix="end">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.remark != null">
+					when task_id = #{item.taskId} then #{item.remark}
+				</if>
+			</foreach>
+		</trim>
+		where
+		task_id in
+		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+			#{item.taskId}
+		</foreach>
+	</update>
+	<update id="batchUpdate" parameterType="org.mine.model.BatchTaskDefinition">
+		update batch_task_definition
+		<trim prefix="set" suffixOverrides=",">
+			<if test="taskName != null">task_name = #{taskName},</if>
+			<if test="taskAssociateGroupId != null">task_associate_group_id = #{taskAssociateGroupId},</if>
+			<if test="taskSkipFlag != null">task_skip_flag = #{taskSkipFlag},</if>
+			<if test="taskInitValue != null">task_init_value = #{taskInitValue},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where task_id = #{taskId}
+	</update>
+
+	<select id="selectAll1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchTaskDefinition.Base_Select_List"/>
+		from batch_task_definition
+		where task_associate_group_id = #{taskAssociateGroupId}
+	</select>
+
+	<select id="selectAll1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchTaskDefinition.Base_Select_List"/>
+		from batch_task_definition
+		where task_associate_group_id = #{taskAssociateGroupId} and vaild_status = '0'
+	</select>
+
+	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchTaskDefinition.Base_Select_List"/>
+		from batch_task_definition
+		where task_associate_group_id = #{taskAssociateGroupId} for update
+	</select>
+
+</mapper>

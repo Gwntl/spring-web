@@ -17,6 +17,10 @@
 		select IFNULL(count(jobdetail_id) + 1,1) from batch_job_detail_conf where jobdetail_id like '${id}00%'
 	</select>
 	
+	<select id="getMaxNumByGroupDefin" resultType="java.lang.Integer">
+		select IFNULL(max(group_execution_num) + 1, 1) from batch_group_definition
+	</select>
+	
 	<select id="getBatchSequence" resultType="java.lang.Long">
 		select nextVal(#{seqName})
 	</select>

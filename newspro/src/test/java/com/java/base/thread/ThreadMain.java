@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import org.mine.aplt.util.CommonUtils;
+import org.slf4j.MDC;
 
 public class ThreadMain {
 	private static volatile boolean exitFlag = false;
@@ -19,7 +20,7 @@ public class ThreadMain {
 //		new Thread(b).start();
 		
 //		System.out.println(Integer.MAX_VALUE >> 16);
-		
+		MDC.put("trade", "Y_TE");
 		try{
 			Thread thread = new Thread(){
 

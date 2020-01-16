@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BatchTaskExecute">
+	<resultMap type="org.mine.model.BatchTaskExecute" id="BaseResultMap">
+		<result column="execute_task_id" property="executeTaskId"/>
+		<result column="execute_task_name" property="executeTaskName"/>
+		<result column="execute_job_id" property="executeJobId"/>
+		<result column="execute_job_num" property="executeJobNum"/>
+		<result column="create_date" property="createDate"/>
+		<result column="valid_status" property="validStatus"/>
+		<result column="remark" property="remark"/>
+	</resultMap>
+
+	<sql id="Base_Select_List">
+		execute_task_id,execute_task_name,execute_job_id,execute_job_num,create_date,valid_status,
+		remark
+	</sql>
+
+	<sql id="Base_Insert_Column">
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="executeTaskId != null">execute_task_id,</if>
+			<if test="executeTaskName != null">execute_task_name,</if>
+			<if test="executeJobId != null">execute_job_id,</if>
+			<if test="executeJobNum != null">execute_job_num,</if>
+			<if test="createDate != null">create_date,</if>
+			<if test="validStatus != null">valid_status,</if>
+			<if test="remark != null">remark,</if>
+		</trim>
+	</sql>
+
+	<sql id="Base_Insert_Values">
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="executeTaskId != null">#{executeTaskId},</if>
+			<if test="executeTaskName != null">#{executeTaskName},</if>
+			<if test="executeJobId != null">#{executeJobId},</if>
+			<if test="executeJobNum != null">#{executeJobNum},</if>
+			<if test="createDate != null">#{createDate},</if>
+			<if test="validStatus != null">#{validStatus},</if>
+			<if test="remark != null">#{remark},</if>
+		</trim>
+	</sql>
+
+	<insert id="insertOne" parameterType="org.mine.model.BatchTaskExecute">
+		insert into batch_task_execute
+		<include refid="BatchTaskExecute.Base_Insert_Column"/>
+		values 
+		<include refid="BatchTaskExecute.Base_Insert_Values"/>
+	</insert>
+
+	<insert id="batchInsert" parameterType="org.mine.model.BatchTaskExecute">
+		insert into batch_task_execute
+		<include refid="BatchTaskExecute.Base_Insert_Column"/>
+		values 
+		<include refid="BatchTaskExecute.Base_Insert_Values"/>
+	</insert>
+
+	<insert id="batchInsertXML" parameterType="java.util.List">
+		insert into batch_task_execute
+		(execute_task_id,execute_task_name,execute_job_id,execute_job_num,create_date
+			,valid_status,remark)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.executeTaskId},#{item.executeTaskName},#{item.executeJobId},#{item.executeJobNum},#{item.createDate}
+				,#{item.validStatus},#{item.remark})
+		</foreach>
+	</insert>
+	<select id="selectAll1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchTaskExecute.Base_Select_List"/>
+		from batch_task_execute
+		where execute_task_id = #{executeTaskId}
+	</select>
+
+	<select id="selectAll1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchTaskExecute.Base_Select_List"/>
+		from batch_task_execute
+		where execute_task_id = #{executeTaskId} and vaild_status = '0'
+	</select>
+
+	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchTaskExecute.Base_Select_List"/>
+		from batch_task_execute
+		where execute_task_id = #{executeTaskId} for update
+	</select>
+
+</mapper>

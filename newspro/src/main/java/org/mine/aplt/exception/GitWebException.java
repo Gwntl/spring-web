@@ -84,4 +84,47 @@ public class GitWebException extends MineBizException{
 	public static MineBizException GIT_APPRUNEXC(String errmsg){
 		return newException(PROPERTIES, "GIT_APPRUNEXC", new Object[]{errmsg});
 	}
+	
+	/**
+	 * Trigger加载失败
+	 * @return
+	 */
+	public static MineBizException GIT_TRIGGER(){
+		return newException(PROPERTIES, "GIT_TRIGGER", new Object[]{});
+	}
+	
+	/**
+	 * 队列赋值失败,请技术人员尽快查看错误信息!!!
+	 * @return
+	 */
+	public static MineBizException GIT_PUTQUEUE(){
+		return newException(PROPERTIES, "GIT_PUTQUEUE", new Object[]{});
+	}
+	
+	/**
+	 * 数据库连接失败
+	 * @param msg
+	 * @return
+	 */
+	public static MineBizException GIT_DB_CONNECT(String msg){
+		return newException(PROPERTIES, "GIT_DB_CONNECT", new Object[]{msg});
+	}
+	
+	/**
+	 * 数据库操作失败
+	 * @param msg
+	 * @return
+	 */
+	public static MineBizException GIT_DB_OPERATOR(String msg){
+		return newException(PROPERTIES, "GIT_DB_OPERATOR", new Object[]{msg});
+	}
+	
+	/**
+	 * 对象为空
+	 * @param msg
+	 * @return
+	 */
+	public static MineBizException GIT_EMPTY(String msg){
+		return newException(PROPERTIES, "GIT_EMPTY", new Object[]{msg});
+	}
 }

@@ -18,6 +18,6 @@ public class DataPrintServiceImpl extends BaseServiceTasketExcutor{
 	
 	@Override
 	public void call(Map<String, Object> map) {
-		System.out.println(CommonUtils.dateToString(new Date(), "yyyy-MM-dd HH:mm:ss") + " : " + "-->>>>-----");
+		System.out.println(CommonUtils.dateToString(new Date(), "yyyy-MM-dd HH:mm:ss") + " : " + "-30s/-1001>>>>-----");
 	}
 }

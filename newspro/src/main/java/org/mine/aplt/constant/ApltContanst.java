@@ -1,18 +1,38 @@
 package org.mine.aplt.constant;
 
 public class ApltContanst {
-
+	/**
+	 * JOB默认name前缀
+	 */
 	public static final String DEFAULT_JOB_NAME = "excutor_job_";
-	
+	/**
+	 * JOB默认组别
+	 */
 	public static final String DEFAULT_JOB_GROUP = "excutor_job_groups";
-	
+	/**
+	 * TRIGGER默认name前缀
+	 */
 	public static final String DEFAULT_TRIGGER_NAME = "excutor_trigger_";
-	
+	/**
+	 * TRIGGER默认组别
+	 */
 	public static final String DEFAULT_TRIGGER_GROUP = "excutor_trigger_groups";
-	
+	/**
+	 * 异步任务执行结果-SUCCESS
+	 */
 	public static final String ASYNC_RESULT_SUCCESS = "0";
-	
+	/**
+	 * 异步任务执行结果-FAIL
+	 */
 	public static final String ASYNC_RESULT_FAIL = "1";
+	/**
+	 * 定时任务
+	 */
+	public static final String JOB_HIST_TYPE_Q = "Q";
+	/**
+	 * 批量任务
+	 */
+	public static final String JOB_HIST_TYPE_B = "B";
 	
 	/**
 	 * yyyyMMdd

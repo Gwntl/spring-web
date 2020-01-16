@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BatchJobDefinition">
+	<resultMap type="org.mine.model.BatchJobDefinition" id="BaseResultMap">
+		<result column="job_id" property="jobId"/>
+		<result column="job_name" property="jobName"/>
+		<result column="job_associate_trigger_id" property="jobAssociateTriggerId"/>
+		<result column="job_executor" property="jobExecutor"/>
+		<result column="job_init_value" property="jobInitValue"/>
+		<result column="job_skip_flag" property="jobSkipFlag"/>
+		<result column="job_run_muti_flag" property="jobRunMutiFlag"/>
+		<result column="job_time_delay_flag" property="jobTimeDelayFlag"/>
+		<result column="job_one_time" property="jobOneTime"/>
+		<result column="job_time_delay_value" property="jobTimeDelayValue"/>
+		<result column="create_date" property="createDate"/>
+		<result column="valid_status" property="validStatus"/>
+		<result column="remark" property="remark"/>
+	</resultMap>
+
+	<sql id="Base_Select_List">
+		job_id,job_name,job_associate_trigger_id,job_executor,job_init_value,job_skip_flag,
+		job_run_muti_flag,job_time_delay_flag,job_one_time,job_time_delay_value,create_date,
+		valid_status,remark
+	</sql>
+
+	<sql id="Base_Insert_Column">
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="jobId != null">job_id,</if>
+			<if test="jobName != null">job_name,</if>
+			<if test="jobAssociateTriggerId != null">job_associate_trigger_id,</if>
+			<if test="jobExecutor != null">job_executor,</if>
+			<if test="jobInitValue != null">job_init_value,</if>
+			<if test="jobSkipFlag != null">job_skip_flag,</if>
+			<if test="jobRunMutiFlag != null">job_run_muti_flag,</if>
+			<if test="jobTimeDelayFlag != null">job_time_delay_flag,</if>
+			<if test="jobOneTime != null">job_one_time,</if>
+			<if test="jobTimeDelayValue != null">job_time_delay_value,</if>
+			<if test="createDate != null">create_date,</if>
+			<if test="validStatus != null">valid_status,</if>
+			<if test="remark != null">remark,</if>
+		</trim>
+	</sql>
+
+	<sql id="Base_Insert_Values">
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="jobId != null">#{jobId},</if>
+			<if test="jobName != null">#{jobName},</if>
+			<if test="jobAssociateTriggerId != null">#{jobAssociateTriggerId},</if>
+			<if test="jobExecutor != null">#{jobExecutor},</if>
+			<if test="jobInitValue != null">#{jobInitValue},</if>
+			<if test="jobSkipFlag != null">#{jobSkipFlag},</if>
+			<if test="jobRunMutiFlag != null">#{jobRunMutiFlag},</if>
+			<if test="jobTimeDelayFlag != null">#{jobTimeDelayFlag},</if>
+			<if test="jobOneTime != null">#{jobOneTime},</if>
+			<if test="jobTimeDelayValue != null">#{jobTimeDelayValue},</if>
+			<if test="createDate != null">#{createDate},</if>
+			<if test="validStatus != null">#{validStatus},</if>
+			<if test="remark != null">#{remark},</if>
+		</trim>
+	</sql>
+
+	<insert id="insertOne" parameterType="org.mine.model.BatchJobDefinition">
+		insert into batch_job_definition
+		<include refid="BatchJobDefinition.Base_Insert_Column"/>
+		values 
+		<include refid="BatchJobDefinition.Base_Insert_Values"/>
+	</insert>
+
+	<insert id="batchInsert" parameterType="org.mine.model.BatchJobDefinition">
+		insert into batch_job_definition
+		<include refid="BatchJobDefinition.Base_Insert_Column"/>
+		values 
+		<include refid="BatchJobDefinition.Base_Insert_Values"/>
+	</insert>
+
+	<insert id="batchInsertXML" parameterType="java.util.List">
+		insert into batch_job_definition
+		(job_id,job_name,job_associate_trigger_id,job_executor,job_init_value
+			,job_skip_flag,job_run_muti_flag,job_time_delay_flag,job_one_time
+			,job_time_delay_value,create_date,valid_status,remark)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.jobId},#{item.jobName},#{item.jobAssociateTriggerId},#{item.jobExecutor},#{item.jobInitValue}
+				,#{item.jobSkipFlag},#{item.jobRunMutiFlag},#{item.jobTimeDelayFlag},#{item.jobOneTime}
+				,#{item.jobTimeDelayValue},#{item.createDate},#{item.validStatus},#{item.remark})
+		</foreach>
+	</insert>
+	<select id="selectOne1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchJobDefinition.Base_Select_List"/>
+		from batch_job_definition
+		where job_id = #{jobId}
+	</select>
+
+	<select id="selectOne1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchJobDefinition.Base_Select_List"/>
+		from batch_job_definition
+		where job_id = #{jobId} and vaild_status = '0'
+	</select>
+
+	<select id="selectOne1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchJobDefinition.Base_Select_List"/>
+		from batch_job_definition
+		where job_id = #{jobId} for update
+	</select>
+
+	<delete id="deleteOne1" parameterType="org.mine.model.BatchJobDefinition">
+		delete from batch_job_definition
+		where
+		job_id = #{jobId}
+	</delete>
+
+	<delete id="deleteOne1L" parameterType="org.mine.model.BatchJobDefinition">
+		delete from batch_job_definition
+		where
+		job_id = #{jobId} for update
+	</delete>
+
+	<update id="updateOne1" parameterType="org.mine.model.BatchJobDefinition">
+		update batch_job_definition
+		<trim prefix="set" suffixOverrides=",">
+			<if test="jobName != null">job_name = #{jobName},</if>
+			<if test="jobAssociateTriggerId != null">job_associate_trigger_id = #{jobAssociateTriggerId},</if>
+			<if test="jobExecutor != null">job_executor = #{jobExecutor},</if>
+			<if test="jobInitValue != null">job_init_value = #{jobInitValue},</if>
+			<if test="jobSkipFlag != null">job_skip_flag = #{jobSkipFlag},</if>
+			<if test="jobRunMutiFlag != null">job_run_muti_flag = #{jobRunMutiFlag},</if>
+			<if test="jobTimeDelayFlag != null">job_time_delay_flag = #{jobTimeDelayFlag},</if>
+			<if test="jobOneTime != null">job_one_time = #{jobOneTime},</if>
+			<if test="jobTimeDelayValue != null">job_time_delay_value = #{jobTimeDelayValue},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where job_id = #{jobId}
+	</update>
+
+	<update id="updateOne1R" parameterType="org.mine.model.BatchJobDefinition">
+		update batch_job_definition
+		<trim prefix="set" suffixOverrides=",">
+			<if test="jobName != null">job_name = #{jobName},</if>
+			<if test="jobAssociateTriggerId != null">job_associate_trigger_id = #{jobAssociateTriggerId},</if>
+			<if test="jobExecutor != null">job_executor = #{jobExecutor},</if>
+			<if test="jobInitValue != null">job_init_value = #{jobInitValue},</if>
+			<if test="jobSkipFlag != null">job_skip_flag = #{jobSkipFlag},</if>
+			<if test="jobRunMutiFlag != null">job_run_muti_flag = #{jobRunMutiFlag},</if>
+			<if test="jobTimeDelayFlag != null">job_time_delay_flag = #{jobTimeDelayFlag},</if>
+			<if test="jobOneTime != null">job_one_time = #{jobOneTime},</if>
+			<if test="jobTimeDelayValue != null">job_time_delay_value = #{jobTimeDelayValue},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where job_id = #{jobId} and vaild_status = '0'
+	</update>
+
+	<update id="updateOne1L" parameterType="org.mine.model.BatchJobDefinition">
+		update batch_job_definition
+		<trim prefix="set" suffixOverrides=",">
+			<if test="jobName != null">job_name = #{jobName},</if>
+			<if test="jobAssociateTriggerId != null">job_associate_trigger_id = #{jobAssociateTriggerId},</if>
+			<if test="jobExecutor != null">job_executor = #{jobExecutor},</if>
+			<if test="jobInitValue != null">job_init_value = #{jobInitValue},</if>
+			<if test="jobSkipFlag != null">job_skip_flag = #{jobSkipFlag},</if>
+			<if test="jobRunMutiFlag != null">job_run_muti_flag = #{jobRunMutiFlag},</if>
+			<if test="jobTimeDelayFlag != null">job_time_delay_flag = #{jobTimeDelayFlag},</if>
+			<if test="jobOneTime != null">job_one_time = #{jobOneTime},</if>
+			<if test="jobTimeDelayValue != null">job_time_delay_value = #{jobTimeDelayValue},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where job_id = #{jobId} for update
+	</update>
+
+	<update id="batchUpdateXML1" parameterType="java.util.List">
+		update batch_job_definition set
+		<trim prefix="job_name=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.jobName != null">
+					when job_id = #{item.jobId} then #{item.jobName}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="job_associate_trigger_id=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.jobAssociateTriggerId != null">
+					when job_id = #{item.jobId} then #{item.jobAssociateTriggerId}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="job_executor=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.jobExecutor != null">
+					when job_id = #{item.jobId} then #{item.jobExecutor}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="job_init_value=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.jobInitValue != null">
+					when job_id = #{item.jobId} then #{item.jobInitValue}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="job_skip_flag=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.jobSkipFlag != null">
+					when job_id = #{item.jobId} then #{item.jobSkipFlag}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="job_run_muti_flag=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.jobRunMutiFlag != null">
+					when job_id = #{item.jobId} then #{item.jobRunMutiFlag}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="job_time_delay_flag=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.jobTimeDelayFlag != null">
+					when job_id = #{item.jobId} then #{item.jobTimeDelayFlag}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="job_one_time=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.jobOneTime != null">
+					when job_id = #{item.jobId} then #{item.jobOneTime}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="job_time_delay_value=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.jobTimeDelayValue != null">
+					when job_id = #{item.jobId} then #{item.jobTimeDelayValue}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="create_date=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.createDate != null">
+					when job_id = #{item.jobId} then #{item.createDate}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="valid_status=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.validStatus != null">
+					when job_id = #{item.jobId} then #{item.validStatus}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="remark=case" suffix="end">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.remark != null">
+					when job_id = #{item.jobId} then #{item.remark}
+				</if>
+			</foreach>
+		</trim>
+		where
+		job_id in
+		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+			#{item.jobId}
+		</foreach>
+	</update>
+	<update id="batchUpdate" parameterType="org.mine.model.BatchJobDefinition">
+		update batch_job_definition
+		<trim prefix="set" suffixOverrides=",">
+			<if test="jobName != null">job_name = #{jobName},</if>
+			<if test="jobAssociateTriggerId != null">job_associate_trigger_id = #{jobAssociateTriggerId},</if>
+			<if test="jobExecutor != null">job_executor = #{jobExecutor},</if>
+			<if test="jobInitValue != null">job_init_value = #{jobInitValue},</if>
+			<if test="jobSkipFlag != null">job_skip_flag = #{jobSkipFlag},</if>
+			<if test="jobRunMutiFlag != null">job_run_muti_flag = #{jobRunMutiFlag},</if>
+			<if test="jobTimeDelayFlag != null">job_time_delay_flag = #{jobTimeDelayFlag},</if>
+			<if test="jobOneTime != null">job_one_time = #{jobOneTime},</if>
+			<if test="jobTimeDelayValue != null">job_time_delay_value = #{jobTimeDelayValue},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where job_id = #{jobId}
+	</update>
+
+	<select id="selectAll1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchJobDefinition.Base_Select_List"/>
+		from batch_job_definition
+		where null = #{taskAssociateGroupId}
+	</select>
+
+	<select id="selectAll1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchJobDefinition.Base_Select_List"/>
+		from batch_job_definition
+		where null = #{taskAssociateGroupId} and vaild_status = '0'
+	</select>
+
+	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchJobDefinition.Base_Select_List"/>
+		from batch_job_definition
+		where null = #{taskAssociateGroupId} for update
+	</select>
+
+</mapper>
