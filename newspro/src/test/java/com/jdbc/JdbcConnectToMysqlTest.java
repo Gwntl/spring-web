@@ -31,7 +31,7 @@ public class JdbcConnectToMysqlTest {
 
 	@Test
 	public void test1(){
-		System.out.println("ww'");
+		System.out.println("ww");
 		String url = "jdbc:mysql://127.0.0.1:3306/msbadb?serverTimezone=UTC";
 		String user = "msba";
 		String password = "msba";
