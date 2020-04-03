@@ -32,3 +32,17 @@ DELIMITER  -- 修改sql执行结束标识.
 当创建function函数时,报（you *might* want to use the less safe log_bin_trust_function_creators variable）错误时,
 使用mysql -u root -p (数据库名)
 登录进mysql客户端中.然后执行set global log_bin_trust_function_creators = 1;即可
+
+
+创建用户: create user 'USER_NAME'@'IP地址' identified by 'PASSWORD'; (ip为%  任意地址)
+删除用户:drop user 'USER_NAME'@'IP地址';
+修改用户: rename user '用户名'@'IP地址' to '新用户名'@'IP地址';
+修改密码; set password for '用户名'@'IP地址'=password('新密码');
+查看用户权限: show grants for 'USER_NAME'@'IP地址';
+#授权 mjj用户仅对db1.t1文件有查询、插入和更新的操作
+grant select ,insert,update on db1.t1 to ''@'';
+#mjj用户对所有数据库中文件有任何操作
+grant all privileges  on *.*  to "alex"@'%';
+
+取消来自远程服务器的mjj用户所有数据库的所有的表的权限
+revoke all privileges on *.* from 'alex'@'%';
