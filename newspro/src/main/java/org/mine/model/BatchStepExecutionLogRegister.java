@@ -1,10 +1,10 @@
 package org.mine.model;
 
 /**
- * batch_step_execution_log_register--批量步骤执行日志登记表
+ * batch_step_execution_log_register--
  * @filename BatchStepExecutionLogRegister.java
  * @author wzaUsers
- * @date 2020-01-09 15:01:44
+ * @date 2020-04-30 16:04:06
  * @version v1.0
 */
 public class BatchStepExecutionLogRegister {

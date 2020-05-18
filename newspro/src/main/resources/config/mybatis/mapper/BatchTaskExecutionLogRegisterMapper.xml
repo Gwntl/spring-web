@@ -5,6 +5,7 @@
 		<result column="task_execution_id" property="taskExecutionId"/>
 		<result column="task_job_id" property="taskJobId"/>
 		<result column="task_job_name" property="taskJobName"/>
+		<result column="task_job_associate_id" property="taskJobAssociateId"/>
 		<result column="task_start_time" property="taskStartTime"/>
 		<result column="task_end_time" property="taskEndTime"/>
 		<result column="task_job_status" property="taskJobStatus"/>
@@ -15,8 +16,8 @@
 	</resultMap>
 
 	<sql id="Base_Select_List">
-		task_execution_id,task_job_id,task_job_name,task_start_time,task_end_time,task_job_status,
-		task_job_errmsg,create_date,valid_status,remark
+		task_execution_id,task_job_id,task_job_name,task_job_associate_id,task_start_time,task_end_time,
+		task_job_status,task_job_errmsg,create_date,valid_status,remark
 	</sql>
 
 	<sql id="Base_Insert_Column">
@@ -24,6 +25,7 @@
 			<if test="taskExecutionId != null">task_execution_id,</if>
 			<if test="taskJobId != null">task_job_id,</if>
 			<if test="taskJobName != null">task_job_name,</if>
+			<if test="taskJobAssociateId != null">task_job_associate_id,</if>
 			<if test="taskStartTime != null">task_start_time,</if>
 			<if test="taskEndTime != null">task_end_time,</if>
 			<if test="taskJobStatus != null">task_job_status,</if>
@@ -39,6 +41,7 @@
 			<if test="taskExecutionId != null">#{taskExecutionId},</if>
 			<if test="taskJobId != null">#{taskJobId},</if>
 			<if test="taskJobName != null">#{taskJobName},</if>
+			<if test="taskJobAssociateId != null">#{taskJobAssociateId},</if>
 			<if test="taskStartTime != null">#{taskStartTime},</if>
 			<if test="taskEndTime != null">#{taskEndTime},</if>
 			<if test="taskJobStatus != null">#{taskJobStatus},</if>
@@ -65,14 +68,14 @@
 
 	<insert id="batchInsertXML" parameterType="java.util.List">
 		insert into batch_task_execution_log_register
-		(task_execution_id,task_job_id,task_job_name,task_start_time,task_end_time
-			,task_job_status,task_job_errmsg,create_date,valid_status
-			,remark)
+		(task_execution_id,task_job_id,task_job_name,task_job_associate_id,task_start_time
+			,task_end_time,task_job_status,task_job_errmsg,create_date
+			,valid_status,remark)
 		values
 		<foreach collection="list" item="item" index="index" separator=",">
-			(#{item.taskExecutionId},#{item.taskJobId},#{item.taskJobName},#{item.taskStartTime},#{item.taskEndTime}
-				,#{item.taskJobStatus},#{item.taskJobErrmsg},#{item.createDate},#{item.validStatus}
-				,#{item.remark})
+			(#{item.taskExecutionId},#{item.taskJobId},#{item.taskJobName},#{item.taskJobAssociateId},#{item.taskStartTime}
+				,#{item.taskEndTime},#{item.taskJobStatus},#{item.taskJobErrmsg},#{item.createDate}
+				,#{item.validStatus},#{item.remark})
 		</foreach>
 	</insert>
 	<select id="selectOne1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
@@ -86,7 +89,7 @@
 		select
 		<include refid="BatchTaskExecutionLogRegister.Base_Select_List"/>
 		from batch_task_execution_log_register
-		where task_execution_id = #{taskExecutionId} and vaild_status = '0'
+		where task_execution_id = #{taskExecutionId} and valid_status = '0'
 	</select>
 
 	<select id="selectOne1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
@@ -113,6 +116,7 @@
 		<trim prefix="set" suffixOverrides=",">
 			<if test="taskJobId != null">task_job_id = #{taskJobId},</if>
 			<if test="taskJobName != null">task_job_name = #{taskJobName},</if>
+			<if test="taskJobAssociateId != null">task_job_associate_id = #{taskJobAssociateId},</if>
 			<if test="taskStartTime != null">task_start_time = #{taskStartTime},</if>
 			<if test="taskEndTime != null">task_end_time = #{taskEndTime},</if>
 			<if test="taskJobStatus != null">task_job_status = #{taskJobStatus},</if>
@@ -129,6 +133,7 @@
 		<trim prefix="set" suffixOverrides=",">
 			<if test="taskJobId != null">task_job_id = #{taskJobId},</if>
 			<if test="taskJobName != null">task_job_name = #{taskJobName},</if>
+			<if test="taskJobAssociateId != null">task_job_associate_id = #{taskJobAssociateId},</if>
 			<if test="taskStartTime != null">task_start_time = #{taskStartTime},</if>
 			<if test="taskEndTime != null">task_end_time = #{taskEndTime},</if>
 			<if test="taskJobStatus != null">task_job_status = #{taskJobStatus},</if>
@@ -137,7 +142,7 @@
 			<if test="validStatus != null">valid_status = #{validStatus},</if>
 			<if test="remark != null">remark = #{remark},</if>
 		</trim>
-		where task_execution_id = #{taskExecutionId} and vaild_status = '0'
+		where task_execution_id = #{taskExecutionId} and valid_status = '0'
 	</update>
 
 	<update id="updateOne1L" parameterType="org.mine.model.BatchTaskExecutionLogRegister">
@@ -145,6 +150,7 @@
 		<trim prefix="set" suffixOverrides=",">
 			<if test="taskJobId != null">task_job_id = #{taskJobId},</if>
 			<if test="taskJobName != null">task_job_name = #{taskJobName},</if>
+			<if test="taskJobAssociateId != null">task_job_associate_id = #{taskJobAssociateId},</if>
 			<if test="taskStartTime != null">task_start_time = #{taskStartTime},</if>
 			<if test="taskEndTime != null">task_end_time = #{taskEndTime},</if>
 			<if test="taskJobStatus != null">task_job_status = #{taskJobStatus},</if>
@@ -169,6 +175,13 @@
 			<foreach collection="list" item="item" index="index">
 				<if test="item.taskJobName != null">
 					when task_execution_id = #{item.taskExecutionId} then #{item.taskJobName}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="task_job_associate_id=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.taskJobAssociateId != null">
+					when task_execution_id = #{item.taskExecutionId} then #{item.taskJobAssociateId}
 				</if>
 			</foreach>
 		</trim>
@@ -232,6 +245,7 @@
 		<trim prefix="set" suffixOverrides=",">
 			<if test="taskJobId != null">task_job_id = #{taskJobId},</if>
 			<if test="taskJobName != null">task_job_name = #{taskJobName},</if>
+			<if test="taskJobAssociateId != null">task_job_associate_id = #{taskJobAssociateId},</if>
 			<if test="taskStartTime != null">task_start_time = #{taskStartTime},</if>
 			<if test="taskEndTime != null">task_end_time = #{taskEndTime},</if>
 			<if test="taskJobStatus != null">task_job_status = #{taskJobStatus},</if>
@@ -254,7 +268,7 @@
 		select
 		<include refid="BatchTaskExecutionLogRegister.Base_Select_List"/>
 		from batch_task_execution_log_register
-		where null = #{taskAssociateGroupId} and vaild_status = '0'
+		where null = #{taskAssociateGroupId} and valid_status = '0'
 	</select>
 
 	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">

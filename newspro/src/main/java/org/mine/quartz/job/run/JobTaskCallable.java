@@ -22,6 +22,7 @@ import org.mine.aplt.constant.JobContanst;
 import org.mine.aplt.enumqz.JobExcutorEnum;
 import org.mine.aplt.exception.GitWebException;
 import org.mine.aplt.exception.MineException;
+import org.mine.aplt.support.BaseServiceTasketExcutor;
 import org.mine.aplt.support.bean.GitContext;
 import org.mine.aplt.support.dao.BatchOperator;
 import org.mine.aplt.util.CommonUtils;
@@ -35,7 +36,6 @@ import org.mine.model.BatchJobExecute;
 import org.mine.model.BatchStepDefinition;
 import org.mine.model.BatchTimingStepLogRegister;
 import org.mine.model.BatchTimingTaskLogRegister;
-import org.mine.quartz.QuartzStepExecutor;
 import org.mine.quartz.dto.CallableResultDto;
 import org.mine.quartz.dto.ConcurrTaskDto;
 import org.mine.quartz.dto.JobMonitorDto;
@@ -43,15 +43,10 @@ import org.mine.quartz.trigger.ExcutorTrigger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class JobTaskCallable implements Runnable, InitializingBean{
-	@Autowired
-	BatchStepDefinitionDao stepDefinitionDao;
-	@Autowired
-	BatchDefineCostomDao costomDao;
 	
 	private static final Logger logger = LoggerFactory.getLogger(JobTaskCallable.class);
 //	private static final int AVAIL_CPU = Runtime.getRuntime().availableProcessors();
@@ -62,11 +57,11 @@ public class JobTaskCallable implements Runnable, InitializingBean{
 	 */
 	private ConcurrTaskDto dto;
 	/**
-	 * 当前执行线程内步骤内容队列
+	 * 当前执行线程内步骤内容队列--记录当前Step的执行信息
 	 */
-	private LinkedList<InnerNode> linkedList = new LinkedList<>();
+	private LinkedList<InnerStepNode> linkedList = new LinkedList<>();
 	/**
-	 * 当前执行线程内步骤ID队列
+	 * 当前执行线程内步骤ID队列--记录当前Step在日志表中的ID
 	 */
 	private LinkedList<Long> linkedIDList = new LinkedList<>();
 	/**
@@ -86,13 +81,13 @@ public class JobTaskCallable implements Runnable, InitializingBean{
 	 */
 	private static Map<Long, JobMonitorDto> commonCache = new ConcurrentHashMap<>();
 	/**
-	 * 作业ID和历史ID关联缓存
+	 * 作业ID和历史ID关联缓存-<任务ID, StepID>
 	 */
 	private static Map<Long, LinkedList<Long>> linkIdCache = new ConcurrentHashMap<>(); 
 	/**
-	 * 执行中的步骤缓存
+	 * 执行中的步骤缓存-<任务ID, Step执行信息>
 	 */
-	private static Map<Long, LinkedList<InnerNode>> stepsCache = new ConcurrentHashMap<>();
+	private static Map<Long, LinkedList<InnerStepNode>> stepsCache = new ConcurrentHashMap<>();
 	/**
 	 * 异步线程执行结果
 	 */
@@ -102,8 +97,10 @@ public class JobTaskCallable implements Runnable, InitializingBean{
 	 */
 	private static final ThreadPoolExecutor pool;
 	static {
-		pool = new ThreadPoolExecutor(THREADMINLENGTH, THREADMAXLENGTH, 10, TimeUnit.SECONDS, new ArrayBlockingQueue<>(THREADMINLENGTH));
+		pool = new ThreadPoolExecutor(THREADMINLENGTH, THREADMAXLENGTH, 1, TimeUnit.SECONDS, new ArrayBlockingQueue<>(THREADMINLENGTH));
 	}
+	
+	public JobTaskCallable() {}
 	
 	public JobTaskCallable(ConcurrTaskDto dto) {
 		this.dto = dto;
@@ -118,10 +115,11 @@ public class JobTaskCallable implements Runnable, InitializingBean{
 			} else {
 				try{
 					for(BatchJobExecute execute : executes){
-						BatchStepDefinition stepDefinition = stepDefinitionDao.selectOne1R(execute.getExecuteStepId(), true);
+						BatchStepDefinition stepDefinition = GitContext.getBean(BatchStepDefinitionDao.class).selectOne1R(execute.getExecuteStepId(), true);
 						GitContext.init(stepDefinition.getStepLogMdcValue());
 						CommonUtils.initMapValue(dto.getStepInitValue(), stepDefinition.getStepInitValue());
-						Long stepExecutionId = costomDao.getBatchSequence("timing_sequence_step");
+						Long stepExecutionId = GitContext.getBean(BatchDefineCostomDao.class).getBatchSequence("timing_sequence_step");
+						stepLogRegister = new BatchTimingStepLogRegister();
 						stepLogRegister.setStepExecutionId(stepExecutionId);
 						stepLogRegister = GitContext.doIndependentTransActionControl(
 								new BatchOperator<BatchTimingStepLogRegister, BatchTimingStepLogRegister>() {
@@ -139,8 +137,8 @@ public class JobTaskCallable implements Runnable, InitializingBean{
 								return input;
 							}},stepLogRegister);
 						
-						QuartzStepExecutor stepExecutor = ExcutorTrigger.quartzStepCache.get(stepDefinition.getStepActuator());
-						linkedList.add(new InnerNode(stepExecutor, stepExecutor.grouping(stepExcutionInfo(stepDefinition))));
+						BaseServiceTasketExcutor excutor = ExcutorTrigger.getExecutor(stepDefinition.getStepActuator());
+						linkedList.add(new InnerStepNode(excutor, excutor.grouping(stepExcutionInfo(stepDefinition))));
 						linkedIDList.add(stepExecutionId);
 						
 						GitContext.doIndependentTransActionControl(new BatchOperator<Integer, BatchTimingStepLogRegister>() {
@@ -153,6 +151,7 @@ public class JobTaskCallable implements Runnable, InitializingBean{
 						}, stepLogRegister);
 					}
 				} catch(Exception e){
+					logger.error(GitWebException.getStackTrace(e));
 					throw GitWebException.GIT1001("处理step时出错....");
 				}
 				Long jobHistoryId = dto.getHistoryId();
@@ -168,6 +167,7 @@ public class JobTaskCallable implements Runnable, InitializingBean{
 				poolExecute(jobHistoryId);
 			}
 		} catch(Throwable a){
+			logger.error(GitWebException.getStackTrace(a));
 			throw GitWebException.GIT1001("处理step时出错....");
 		}
 	}
@@ -201,10 +201,10 @@ public class JobTaskCallable implements Runnable, InitializingBean{
 	 * @param jobId
 	 */
 	private void poolExecute(Long jobHistoryId){
-		InnerNode node = stepsCache.get(jobHistoryId).removeFirst();
+		InnerStepNode node = stepsCache.get(jobHistoryId).removeFirst();
 		if(node != null){
 			List<FutureTask<CallableResultDto>> futureTasks = new ArrayList<>();
-			for(Object obj : node.getList()){
+			for(Map<String, Object> obj : node.getList()){
 				FutureTask<CallableResultDto> futureTask = new FutureTask<>(
 						new JobTaskCallable.InnerThread(node.getExecutor(), obj));
 				pool.execute(futureTask);
@@ -214,6 +214,52 @@ public class JobTaskCallable implements Runnable, InitializingBean{
 		} else {
 			if(linkIdCache.containsKey(jobHistoryId)) linkIdCache.remove(jobHistoryId);
 		}
+	}
+	
+	/**
+	 * 通知job更改状态
+	 * @param status
+	 * @param errmsg
+	 * @param jobHistoryId
+	 */
+	public void notifyJob(String status, String errmsg, Long jobHistoryId){
+		JobMonitorDto dto = commonCache.get(jobHistoryId);
+		if(dto != null){
+			dto.setStatus(status);
+			dto.setErrmsg(errmsg);
+			try {
+				//当队列满的时候,需等待队列可插入
+				monitorQueue.put(dto);
+				commonCache.remove(jobHistoryId);
+			} catch (InterruptedException e) {
+				logger.error("jobProcessorAfter interrupted ........");
+			}
+		} else {
+			logger.error(
+					"The absence of a job[{}] in the commonCache will result in the current job status not being updated",
+					jobHistoryId);
+		}
+	}
+	
+	/**
+	 * 取消运行中的job, 需执行器中响应中断. 当执行器中使用sleep方法时, 在捕获异常之后若需要执行其他逻辑时, 需要再执行一次 interrupt()方法. 由于sleep会清除中断状态
+	 * 需考虑分段事务提交
+	 * @param jobHistoryId
+	 * @return
+	 */
+	public boolean cancel(Long jobHistoryId){
+		boolean res = false;
+		List<FutureTask<CallableResultDto>> tasks = tasksResult.get(jobHistoryId);
+		if(tasks != null && tasks.size() > 0){
+			for(FutureTask<CallableResultDto> task : tasks){
+				if (!task.isDone()) {
+					if(res = task.cancel(true)){
+						break;
+					}
+				}
+			}
+		}
+		return res;
 	}
 	
 	@Override
@@ -255,7 +301,8 @@ public class JobTaskCallable implements Runnable, InitializingBean{
 											.selectOne1R(stepHistoryIds.getFirst(), false);
 									if(logRegister != null){
 										Iterator<FutureTask<CallableResultDto>> taskIterator = tasks.iterator();
-										while(taskIterator.hasNext()){
+										//当存在任务并且当前任务为完成状态时.
+										while(taskIterator.hasNext() && allSuccess){
 											FutureTask<CallableResultDto> task = taskIterator.next();
 											if(task.isDone()){
 												if(task.isCancelled()){
@@ -280,16 +327,19 @@ public class JobTaskCallable implements Runnable, InitializingBean{
 										if(allSuccess){
 											if(isCancle){
 												status = JobExcutorEnum.CANCEL.getId();
-												LinkedList<InnerNode> cancelSteps = stepsCache.remove(jobHistoryId);
-												linkIdCache.remove(jobHistoryId);
+												stepsCache.remove(jobHistoryId);
+												LinkedList<Long> steps = linkIdCache.remove(jobHistoryId);
 												isChange = true;
 												message = "it is been canceled";
-												logger.warn("Cancelled steps : {}", CommonUtils.toString(cancelSteps));
+												if(steps.size() > 1){
+													//TODO 更新剩余step的状态
+												}
+												logger.warn("Cancelled steps : {}", CommonUtils.toString(steps));
 											} else {
 												if(taskResult){
 													status = JobExcutorEnum.SUCCESS.getId();
 													if(stepsCache.size() > 0){
-														LinkedList<InnerNode> nodes = stepsCache.get(jobHistoryId);
+														LinkedList<InnerStepNode> nodes = stepsCache.get(jobHistoryId);
 														//当存在下一步骤时,执行下一个步骤内容
 														if(nodes.size() > 0){
 															//检查缓存数据正确性
@@ -365,7 +415,7 @@ public class JobTaskCallable implements Runnable, InitializingBean{
 							JobMonitorDto jobMonitor = monitorQueue.take();
 							String status = jobMonitor.getStatus();
 							BatchTimingTaskLogRegister register = GitContext.getBean(BatchTimingTaskLogRegisterDao.class)
-									.selectOne1R(jobMonitor.getHistoryId(),false);
+									.selectOne1R(jobMonitor.getHistoryId(), false);
 							if(register != null){
 								register.setTimingJobStatus(status);
 								if (JobExcutorEnum.SUCCESS.getId().equals(status)
@@ -396,34 +446,24 @@ public class JobTaskCallable implements Runnable, InitializingBean{
 	}
 	
 	/**
-	 * 通知job更改状态
-	 * @param status
-	 * @param errmsg
-	 * @param jobHistoryId
+	 * 内部执行器
+	 * @ClassName: InnerThread
+	 * @author: wntl
+	 * @date: 2020年4月29日 下午8:36:27
 	 */
-	public void notifyJob(String status, String errmsg, Long jobHistoryId){
-		JobMonitorDto dto = commonCache.get(jobHistoryId);
-		if(dto != null){
-			dto.setStatus(status);
-			dto.setErrmsg(errmsg);
-			try {
-				//当队列满的时候,需等待队列可插入
-				monitorQueue.put(dto);
-				commonCache.remove(jobHistoryId);
-			} catch (InterruptedException e) {
-				logger.error("jobProcessorAfter interrupted ........");
-			}
-		} else {
-			logger.error(
-					"The absence of a job[{}] in the commonCache will result in the current job status not being updated",
-					jobHistoryId);
-		}
-	}
-	
 	class InnerThread implements Callable<CallableResultDto>{
-		QuartzStepExecutor executor;
-		Object obj;
-		InnerThread(QuartzStepExecutor executor, Object obj) {
+		/**
+		 * 执行器
+		 * @Fields executor
+		 */
+		BaseServiceTasketExcutor executor;
+		/**
+		 * 执行参数
+		 * @Fields obj
+		 */
+		Map<String, Object> obj;
+		
+		InnerThread(BaseServiceTasketExcutor executor, Map<String, Object> obj) {
 			this.executor = executor;
 			this.obj = obj;
 		}
@@ -434,6 +474,7 @@ public class JobTaskCallable implements Runnable, InitializingBean{
 				executor.call(obj);
 				dto.setResult(true);
 			} catch(Exception e){
+				logger.debug("error message : {}", MineException.getStackTrace(e));
 				dto.setResult(false);
 				dto.setMseeage(e.getMessage());
 			}
@@ -441,35 +482,53 @@ public class JobTaskCallable implements Runnable, InitializingBean{
 		}
 	}
 	
-	class InnerNode{
-		QuartzStepExecutor executor;
-		List<Object> list;
-		InnerNode(QuartzStepExecutor executor, List<Object> list) {
+	/**
+	 * 内部执行节点
+	 * @author: wntl
+	 * @date: 2020年4月29日 下午8:06:05
+	 */
+	class InnerStepNode{
+		/**
+		 * 执行器
+		 * @Fields executor
+		 */
+		BaseServiceTasketExcutor executor;
+		/**
+		 * 分组信息
+		 * @Fields list
+		 */
+		List<Map<String, Object>> list;
+		
+		InnerStepNode(BaseServiceTasketExcutor executor, List<Map<String, Object>> list) {
 			this.executor = executor;
 			this.list = list;
 		}
 		/**
+		 * 执行器
 		 * @return the executor
 		 */
-		public QuartzStepExecutor getExecutor() {
+		public BaseServiceTasketExcutor getExecutor() {
 			return executor;
 		}
 		/**
+		 * 执行器
 		 * @param executor the executor to set
 		 */
-		public void setExecutor(QuartzStepExecutor executor) {
+		public void setExecutor(BaseServiceTasketExcutor executor) {
 			this.executor = executor;
 		}
 		/**
+		 * 分组信息
 		 * @return the list
 		 */
-		public List<Object> getList() {
+		public List<Map<String, Object>> getList() {
 			return list;
 		}
 		/**
+		 * 分组信息
 		 * @param list the list to set
 		 */
-		public void setList(List<Object> list) {
+		public void setList(List<Map<String, Object>> list) {
 			this.list = list;
 		}
 		@Override
@@ -479,9 +538,9 @@ public class JobTaskCallable implements Runnable, InitializingBean{
 		
 	}
 	
-	public static String toString(List<InnerNode> nodes){
+	public static String toString(List<InnerStepNode> nodes){
 		StringBuffer buffer = new StringBuffer();
-		Iterator<InnerNode> iterator = nodes.iterator();
+		Iterator<InnerStepNode> iterator = nodes.iterator();
 		while(iterator.hasNext()){
 			buffer.append(iterator.next().toString());
 			if(iterator.hasNext()){

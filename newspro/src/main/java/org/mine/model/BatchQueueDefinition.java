@@ -1,10 +1,10 @@
 package org.mine.model;
 
 /**
- * batch_queue_definition--批量执行队列定义表(串行)
+ * batch_queue_definition--
  * @filename BatchQueueDefinition.java
  * @author wzaUsers
- * @date 2020-01-09 15:01:43
+ * @date 2020-04-30 16:04:06
  * @version v1.0
 */
 public class BatchQueueDefinition {
@@ -21,13 +21,17 @@ public class BatchQueueDefinition {
 	 */
 	private Integer queueTimingtaskFlag;
 	/**
+	 * 队列执行序号
+	 */
+	private Integer queueExecutionNum;
+	/**
 	 * 创建时间
 	 */
 	private String createDate;
 	/**
 	 * 有效状态. 0-是, 1-否, D-已废弃
 	 */
-	private String vaildStatus;
+	private String validStatus;
 	/**
 	 * 备注
 	 */
@@ -37,8 +41,9 @@ public class BatchQueueDefinition {
 		this.queueId = 0L;
 		this.queueName = "";
 		this.queueTimingtaskFlag = 1;
+		this.queueExecutionNum = 0;
 		this.createDate = "";
-		this.vaildStatus = "0";
+		this.validStatus = "0";
 		this.remark = "";
 	}
 
@@ -85,6 +90,20 @@ public class BatchQueueDefinition {
 		this.queueTimingtaskFlag = queueTimingtaskFlag;
 	}
 	/**
+	 * 队列执行序号
+	 * @return thequeueExecutionNum
+	 */
+	public Integer getQueueExecutionNum() {
+		return queueExecutionNum;
+	}
+	/**
+	 * 队列执行序号
+	 * @param queueExecutionNum the queueExecutionNum to set
+	 */
+	public void setQueueExecutionNum(Integer queueExecutionNum) {
+		this.queueExecutionNum = queueExecutionNum;
+	}
+	/**
 	 * 创建时间
 	 * @return thecreateDate
 	 */
@@ -100,17 +119,17 @@ public class BatchQueueDefinition {
 	}
 	/**
 	 * 有效状态. 0-是, 1-否, D-已废弃
-	 * @return thevaildStatus
+	 * @return thevalidStatus
 	 */
-	public String getVaildStatus() {
-		return vaildStatus;
+	public String getValidStatus() {
+		return validStatus;
 	}
 	/**
 	 * 有效状态. 0-是, 1-否, D-已废弃
-	 * @param vaildStatus the vaildStatus to set
+	 * @param validStatus the validStatus to set
 	 */
-	public void setVaildStatus(String vaildStatus) {
-		this.vaildStatus = vaildStatus;
+	public void setValidStatus(String validStatus) {
+		this.validStatus = validStatus;
 	}
 	/**
 	 * 备注
@@ -133,7 +152,8 @@ public class BatchQueueDefinition {
 	@Override
 	public String toString() {
 		return "BatchQueueDefinition[" + 
-		"queueId=" + queueId + ", queueName=" + queueName + ", queueTimingtaskFlag=" + queueTimingtaskFlag + ", createDate=" + createDate + 
-		", vaildStatus=" + vaildStatus + ", remark=" + remark + "]";
+		"queueId=" + queueId + ", queueName=" + queueName + ", queueTimingtaskFlag=" + queueTimingtaskFlag + ", queueExecutionNum=" + queueExecutionNum + 
+		", createDate=" + createDate + ", validStatus=" + validStatus + ", remark=" + remark + 
+		"]";
 	}
 }

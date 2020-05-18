@@ -1,6 +1,19 @@
 root： wzl1968.%%
 msba: msba (msbadb)
 
+登录mysql: mysql -uroot -p
+展示所有数据库: show databases;
+选中某个数据库: user database_name;
+查看数据库字符集: show variables like '%character%';
+查看表字符集: shoe create table [table_name];
+更改数据库字符集: alter database base_name character set utf8 collate utf8_general_ci;
+更改表字符集: alter table table_name character set utf8 collate utf8_general_ci;
+修改字段编码：alter table table_name modify column_name _type set utf8 collate utf8_general_ci;
+创建表时, 指定字符集: create table ..() character set utf8 collate utf8_general_ci;
+增加字段: alter table table_name add column [_name] [_type] default "" comment "";
+删除字段: alter table table_name drop column [_name];
+修改字段: alter table table_name modify [_name]...;
+
 创建函数的命令:
 CREATE ([DEFINER = { USER | CURRENT_USER }]：定义创建者，可以手动指定数据库中已经存在的用户，或者默认(使用当前用户))
 FUNCTION currval(seq_name VARCHAR(32)) -- 定义函数 CREATE FUNCTION 函数名(传参类型)

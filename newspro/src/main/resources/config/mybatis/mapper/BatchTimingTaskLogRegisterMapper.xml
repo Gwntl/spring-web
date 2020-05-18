@@ -89,7 +89,7 @@
 		select
 		<include refid="BatchTimingTaskLogRegister.Base_Select_List"/>
 		from batch_timing_task_log_register
-		where timing_execution_id = #{timingExecutionId} and vaild_status = '0'
+		where timing_execution_id = #{timingExecutionId} and valid_status = '0'
 	</select>
 
 	<select id="selectOne1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
@@ -142,7 +142,7 @@
 			<if test="validStatus != null">valid_status = #{validStatus},</if>
 			<if test="remark != null">remark = #{remark},</if>
 		</trim>
-		where timing_execution_id = #{timingExecutionId} and vaild_status = '0'
+		where timing_execution_id = #{timingExecutionId} and valid_status = '0'
 	</update>
 
 	<update id="updateOne1L" parameterType="org.mine.model.BatchTimingTaskLogRegister">
@@ -268,7 +268,7 @@
 		select
 		<include refid="BatchTimingTaskLogRegister.Base_Select_List"/>
 		from batch_timing_task_log_register
-		where null = #{taskAssociateGroupId} and vaild_status = '0'
+		where null = #{taskAssociateGroupId} and valid_status = '0'
 	</select>
 
 	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">

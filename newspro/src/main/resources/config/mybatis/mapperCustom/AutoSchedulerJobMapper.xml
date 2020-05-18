@@ -2,10 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="AutoSchedulerJob">
 	<update id="updateTriggerStatus" parameterType="java.util.HashMap">
-		update batch_trigger_conf set vaild_status = #{vaildStatus} where trigger_id = #{triggerId}
+		update batch_trigger_conf set valid_status = #{vaildStatus} where trigger_id = #{triggerId}
 	</update>
 	
 	<update id="updateStepExectorStatus" parameterType="java.util.HashMap">
-		update batch_task_execute set vaild_status = #{vaildStatus} where execute_task_id = #{executeTaskId}#
+		update batch_task_execute set valid_status = #{vaildStatus} where execute_task_id = #{executeTaskId}#
 	</update>
 </mapper>

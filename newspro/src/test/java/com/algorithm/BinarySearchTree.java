@@ -2,6 +2,7 @@ package com.algorithm;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @Description: 二叉搜索树(又称二叉排序树,二叉查找树)(Java). 实现二叉搜索树的增删查
@@ -10,23 +11,11 @@ import java.util.List;
  * @author: wntl
  * @date: 2020年4月3日 上午11:28:48
  */
-public class BinarySearchTree {
+public class BinarySearchTree extends Tree{
 
 	transient Node root;
 	
 	volatile int count;
-	/**
-	 * 前序遍历
-	 */
-	private static final String TRAVERSAL_0 = "PREORDER";
-	/**
-	 * 中序遍历
-	 */
-	private static final String TRAVERSAL_1 = "INORDER";
-	/**
-	 * 后序遍历
-	 */
-	private static final String TRAVERSAL_2 = "POSTORDER";
 	
 	public BinarySearchTree() {
 	}
@@ -43,7 +32,8 @@ public class BinarySearchTree {
 	/**
 	 * @param value
 	 */
-	public void add(int value){
+	@Override
+	public synchronized void add(int value){
 		if(root == null){
 			root = newNode(value);
 		} else {
@@ -158,29 +148,30 @@ public class BinarySearchTree {
 	}
 	
 	/**
-	 * 删除节点
-	 * 删除节点时中序遍历的顺序不变.则需要将中序遍历中大于删除节点的值中的最小值移动至删除节点位置处
-	 * 例如: 树中序遍历为: 12345678, 删除5节点, 删除后的中序遍历为: 1234678
+	 * 删除节点</br>
+	 * 删除节点时中序遍历的顺序不变.则需要将中序遍历中大于删除节点的值中的最小值移动至删除节点位置处</br>
+	 * 例如: 树中序遍历为: 12345678, 删除5节点, 删除后的中序遍历为: 1234678</br>
 	 * 
-	 * 思路: 
-	 * 删除节点时,存在四种情况:
-	 *  1. 删除的节点没有左右节点.  此时需要先判断删除节点处于其父节点的左右, 然后将指向该节点的引用清空,将删除节点的parent属性置空.
-	 *  2. 删除的节点存在左节点没有右节点. 此时需要先判断删除节点处于其父节点的左右, 然后将删除节点的下一个节点上移, 修改下一个节点的parent属性和指向他的引用.将删除节点的属性置为空.
-	 *  3. 删除的节点存在右节点没有左节点. 此时需要先判断删除节点处于其父节点的左右, 然后将删除节点的下一个节点上移, 修改下一个节点的parent属性和指向他的引用.将删除节点的属性置为空.
-	 *  4. 删除的节点既存在左节点也存在右节点时: 
-	 *  	4.1 首先从删除节点的右子树中获取大于删除后节点值的最小值.(即上述例子中的6. 注: 该替换一定存在于右子树中的最左边)
-	 *  	4.2 判断是哪个节点.(注: 当为root节点时,便不需要此处判断)
-	 *  		4.2.1. 当为左节点时: 将删除节点的parent节点的左子树指向替换节点. 替换几点的parent属性指向删除节点的parent.
-	 *  		4.2.3. 当为右节点时: 将删除节点的parent节点的右子树指向替换节点. 替换几点的parent属性指向删除节点的parent.
-	 *  	4.3. 判断替换节点是否存在子节点, 当存在子节点的时候一定是右子树. 将替换节点的右子树指向替换节点parent的左节点并且parent属性指向替换节点的parent.
-	 *  	4.4. 将删除节点的左节点指向替换节点. 并且parent属性指向替换节点.
-	 *  	4.5. 当替换节点的parent属性为删除的节点时, 参考2.
-	 *  	4.6. 将删除节点的右子树指向替换节点的右子树,并且修改其parent属性.
-	 *  	4.7. 将删除节点的左右节点及parent属性置null.
+	 * 思路: </br>
+	 * 删除节点时,存在四种情况:</br>
+	 *  1. 删除的节点没有左右节点.  此时需要先判断删除节点处于其父节点的左右, 然后将指向该节点的引用清空,将删除节点的parent属性置空.</br>
+	 *  2. 删除的节点存在左节点没有右节点. 此时需要先判断删除节点处于其父节点的左右, 然后将删除节点的下一个节点上移, 修改下一个节点的parent属性和指向他的引用.将删除节点的属性置为空.</br>
+	 *  3. 删除的节点存在右节点没有左节点. 此时需要先判断删除节点处于其父节点的左右, 然后将删除节点的下一个节点上移, 修改下一个节点的parent属性和指向他的引用.将删除节点的属性置为空.</br>
+	 *  4. 删除的节点既存在左节点也存在右节点时: </br>
+	 *  	4.1 首先从删除节点的右子树中获取大于删除后节点值的最小值.(即上述例子中的6. 注: 该替换一定存在于右子树中的最左边)</br>
+	 *  	4.2 判断是哪个节点.(注: 当为root节点时,便不需要此处判断)</br>
+	 *  		4.2.1. 当为左节点时: 将删除节点的parent节点的左子树指向替换节点. 替换几点的parent属性指向删除节点的parent.</br>
+	 *  		4.2.3. 当为右节点时: 将删除节点的parent节点的右子树指向替换节点. 替换几点的parent属性指向删除节点的parent.</br>
+	 *  	4.3. 判断替换节点是否存在子节点, 当存在子节点的时候一定是右子树. 将替换节点的右子树指向替换节点parent的左节点并且parent属性指向替换节点的parent.</br>
+	 *  	4.4. 将删除节点的左节点指向替换节点. 并且parent属性指向替换节点.</br>
+	 *  	4.5. 当替换节点的parent属性为删除的节点时, 参考2.</br>
+	 *  	4.6. 将删除节点的右子树指向替换节点的右子树,并且修改其parent属性.</br>
+	 *  	4.7. 将删除节点的左右节点及parent属性置null.</br>
 	 * @param value
 	 * @return
 	 */
-	public Node deleteNode(int value){
+	@Override
+	public void remove(int value){
 		if(root == null){
 			throw new NullPointerException();
 		}
@@ -190,26 +181,38 @@ public class BinarySearchTree {
 		}
 		
 		if(node.left == null && node.right == null){
-			if(node.parent.left == node){
-				node.parent.left = null;
+			if (root == node) {
+				root = null;
 			} else {
-				node.parent.right = null;
+				if(node.parent.left == node){
+					node.parent.left = null;
+				} else {
+					node.parent.right = null;
+				}
+				node.parent = null;
 			}
-			node.parent = null;
 		} else if(node.left != null && node.right == null){
-			if(node.parent.left == node){
-				node.parent.left = node.left;
+			if (root == node) {
+				root = node.left;
 			} else {
-				node.parent.right = node.left;
+				if(node.parent.left == node){
+					node.parent.left = node.left;
+				} else {
+					node.parent.right = node.left;
+				}
 			}
 			node.left.parent = node.parent;
 			node.left = null;
 			node.parent = null;
 		} else if(node.left == null && node.right != null){
-			if(node.parent.left == node){
-				node.parent.left = node.right;
+			if (root == node) {
+				root = node.right;
 			} else {
-				node.parent.right = node.right;
+				if(node.parent.left == node){
+					node.parent.left = node.right;
+				} else {
+					node.parent.right = node.right;
+				}
 			}
 			node.right.parent = node.parent;
 			node.right = null;
@@ -230,6 +233,8 @@ public class BinarySearchTree {
 					//2.2当删除节点在原有位置中存在于右子树中时
 					node.parent.right = minNode;
 				}
+			} else {
+				root = minNode;
 			}
 			//3判断最小值节点的父节点是不是要删除的节点
 			if(minNode.parent.value != node.value){
@@ -257,7 +262,6 @@ public class BinarySearchTree {
 			node.right = null;
 		}
 		count--;
-		return node;
 	}
 	
 	/**
@@ -283,15 +287,43 @@ public class BinarySearchTree {
 		return node;
 	}
 	
-	public Node findNodeByCondition(int value, int key){
-		Node node = null;
-		Node cur = root;
-		int num = 0;
-		while(cur != null){
-			
+	/**
+	 * 获取二叉搜索树中第key小的值
+	 * @param key
+	 * @return
+	 */
+	public Integer findValueByKey(int key){
+		if(key > count || key <= 0){
+			return null;
 		}
-		
-		return null;
+		return inorderTraversal().get(key - 1);
+	}
+	
+	private AtomicInteger num = new AtomicInteger(0);
+	private AtomicInteger res = new AtomicInteger();
+	public Integer findNodeByCondition(int key){
+		if(key > count){
+			return null;
+		}
+		num.set(0);
+		Node cur = root;
+		midTraversal(cur, key);
+		return res.intValue();
+	}
+	
+	public void midTraversal(Node node, int key){
+		if(node.left != null){
+			midTraversal(node.left, key);
+		}
+		num.incrementAndGet();
+		if(key == num.get()){
+			System.out.println(num + "， " + node.value);
+			res.set(node.value);
+			return;
+		}
+		if(node.right != null){
+			midTraversal(node.right, key);
+		}
 	}
 	
 	/**
@@ -302,7 +334,7 @@ public class BinarySearchTree {
 	public Node findRightMin(Node node){
 		if(node.left != null){
 			node = findRightMin(node.left);
-		} 
+		}
 		return node;
 	}
 	
@@ -342,41 +374,48 @@ public class BinarySearchTree {
 		tree.add(5);
 		tree.add(11);
 		tree.add(17);
-		tree.add(27);
-		tree.add(3);
-		tree.add(7);
-		tree.add(10);
-		tree.add(12);
-		tree.add(15);
-		tree.add(18);
-		tree.add(23);
-		tree.add(30);
-		tree.add(1);
-		tree.add(2);
-		tree.add(6);
-		tree.add(8);
-		tree.add(13);
-		tree.add(16);
-		tree.add(21);
-		tree.add(31);
-		tree.add(22);
+//		tree.add(27);
+//		tree.add(3);
+//		tree.add(7);
+//		tree.add(10);
+//		tree.add(12);
+//		tree.add(15);
+//		tree.add(18);
+//		tree.add(23);
+//		tree.add(30);
+//		tree.add(1);
+//		tree.add(2);
+//		tree.add(6);
+//		tree.add(8);
+//		tree.add(13);
+//		tree.add(16);
+//		tree.add(21);
+//		tree.add(31);
+//		tree.add(22);
+		System.out.println(tree.root.toString());
+		tree.remove(14);
+		System.out.println(tree.root.toString());
 		List<Integer> list = tree.preorderTraversal();
 		System.out.println(toString(list));
 		list = tree.inorderTraversal();
 		System.out.println(toString(list));
 		list = tree.postorderTraversal();
 		System.out.println(toString(list));
-		int deleteNodeValue = 30;
-		System.out.println(tree.findNode(deleteNodeValue).toString());
-		System.out.println(tree.getCount());
-		System.out.println("=====delete " + deleteNodeValue + "======" + tree.deleteNode(deleteNodeValue).toString());
-		System.out.println(tree.getCount());
-		list = tree.preorderTraversal();
-		System.out.println(toString(list));
-		list = tree.inorderTraversal();
-		System.out.println(toString(list));
-		list = tree.postorderTraversal();
-		System.out.println(toString(list));
+//		System.out.println(tree.findValueByKey(2));
+//		tree.findNodeByCondition(4);
+//		tree.findNodeByCondition(2);
+//		System.out.println(tree.findNodeByCondition(3));
+//		int deleteNodeValue = 30;
+//		System.out.println(tree.findNode(deleteNodeValue).toString());
+//		System.out.println(tree.getCount());
+//		System.out.println("=====delete " + deleteNodeValue + "======" + tree.deleteNode(deleteNodeValue).toString());
+//		System.out.println(tree.getCount());
+//		list = tree.preorderTraversal();
+//		System.out.println(toString(list));
+//		list = tree.inorderTraversal();
+//		System.out.println(toString(list));
+//		list = tree.postorderTraversal();
+//		System.out.println(toString(list));
 	}
 	
 	public static String toString(List<Integer> list){

@@ -1,10 +1,10 @@
 package org.mine.model;
 
 /**
- * batch_task_execution_log_register--批量任务执行日志登记表
+ * batch_task_execution_log_register--
  * @filename BatchTaskExecutionLogRegister.java
  * @author wzaUsers
- * @date 2020-01-09 15:01:44
+ * @date 2020-04-30 16:04:06
  * @version v1.0
 */
 public class BatchTaskExecutionLogRegister {
@@ -20,6 +20,10 @@ public class BatchTaskExecutionLogRegister {
 	 * 执行作业名称
 	 */
 	private String taskJobName;
+	/**
+	 * 任务ID
+	 */
+	private Long taskJobAssociateId;
 	/**
 	 * 开始时间
 	 */
@@ -53,6 +57,7 @@ public class BatchTaskExecutionLogRegister {
 		this.taskExecutionId = 0L;
 		this.taskJobId = 0L;
 		this.taskJobName = "";
+		this.taskJobAssociateId = 0L;
 		this.taskStartTime = null;
 		this.taskEndTime = null;
 		this.taskJobStatus = "";
@@ -103,6 +108,20 @@ public class BatchTaskExecutionLogRegister {
 	 */
 	public void setTaskJobName(String taskJobName) {
 		this.taskJobName = taskJobName;
+	}
+	/**
+	 * 任务ID
+	 * @return thetaskJobAssociateId
+	 */
+	public Long getTaskJobAssociateId() {
+		return taskJobAssociateId;
+	}
+	/**
+	 * 任务ID
+	 * @param taskJobAssociateId the taskJobAssociateId to set
+	 */
+	public void setTaskJobAssociateId(Long taskJobAssociateId) {
+		this.taskJobAssociateId = taskJobAssociateId;
 	}
 	/**
 	 * 开始时间
@@ -209,9 +228,9 @@ public class BatchTaskExecutionLogRegister {
 	@Override
 	public String toString() {
 		return "BatchTaskExecutionLogRegister[" + 
-		"taskExecutionId=" + taskExecutionId + ", taskJobId=" + taskJobId + ", taskJobName=" + taskJobName + ", taskStartTime=" + taskStartTime + 
-		", taskEndTime=" + taskEndTime + ", taskJobStatus=" + taskJobStatus + ", taskJobErrmsg=" + taskJobErrmsg + 
-		", createDate=" + createDate + ", validStatus=" + validStatus + ", remark=" + remark + 
-		"]";
+		"taskExecutionId=" + taskExecutionId + ", taskJobId=" + taskJobId + ", taskJobName=" + taskJobName + ", taskJobAssociateId=" + taskJobAssociateId + 
+		", taskStartTime=" + taskStartTime + ", taskEndTime=" + taskEndTime + ", taskJobStatus=" + taskJobStatus + 
+		", taskJobErrmsg=" + taskJobErrmsg + ", createDate=" + createDate + ", validStatus=" + validStatus + 
+		", remark=" + remark + "]";
 	}
 }

@@ -6,20 +6,22 @@ import java.util.function.Consumer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.util.Assert;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"classpath:config/quartz/asyncExcutor.xml"})
+@ContextConfiguration(locations={"classpath*:config/quartz/asyncExcutor.xml"})
 public class ThreadPoolExcutorsTest {
 
-	@Autowired
+	@Qualifier(value = "threadPoolExcutor")
 	private ThreadPoolTaskExecutor excutor;
 	
 	@Test
 	public void test() {
-//		fail("Not yet implemented");
+		Assert.notNull(excutor, "excutor is null");
 		String s = "ssss";
 		if(s.equalsIgnoreCase("ssss")){
 			CompletableFuture<Void> future = CompletableFuture.runAsync(new Runnable() {

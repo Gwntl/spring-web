@@ -1,10 +1,10 @@
 package org.mine.model;
 
 /**
- * batch_task_execute--批量任务运行表
+ * batch_task_execute--
  * @filename BatchTaskExecute.java
  * @author wzaUsers
- * @date 2020-01-09 11:01:11
+ * @date 2020-04-30 16:04:14
  * @version v1.0
 */
 public class BatchTaskExecute {
@@ -25,6 +25,10 @@ public class BatchTaskExecute {
 	 */
 	private Integer executeJobNum;
 	/**
+	 * 是否一次性作业. 0-是, 1-否
+	 */
+	private Integer executeJobOneTime;
+	/**
 	 * 创建时间
 	 */
 	private String createDate;
@@ -42,6 +46,7 @@ public class BatchTaskExecute {
 		this.executeTaskName = "";
 		this.executeJobId = 0L;
 		this.executeJobNum = 0;
+		this.executeJobOneTime = 1;
 		this.createDate = "";
 		this.validStatus = "0";
 		this.remark = "";
@@ -104,6 +109,20 @@ public class BatchTaskExecute {
 		this.executeJobNum = executeJobNum;
 	}
 	/**
+	 * 是否一次性作业. 0-是, 1-否
+	 * @return theexecuteJobOneTime
+	 */
+	public Integer getExecuteJobOneTime() {
+		return executeJobOneTime;
+	}
+	/**
+	 * 是否一次性作业. 0-是, 1-否
+	 * @param executeJobOneTime the executeJobOneTime to set
+	 */
+	public void setExecuteJobOneTime(Integer executeJobOneTime) {
+		this.executeJobOneTime = executeJobOneTime;
+	}
+	/**
 	 * 创建时间
 	 * @return thecreateDate
 	 */
@@ -153,7 +172,7 @@ public class BatchTaskExecute {
 	public String toString() {
 		return "BatchTaskExecute[" + 
 		"executeTaskId=" + executeTaskId + ", executeTaskName=" + executeTaskName + ", executeJobId=" + executeJobId + ", executeJobNum=" + executeJobNum + 
-		", createDate=" + createDate + ", validStatus=" + validStatus + ", remark=" + remark + 
-		"]";
+		", executeJobOneTime=" + executeJobOneTime + ", createDate=" + createDate + ", validStatus=" + validStatus + 
+		", remark=" + remark + "]";
 	}
 }

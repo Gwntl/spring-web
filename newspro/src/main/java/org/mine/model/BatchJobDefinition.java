@@ -1,10 +1,10 @@
 package org.mine.model;
 
 /**
- * batch_job_definition--批量作业定义表
+ * batch_job_definition--
  * @filename BatchJobDefinition.java
  * @author wzaUsers
- * @date 2020-01-09 15:01:43
+ * @date 2020-04-30 16:04:06
  * @version v1.0
 */
 public class BatchJobDefinition {
@@ -41,10 +41,6 @@ public class BatchJobDefinition {
 	 */
 	private Integer jobTimeDelayFlag;
 	/**
-	 * 是否一次性作业. 0-是, 1-否
-	 */
-	private Integer jobOneTime;
-	/**
 	 * 延时时间
 	 */
 	private String jobTimeDelayValue;
@@ -70,7 +66,6 @@ public class BatchJobDefinition {
 		this.jobSkipFlag = 1;
 		this.jobRunMutiFlag = 0;
 		this.jobTimeDelayFlag = 1;
-		this.jobOneTime = 1;
 		this.jobTimeDelayValue = "";
 		this.createDate = "";
 		this.validStatus = "0";
@@ -190,20 +185,6 @@ public class BatchJobDefinition {
 		this.jobTimeDelayFlag = jobTimeDelayFlag;
 	}
 	/**
-	 * 是否一次性作业. 0-是, 1-否
-	 * @return thejobOneTime
-	 */
-	public Integer getJobOneTime() {
-		return jobOneTime;
-	}
-	/**
-	 * 是否一次性作业. 0-是, 1-否
-	 * @param jobOneTime the jobOneTime to set
-	 */
-	public void setJobOneTime(Integer jobOneTime) {
-		this.jobOneTime = jobOneTime;
-	}
-	/**
 	 * 延时时间
 	 * @return thejobTimeDelayValue
 	 */
@@ -268,8 +249,7 @@ public class BatchJobDefinition {
 		return "BatchJobDefinition[" + 
 		"jobId=" + jobId + ", jobName=" + jobName + ", jobAssociateTriggerId=" + jobAssociateTriggerId + ", jobExecutor=" + jobExecutor + 
 		", jobInitValue=" + jobInitValue + ", jobSkipFlag=" + jobSkipFlag + ", jobRunMutiFlag=" + jobRunMutiFlag + 
-		", jobTimeDelayFlag=" + jobTimeDelayFlag + ", jobOneTime=" + jobOneTime + ", jobTimeDelayValue=" + jobTimeDelayValue + 
-		", createDate=" + createDate + ", validStatus=" + validStatus + ", remark=" + remark + 
-		"]";
+		", jobTimeDelayFlag=" + jobTimeDelayFlag + ", jobTimeDelayValue=" + jobTimeDelayValue + ", createDate=" + createDate + 
+		", validStatus=" + validStatus + ", remark=" + remark + "]";
 	}
 }

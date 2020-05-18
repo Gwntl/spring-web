@@ -9,6 +9,7 @@ import org.mine.aplt.constant.ApltContanst;
 import org.mine.aplt.enumqz.JobExcutorEnum;
 import org.mine.aplt.exception.GitWebException;
 import org.mine.aplt.exception.MineBizException;
+import org.mine.aplt.support.BaseServiceTasketExcutor;
 import org.mine.aplt.support.bean.GitContext;
 import org.mine.aplt.util.CommonUtils;
 import org.mine.dao.BatchGroupDefinitionDao;
@@ -23,8 +24,7 @@ import org.mine.model.BatchQueueDefinition;
 import org.mine.model.BatchTaskDefinition;
 import org.mine.model.BatchTaskExecute;
 import org.mine.model.BatchTriggerDefinition;
-import org.mine.quartz.ExcutorBase;
-import org.mine.quartz.QuartzStepExecutor;
+import org.mine.quartz.ExecutorBase;
 import org.mine.quartz.dto.ConcurrTaskDto;
 import org.quartz.JobDataMap;
 import org.quartz.JobKey;
@@ -56,18 +56,35 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 	private BatchTaskExecuteDao taskExecuteDao;
 	@Autowired
 	private BatchJobDefinitionDao jobDefinitionDao;
+	@Autowired
+	private GitContext context;
 
-	public static Map<String, QuartzStepExecutor> quartzStepCache = new ConcurrentHashMap<>();
+	protected static Map<String, BaseServiceTasketExcutor> quartzStepCache = new ConcurrentHashMap<>(1 >> 5);
+	
+	public static BaseServiceTasketExcutor getExecutor(String key){
+		if (quartzStepCache.containsKey(key)) {
+			return quartzStepCache.get(key);
+		} else {
+			Object obj = GitContext.getBean(key);
+			if(obj != null && obj instanceof BaseServiceTasketExcutor){
+				quartzStepCache.put(key, (BaseServiceTasketExcutor)obj);
+				return (BaseServiceTasketExcutor)obj;
+			}
+		}
+		return null;
+	}
 	
 	/* 
 	 * 此处将quartz需要的定时作业配置在数据库中, 每次加载时,从数据库中加载定时作业.
 	 * (non-Javadoc)
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
+	@SuppressWarnings("static-access")
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		//初始化执行器缓存
-		quartzStepCache.putAll(GitContext.getBeansOfType(QuartzStepExecutor.class));
+		quartzStepCache.putAll(context.getBeansOfType(BaseServiceTasketExcutor.class));
+		System.out.println(">>>>> " + CommonUtils.toString(quartzStepCache));
 		loadTimingData();
 	}
 	
@@ -98,8 +115,7 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 							if(CommonUtils.isEmpty(taskDefinitions)){
 								logger.error("No executable tasks exists on the current group[{}]!!!", groupId);
 							} else {
-								for(int task = 0, taskSize = taskDefinitions.size(); task < taskSize; task++){
-									BatchTaskDefinition taskDefinition = taskDefinitions.get(task);
+								for(BatchTaskDefinition taskDefinition : taskDefinitions){
 									Long taskId = taskDefinition.getTaskId();
 									taskDto.setTaskId(taskId);
 									taskDto.setTaskSkipFlag(taskDefinition.getTaskSkipFlag());
@@ -119,7 +135,7 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 												taskDto.setJobRunMutiFlag(jobDefinition.getJobRunMutiFlag());
 												taskDto.setJobTimeDelayFlag(jobDefinition.getJobTimeDelayFlag());
 												taskDto.setJobTimeDelayValue(jobDefinition.getJobTimeDelayValue());
-												taskDto.setJobOneTime(jobDefinition.getJobOneTime());
+												taskDto.setJobOneTime(taskExecute.getExecuteJobOneTime());
 												CommonUtils.initMapValue(taskDto.getJobInitValue(), jobDefinition.getJobInitValue());
 												registerQuartz(jobDefinition, taskDto);
 											} else {
@@ -153,7 +169,7 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 		JobDetailImpl detailImpl = new JobDetailImpl();
 		detailImpl.setName(ApltContanst.DEFAULT_JOB_NAME + jobDefinition.getJobId());
 		detailImpl.setKey(new JobKey(detailImpl.getName(), ApltContanst.DEFAULT_JOB_GROUP));
-		detailImpl.setJobClass(ExcutorBase.getExcutorJob(jobDefinition.getJobExecutor()));
+		detailImpl.setJobClass(ExecutorBase.getExcutorJob(jobDefinition.getJobExecutor()));
 		JobDataMap dataMap = new JobDataMap();
 		dataMap.put("dto", taskDto);
 		detailImpl.setJobDataMap(dataMap);
@@ -167,7 +183,7 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 		 * 当注册时若发现未配置Job信息, Spring会从Map中自动获取jobDetail的值,注册进Schedule中.
 		 * */
 //		getJobDataMap().put("jobDetail", detail);
-		ExcutorBase.getSchedulerFactoryBean().getScheduler().scheduleJob(detailImpl, trigger);
+		ExecutorBase.getSchedulerFactoryBean().getScheduler().scheduleJob(detailImpl, trigger);
 //		map.put(detailImpl, trigger);
 		
 		//注册该JOB中其他触发器
@@ -177,7 +193,7 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 			for(int register = 1; register < triggerSize; register ++){
 				extraTrigger = definationTrigger(Long.valueOf(triggerIds.get(register)));
 				extraTrigger.setJobKey(detailImpl.getKey());
-				ExcutorBase.getSchedulerFactoryBean().getScheduler().scheduleJob(extraTrigger);
+				ExecutorBase.getSchedulerFactoryBean().getScheduler().scheduleJob(extraTrigger);
 			}
 		}
 	}

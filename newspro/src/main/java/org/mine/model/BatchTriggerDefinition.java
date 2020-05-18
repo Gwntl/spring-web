@@ -1,10 +1,10 @@
 package org.mine.model;
 
 /**
- * batch_trigger_definition--定时任务触发器定义表
+ * batch_trigger_definition--
  * @filename BatchTriggerDefinition.java
  * @author wzaUsers
- * @date 2020-01-09 15:01:44
+ * @date 2020-04-30 16:04:06
  * @version v1.0
 */
 public class BatchTriggerDefinition {
@@ -35,7 +35,7 @@ public class BatchTriggerDefinition {
 	/**
 	 * 有效状态
 	 */
-	private String vaildStatus;
+	private String validStatus;
 	/**
 	 * 备注
 	 */
@@ -48,7 +48,7 @@ public class BatchTriggerDefinition {
 		this.triggerEndTime = null;
 		this.triggerCrontrigger = "";
 		this.createDate = "";
-		this.vaildStatus = "0";
+		this.validStatus = "0";
 		this.triggerRemark = "";
 	}
 
@@ -138,17 +138,17 @@ public class BatchTriggerDefinition {
 	}
 	/**
 	 * 有效状态
-	 * @return thevaildStatus
+	 * @return thevalidStatus
 	 */
-	public String getVaildStatus() {
-		return vaildStatus;
+	public String getValidStatus() {
+		return validStatus;
 	}
 	/**
 	 * 有效状态
-	 * @param vaildStatus the vaildStatus to set
+	 * @param validStatus the validStatus to set
 	 */
-	public void setVaildStatus(String vaildStatus) {
-		this.vaildStatus = vaildStatus;
+	public void setValidStatus(String validStatus) {
+		this.validStatus = validStatus;
 	}
 	/**
 	 * 备注
@@ -172,7 +172,7 @@ public class BatchTriggerDefinition {
 	public String toString() {
 		return "BatchTriggerDefinition[" + 
 		"triggerId=" + triggerId + ", triggerName=" + triggerName + ", triggerStartTime=" + triggerStartTime + ", triggerEndTime=" + triggerEndTime + 
-		", triggerCrontrigger=" + triggerCrontrigger + ", createDate=" + createDate + ", vaildStatus=" + vaildStatus + 
+		", triggerCrontrigger=" + triggerCrontrigger + ", createDate=" + createDate + ", validStatus=" + validStatus + 
 		", triggerRemark=" + triggerRemark + "]";
 	}
 }

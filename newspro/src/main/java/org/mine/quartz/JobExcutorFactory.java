@@ -24,14 +24,15 @@ public class JobExcutorFactory{
 	}
 	
 	/**
-	 * 单例方法, 供Job调度作业时使用
+	 * 单例方法, 供Job调度作业时使用.
+	 * 根据不同场景实现不同的线程池.
 	 * @return
 	 */
 	public static ThreadPoolExecutor getNewInstance(){
 		if(executor == null){
 			synchronized (JobExcutorFactory.class) {
 				if(executor == null){
-					executor = new ThreadPoolExecutor(20, 30, 50L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(20));
+					executor = new ThreadPoolExecutor(20, 30, 50L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(20));
 				}
 			}
 		}

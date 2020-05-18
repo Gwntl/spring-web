@@ -9,12 +9,11 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
 
-	<import resource="../quartz/quartz.xml"/>
-
 	<!-- 引入配置文件 -->
 	<context:property-placeholder location="classpath:config/properties/jdbc.properties"/>
-	
 	<context:component-scan base-package="org.mine.*"/>
+	
+	<import resource="../quartz/quartz.xml"/>
 	
 	<!-- 配置数据源 此处采用JDBC -->
 <!-- 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"> -->

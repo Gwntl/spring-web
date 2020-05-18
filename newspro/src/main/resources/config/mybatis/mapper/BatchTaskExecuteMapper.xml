@@ -6,14 +6,15 @@
 		<result column="execute_task_name" property="executeTaskName"/>
 		<result column="execute_job_id" property="executeJobId"/>
 		<result column="execute_job_num" property="executeJobNum"/>
+		<result column="execute_job_one_time" property="executeJobOneTime"/>
 		<result column="create_date" property="createDate"/>
 		<result column="valid_status" property="validStatus"/>
 		<result column="remark" property="remark"/>
 	</resultMap>
 
 	<sql id="Base_Select_List">
-		execute_task_id,execute_task_name,execute_job_id,execute_job_num,create_date,valid_status,
-		remark
+		execute_task_id,execute_task_name,execute_job_id,execute_job_num,execute_job_one_time,create_date,
+		valid_status,remark
 	</sql>
 
 	<sql id="Base_Insert_Column">
@@ -22,6 +23,7 @@
 			<if test="executeTaskName != null">execute_task_name,</if>
 			<if test="executeJobId != null">execute_job_id,</if>
 			<if test="executeJobNum != null">execute_job_num,</if>
+			<if test="executeJobOneTime != null">execute_job_one_time,</if>
 			<if test="createDate != null">create_date,</if>
 			<if test="validStatus != null">valid_status,</if>
 			<if test="remark != null">remark,</if>
@@ -34,6 +36,7 @@
 			<if test="executeTaskName != null">#{executeTaskName},</if>
 			<if test="executeJobId != null">#{executeJobId},</if>
 			<if test="executeJobNum != null">#{executeJobNum},</if>
+			<if test="executeJobOneTime != null">#{executeJobOneTime},</if>
 			<if test="createDate != null">#{createDate},</if>
 			<if test="validStatus != null">#{validStatus},</if>
 			<if test="remark != null">#{remark},</if>
@@ -56,12 +59,12 @@
 
 	<insert id="batchInsertXML" parameterType="java.util.List">
 		insert into batch_task_execute
-		(execute_task_id,execute_task_name,execute_job_id,execute_job_num,create_date
-			,valid_status,remark)
+		(execute_task_id,execute_task_name,execute_job_id,execute_job_num,execute_job_one_time
+			,create_date,valid_status,remark)
 		values
 		<foreach collection="list" item="item" index="index" separator=",">
-			(#{item.executeTaskId},#{item.executeTaskName},#{item.executeJobId},#{item.executeJobNum},#{item.createDate}
-				,#{item.validStatus},#{item.remark})
+			(#{item.executeTaskId},#{item.executeTaskName},#{item.executeJobId},#{item.executeJobNum},#{item.executeJobOneTime}
+				,#{item.createDate},#{item.validStatus},#{item.remark})
 		</foreach>
 	</insert>
 	<select id="selectAll1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
@@ -75,7 +78,7 @@
 		select
 		<include refid="BatchTaskExecute.Base_Select_List"/>
 		from batch_task_execute
-		where execute_task_id = #{executeTaskId} and vaild_status = '0'
+		where execute_task_id = #{executeTaskId} and valid_status = '0'
 	</select>
 
 	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">

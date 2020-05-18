@@ -5,7 +5,9 @@ import java.util.Map;
 
 import org.mine.aplt.support.BaseServiceTasketExcutor;
 import org.mine.aplt.util.CommonUtils;
+import org.springframework.stereotype.Service;
 
+@Service(value = "actualAddJob")
 public class ActualAddJobImpl extends BaseServiceTasketExcutor{
 
 	@Override

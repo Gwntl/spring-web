@@ -86,7 +86,7 @@
 		select
 		<include refid="BatchTaskExecutionLogHistory.Base_Select_List"/>
 		from batch_task_execution_log_history
-		where history_task_execution_id = #{historyTaskExecutionId} and vaild_status = '0'
+		where history_task_execution_id = #{historyTaskExecutionId} and valid_status = '0'
 	</select>
 
 	<select id="selectOne1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
@@ -137,7 +137,7 @@
 			<if test="validStatus != null">valid_status = #{validStatus},</if>
 			<if test="remark != null">remark = #{remark},</if>
 		</trim>
-		where history_task_execution_id = #{historyTaskExecutionId} and vaild_status = '0'
+		where history_task_execution_id = #{historyTaskExecutionId} and valid_status = '0'
 	</update>
 
 	<update id="updateOne1L" parameterType="org.mine.model.BatchTaskExecutionLogHistory">
@@ -254,7 +254,7 @@
 		select
 		<include refid="BatchTaskExecutionLogHistory.Base_Select_List"/>
 		from batch_task_execution_log_history
-		where null = #{taskAssociateGroupId} and vaild_status = '0'
+		where null = #{taskAssociateGroupId} and valid_status = '0'
 	</select>
 
 	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">

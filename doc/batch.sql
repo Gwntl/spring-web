@@ -1,5 +1,5 @@
 -- 该批量执行内容为: queue-group-task-job-step
--- 一个queue对应掉哟个group, 一个group对应多个task, 一个task对应多个job, 一个task对应多个step
+-- 一个queue对应掉一个group, 一个group对应多个task, 一个task对应多个job, 一个task对应多个step
 -- 每个job之间可以并发执行, queue、group、task、step仅可以串行执行.
 -- 最小单位为step,创建step的目的是为了防止一个task内存在一组任务(step)需要串行执行并且与当前运行的任务并发执行.
 
@@ -10,9 +10,9 @@ create table if not exists batch_queue_definition (
 	queue_timingtask_flag int(1) not null default "1" comment "是否为定时任务. 0-是,1-否",
 	queue_execution_num int(3) not null comment "队列执行序号",
 	create_date varchar(8) not null comment "创建时间",
-	vaild_status varchar(1) not null default "0" comment "有效状态. 0-是, 1-否, D-已废弃",
+	valid_status varchar(1) not null default "0" comment "有效状态. 0-是, 1-否, D-已废弃",
 	remark varchar(500) comment "备注"
-) comment "批量执行队列定义表(串行)";
+) character set utf8 collate utf8_general_ci comment "批量执行队列定义表(串行)";
 create unique index batch_queue_definition_index1 on batch_queue_definition(queue_id);
 create index batch_queue_definition_index2 on batch_queue_definition(queue_timingtask_flag);
 
@@ -25,7 +25,7 @@ create table if not exists batch_group_definition(
 	create_date varchar(8) not null comment "创建时间",
 	valid_status varchar(1) not null default "0" comment "有效状态. 0-是, 1-否, D-已废弃",
 	remark varchar(500) comment "备注"
-) comment "批量任务组定义表(串行)";
+) character set utf8 collate utf8_general_ci comment "批量任务组定义表(串行)";
 create unique index batch_group_definition_index on batch_group_definition(group_id);
 create index batch_group_definition_index1 on batch_group_definition(group_associate_queue_id);
 
@@ -40,7 +40,7 @@ create table if not exists batch_task_definition(
 	create_date varchar(8) not null comment "创建时间",
 	valid_status varchar(1) not null default "0" comment "有效状态. 0-是, 1-否, D-已废弃",
 	remark varchar(500) comment "备注"
-) comment "批量任务定义表";
+) character set utf8 collate utf8_general_ci comment "批量任务定义表";
 create unique index batch_task_definition_index1 on batch_task_definition(task_id);
 create index batch_task_definition_index2 on batch_task_definition(task_associate_group_id);
 
@@ -54,7 +54,7 @@ create table if not exists batch_task_execute(
 	create_date varchar(8) not null comment "创建时间",
 	valid_status varchar(1) not null default "0" comment "有效状态. 0-是, 1-否, D-已废弃",
 	remark varchar(500) comment "备注"
-) comment "批量任务运行表";
+) character set utf8 collate utf8_general_ci comment "批量任务运行表";
 create index batch_task_execute_index1 on batch_task_execute(execute_task_id);
 
 drop table if exists batch_job_definition;
@@ -71,19 +71,21 @@ create table if not exists batch_job_definition(
 	create_date varchar(8) not null comment "创建时间",
 	valid_status varchar(1) not null default "0" comment "有效状态. 0-是, 1-否, D-已废弃",
 	remark varchar(500) comment "备注"
-) comment "批量作业定义表";
+) character set utf8 collate utf8_general_ci comment "批量作业定义表";
 create unique index batch_job_definition_index1 on batch_job_definition(job_id);
 
+-- 增加是否强依赖上一步
 drop table if exists batch_job_execute;
 create table if not exists batch_job_execute(
 	execute_job_id bigint(20) not null comment "执行作业ID",
 	execute_job_name varchar(32) not null comment "执行作业名称",
 	execute_step_id bigint(20) not null comment "关联步骤ID",
 	execute_step_num int(3) not null comment "步骤执行序号",
+	execute_strong_depen int(1) not null comment "是否强依赖上一步",
 	create_date varchar(8) not null comment "创建时间",
 	valid_status varchar(1) not null default "0" comment "有效状态. 0-是, 1-否, D-已废弃",
 	remark varchar(500) comment "备注"
-) comment "批量作业执行表(并发)";
+) character set utf8 collate utf8_general_ci comment "批量作业执行表(并发)";
 create index batch_job_execute_index1 on batch_job_execute(execute_job_id);
 
 drop table if exists batch_step_definition;
@@ -96,7 +98,7 @@ create table if not exists batch_step_definition(
 	create_date varchar(8) not null comment "创建时间",
 	valid_status varchar(1) not null default "0" comment "有效状态. 0-是, 1-否, D-已废弃",
 	remark varchar(500) comment "备注"
-) comment "批量执行步骤定义表(串行)";
+) character set utf8 collate utf8_general_ci comment "批量执行步骤定义表(串行)";
 create unique index batch_step_definition_index1 on batch_step_definition(step_id);
 
 
@@ -108,9 +110,9 @@ create table batch_trigger_definition(
 	trigger_end_time DATETIME COMMENT "触发器结束时间",
 	trigger_crontrigger varchar(32) NOT NULL COMMENT "触发器设置",
 	create_date varchar(8) not null comment "创建时间",
-	vaild_status VARCHAR(1) NOT NULL default "0" COMMENT "有效状态",
+	valid_status VARCHAR(1) NOT NULL default "0" COMMENT "有效状态",
 	trigger_remark varchar(500) COMMENT "备注"
-	) COMMENT "定时任务触发器定义表";
+) character set utf8 collate utf8_general_ci COMMENT "定时任务触发器定义表";
 create UNIQUE INDEX batch_trigger_definition_index1 on batch_trigger_definition (trigger_id);
 
 drop table if exists batch_task_execution_log_register;
@@ -126,7 +128,7 @@ create table if not exists batch_task_execution_log_register(
 	create_date varchar(8) not null comment "创建时间",
 	valid_status varchar(1) not null default "0" comment "有效状态. 0-是, 1-否",
 	remark varchar(500) comment "备注"
-) comment "批量任务执行日志登记表";
+) character set utf8 collate utf8_general_ci comment "批量任务执行日志登记表";
 create unique index batch_task_execution_log_register_index1 on batch_task_execution_log_register(task_execution_id);
 
 drop table if exists batch_task_execution_log_history;
@@ -141,7 +143,7 @@ create table if not exists batch_task_execution_log_history(
 	create_date varchar(8) not null comment "创建时间",
 	valid_status varchar(1) not null default "0" comment "有效状态. 0-是, 1-否",
 	remark varchar(500) comment "备注"
-) comment "批量任务执行日志历史表";
+) character set utf8 collate utf8_general_ci comment "批量任务执行日志历史表";
 create unique index batch_task_execution_log_history_index1 on batch_task_execution_log_history(history_task_execution_id);
 
 drop table if exists batch_step_execution_log_register;
@@ -157,7 +159,7 @@ create table if not exists batch_step_execution_log_register(
 	create_date varchar(8) not null comment "创建时间",
 	valid_status varchar(1) not null default "0" comment "有效状态. 0-是, 1-否",
 	remark varchar(500) comment "备注"
-) comment "批量步骤执行日志登记表";
+) character set utf8 collate utf8_general_ci comment "批量步骤执行日志登记表";
 create unique index batch_step_execution_log_register_index1 on batch_step_execution_log_register(step_execution_id);
 
 drop table if exists batch_step_execution_log_history;
@@ -173,7 +175,7 @@ create table if not exists batch_step_execution_log_history(
 	create_date varchar(8) not null comment "创建时间",
 	valid_status varchar(1) not null default "0" comment "有效状态. 0-是, 1-否",
 	remark varchar(500) comment "备注"
-) comment "批量步骤执行日志历史表";
+) character set utf8 collate utf8_general_ci comment "批量步骤执行日志历史表";
 create unique index batch_step_execution_log_history_index1 on batch_step_execution_log_history(history_step_execution_id);
 
 drop table if exists batch_timing_task_log_register;
@@ -189,7 +191,7 @@ create table if not exists batch_timing_task_log_register(
 	create_date varchar(8) not null comment "创建时间",
 	valid_status varchar(1) not null default "0" comment "有效状态. 0-是, 1-否",
 	remark varchar(500) comment "备注"
-) comment "批量定时任务日志登记表";
+) character set utf8 collate utf8_general_ci comment "批量定时任务日志登记表";
 create unique index batch_timing_task_log_register_index1 on batch_timing_task_log_register(timing_execution_id);
 
 
@@ -206,7 +208,7 @@ create table if not exists batch_timing_task_log_history(
 	create_date varchar(8) not null comment "创建时间",
 	valid_status varchar(1) not null default "0" comment "有效状态. 0-是, 1-否",
 	remark varchar(500) comment "备注"
-) comment "定时批量任务日志历史表";
+) character set utf8 collate utf8_general_ci comment "定时批量任务日志历史表";
 create unique index batch_timing_task_log_history_index1 on batch_timing_task_log_history(history_timing_execution_id);
 
 
@@ -223,7 +225,7 @@ create table if not exists batch_timing_step_log_register(
 	create_date varchar(8) not null comment "创建时间",
 	valid_status varchar(1) not null default "0" comment "有效状态. 0-是, 1-否",
 	remark varchar(500) comment "备注"
-) comment "定时批量步骤执行日志登记表";
+) character set utf8 collate utf8_general_ci comment "定时批量步骤执行日志登记表";
 create unique index batch_timing_step_log_register_index1 on batch_timing_step_log_register(step_execution_id);
 
 drop table if exists batch_timing_step_log_history;
@@ -239,5 +241,5 @@ create table if not exists batch_timing_step_log_history(
 	create_date varchar(8) not null comment "创建时间",
 	valid_status varchar(1) not null default "0" comment "有效状态. 0-是, 1-否",
 	remark varchar(500) comment "备注"
-) comment "定时批量步骤执行日志历史表";
+) character set utf8 collate utf8_general_ci comment "定时批量步骤执行日志历史表";
 create unique index batch_timing_step_log_history_index1 on batch_timing_step_log_history(history_step_execution_id);

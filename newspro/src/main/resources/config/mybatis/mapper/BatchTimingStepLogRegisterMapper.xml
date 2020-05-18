@@ -89,7 +89,7 @@
 		select
 		<include refid="BatchTimingStepLogRegister.Base_Select_List"/>
 		from batch_timing_step_log_register
-		where step_execution_id = #{stepExecutionId} and vaild_status = '0'
+		where step_execution_id = #{stepExecutionId} and valid_status = '0'
 	</select>
 
 	<select id="selectOne1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
@@ -142,7 +142,7 @@
 			<if test="validStatus != null">valid_status = #{validStatus},</if>
 			<if test="remark != null">remark = #{remark},</if>
 		</trim>
-		where step_execution_id = #{stepExecutionId} and vaild_status = '0'
+		where step_execution_id = #{stepExecutionId} and valid_status = '0'
 	</update>
 
 	<update id="updateOne1L" parameterType="org.mine.model.BatchTimingStepLogRegister">
@@ -207,7 +207,7 @@
 		select
 		<include refid="BatchTimingStepLogRegister.Base_Select_List"/>
 		from batch_timing_step_log_register
-		where null = #{taskAssociateGroupId} and vaild_status = '0'
+		where null = #{taskAssociateGroupId} and valid_status = '0'
 	</select>
 
 	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">

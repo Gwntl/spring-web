@@ -78,7 +78,7 @@
 		select
 		<include refid="BatchStepDefinition.Base_Select_List"/>
 		from batch_step_definition
-		where step_id = #{stepId} and vaild_status = '0'
+		where step_id = #{stepId} and valid_status = '0'
 	</select>
 
 	<select id="selectOne1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
@@ -125,7 +125,7 @@
 			<if test="validStatus != null">valid_status = #{validStatus},</if>
 			<if test="remark != null">remark = #{remark},</if>
 		</trim>
-		where step_id = #{stepId} and vaild_status = '0'
+		where step_id = #{stepId} and valid_status = '0'
 	</update>
 
 	<update id="updateOne1L" parameterType="org.mine.model.BatchStepDefinition">
@@ -224,7 +224,7 @@
 		select
 		<include refid="BatchStepDefinition.Base_Select_List"/>
 		from batch_step_definition
-		where null = #{taskAssociateGroupId} and vaild_status = '0'
+		where null = #{taskAssociateGroupId} and valid_status = '0'
 	</select>
 
 	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">

@@ -1,10 +1,10 @@
 package org.mine.model;
 
 /**
- * batch_timing_step_log_history--定时批量步骤执行日志历史表
+ * batch_timing_step_log_history--
  * @filename BatchTimingStepLogHistory.java
  * @author wzaUsers
- * @date 2020-01-09 15:01:44
+ * @date 2020-04-30 16:04:06
  * @version v1.0
 */
 public class BatchTimingStepLogHistory {

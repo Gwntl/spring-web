@@ -1,10 +1,10 @@
 package org.mine.model;
 
 /**
- * batch_job_execute--批量作业执行表(并发)
+ * batch_job_execute--
  * @filename BatchJobExecute.java
  * @author wzaUsers
- * @date 2020-01-09 11:01:11
+ * @date 2020-04-30 16:04:15
  * @version v1.0
 */
 public class BatchJobExecute {
@@ -20,6 +20,14 @@ public class BatchJobExecute {
 	 * 关联步骤ID
 	 */
 	private Long executeStepId;
+	/**
+	 * 步骤执行序号
+	 */
+	private Integer executeStepNum;
+	/**
+	 * 是否强依赖上一步
+	 */
+	private Integer executeStrongDepen;
 	/**
 	 * 创建时间
 	 */
@@ -37,6 +45,8 @@ public class BatchJobExecute {
 		this.executeJobId = 0L;
 		this.executeJobName = "";
 		this.executeStepId = 0L;
+		this.executeStepNum = 0;
+		this.executeStrongDepen = 0;
 		this.createDate = "";
 		this.validStatus = "0";
 		this.remark = "";
@@ -83,6 +93,34 @@ public class BatchJobExecute {
 	 */
 	public void setExecuteStepId(Long executeStepId) {
 		this.executeStepId = executeStepId;
+	}
+	/**
+	 * 步骤执行序号
+	 * @return theexecuteStepNum
+	 */
+	public Integer getExecuteStepNum() {
+		return executeStepNum;
+	}
+	/**
+	 * 步骤执行序号
+	 * @param executeStepNum the executeStepNum to set
+	 */
+	public void setExecuteStepNum(Integer executeStepNum) {
+		this.executeStepNum = executeStepNum;
+	}
+	/**
+	 * 是否强依赖上一步
+	 * @return theexecuteStrongDepen
+	 */
+	public Integer getExecuteStrongDepen() {
+		return executeStrongDepen;
+	}
+	/**
+	 * 是否强依赖上一步
+	 * @param executeStrongDepen the executeStrongDepen to set
+	 */
+	public void setExecuteStrongDepen(Integer executeStrongDepen) {
+		this.executeStrongDepen = executeStrongDepen;
 	}
 	/**
 	 * 创建时间
@@ -133,7 +171,8 @@ public class BatchJobExecute {
 	@Override
 	public String toString() {
 		return "BatchJobExecute[" + 
-		"executeJobId=" + executeJobId + ", executeJobName=" + executeJobName + ", executeStepId=" + executeStepId + ", createDate=" + createDate + 
-		", validStatus=" + validStatus + ", remark=" + remark + "]";
+		"executeJobId=" + executeJobId + ", executeJobName=" + executeJobName + ", executeStepId=" + executeStepId + ", executeStepNum=" + executeStepNum + 
+		", executeStrongDepen=" + executeStrongDepen + ", createDate=" + createDate + ", validStatus=" + validStatus + 
+		", remark=" + remark + "]";
 	}
 }

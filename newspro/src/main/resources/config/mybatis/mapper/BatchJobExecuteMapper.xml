@@ -5,13 +5,16 @@
 		<result column="execute_job_id" property="executeJobId"/>
 		<result column="execute_job_name" property="executeJobName"/>
 		<result column="execute_step_id" property="executeStepId"/>
+		<result column="execute_step_num" property="executeStepNum"/>
+		<result column="execute_strong_depen" property="executeStrongDepen"/>
 		<result column="create_date" property="createDate"/>
 		<result column="valid_status" property="validStatus"/>
 		<result column="remark" property="remark"/>
 	</resultMap>
 
 	<sql id="Base_Select_List">
-		execute_job_id,execute_job_name,execute_step_id,create_date,valid_status,remark
+		execute_job_id,execute_job_name,execute_step_id,execute_step_num,execute_strong_depen,create_date,
+		valid_status,remark
 	</sql>
 
 	<sql id="Base_Insert_Column">
@@ -19,6 +22,8 @@
 			<if test="executeJobId != null">execute_job_id,</if>
 			<if test="executeJobName != null">execute_job_name,</if>
 			<if test="executeStepId != null">execute_step_id,</if>
+			<if test="executeStepNum != null">execute_step_num,</if>
+			<if test="executeStrongDepen != null">execute_strong_depen,</if>
 			<if test="createDate != null">create_date,</if>
 			<if test="validStatus != null">valid_status,</if>
 			<if test="remark != null">remark,</if>
@@ -30,6 +35,8 @@
 			<if test="executeJobId != null">#{executeJobId},</if>
 			<if test="executeJobName != null">#{executeJobName},</if>
 			<if test="executeStepId != null">#{executeStepId},</if>
+			<if test="executeStepNum != null">#{executeStepNum},</if>
+			<if test="executeStrongDepen != null">#{executeStrongDepen},</if>
 			<if test="createDate != null">#{createDate},</if>
 			<if test="validStatus != null">#{validStatus},</if>
 			<if test="remark != null">#{remark},</if>
@@ -52,12 +59,12 @@
 
 	<insert id="batchInsertXML" parameterType="java.util.List">
 		insert into batch_job_execute
-		(execute_job_id,execute_job_name,execute_step_id,create_date,valid_status
-			,remark)
+		(execute_job_id,execute_job_name,execute_step_id,execute_step_num,execute_strong_depen
+			,create_date,valid_status,remark)
 		values
 		<foreach collection="list" item="item" index="index" separator=",">
-			(#{item.executeJobId},#{item.executeJobName},#{item.executeStepId},#{item.createDate},#{item.validStatus}
-				,#{item.remark})
+			(#{item.executeJobId},#{item.executeJobName},#{item.executeStepId},#{item.executeStepNum},#{item.executeStrongDepen}
+				,#{item.createDate},#{item.validStatus},#{item.remark})
 		</foreach>
 	</insert>
 	<select id="selectAll1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
@@ -71,7 +78,7 @@
 		select
 		<include refid="BatchJobExecute.Base_Select_List"/>
 		from batch_job_execute
-		where execute_job_id = #{executeJobId} and vaild_status = '0'
+		where execute_job_id = #{executeJobId} and valid_status = '0'
 	</select>
 
 	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">

@@ -4,8 +4,10 @@ import java.util.List;
 import org.mine.model.BatchJobExecute;
 import java.util.Map;
 import java.util.HashMap;
+import org.mine.aplt.exception.GitWebException;
 import org.mine.aplt.support.dao.BaseDaoSupport;
 import org.mine.aplt.support.dao.BatchOperator;
+import org.mine.aplt.util.CommonUtils;
 import org.mine.dao.BatchJobExecuteDao;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +15,7 @@ import org.springframework.stereotype.Repository;
  * 
  * @filename BatchJobExecuteDaoImpl.java
  * @author wzaUsers
- * @date 2020-01-09 11:01:11
+ * @date 2020-04-30 16:04:15
  * @version v1.0
 */
 @Repository

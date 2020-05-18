@@ -5,7 +5,15 @@ import java.util.Map;
 
 import org.mine.aplt.support.BaseServiceTasketExcutor;
 import org.mine.aplt.util.CommonUtils;
+import org.springframework.stereotype.Service;
 
+/**
+ * @Description: 
+ * @ClassName: ActualAddMultiJobImpl
+ * @author: wntl
+ * @date: 2020年4月28日 下午7:30:32
+ */
+@Service(value = "actualAddMultiJob")
 public class ActualAddMultiJobImpl extends BaseServiceTasketExcutor{
 
 	/* (non-Javadoc)

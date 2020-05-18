@@ -8,13 +8,13 @@
 		<result column="trigger_end_time" property="triggerEndTime"/>
 		<result column="trigger_crontrigger" property="triggerCrontrigger"/>
 		<result column="create_date" property="createDate"/>
-		<result column="vaild_status" property="vaildStatus"/>
+		<result column="valid_status" property="validStatus"/>
 		<result column="trigger_remark" property="triggerRemark"/>
 	</resultMap>
 
 	<sql id="Base_Select_List">
 		trigger_id,trigger_name,trigger_start_time,trigger_end_time,trigger_crontrigger,create_date,
-		vaild_status,trigger_remark
+		valid_status,trigger_remark
 	</sql>
 
 	<sql id="Base_Insert_Column">
@@ -25,7 +25,7 @@
 			<if test="triggerEndTime != null">trigger_end_time,</if>
 			<if test="triggerCrontrigger != null">trigger_crontrigger,</if>
 			<if test="createDate != null">create_date,</if>
-			<if test="vaildStatus != null">vaild_status,</if>
+			<if test="validStatus != null">valid_status,</if>
 			<if test="triggerRemark != null">trigger_remark,</if>
 		</trim>
 	</sql>
@@ -38,7 +38,7 @@
 			<if test="triggerEndTime != null">#{triggerEndTime},</if>
 			<if test="triggerCrontrigger != null">#{triggerCrontrigger},</if>
 			<if test="createDate != null">#{createDate},</if>
-			<if test="vaildStatus != null">#{vaildStatus},</if>
+			<if test="validStatus != null">#{validStatus},</if>
 			<if test="triggerRemark != null">#{triggerRemark},</if>
 		</trim>
 	</sql>
@@ -60,11 +60,11 @@
 	<insert id="batchInsertXML" parameterType="java.util.List">
 		insert into batch_trigger_definition
 		(trigger_id,trigger_name,trigger_start_time,trigger_end_time,trigger_crontrigger
-			,create_date,vaild_status,trigger_remark)
+			,create_date,valid_status,trigger_remark)
 		values
 		<foreach collection="list" item="item" index="index" separator=",">
 			(#{item.triggerId},#{item.triggerName},#{item.triggerStartTime},#{item.triggerEndTime},#{item.triggerCrontrigger}
-				,#{item.createDate},#{item.vaildStatus},#{item.triggerRemark})
+				,#{item.createDate},#{item.validStatus},#{item.triggerRemark})
 		</foreach>
 	</insert>
 	<select id="selectOne1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
@@ -78,7 +78,7 @@
 		select
 		<include refid="BatchTriggerDefinition.Base_Select_List"/>
 		from batch_trigger_definition
-		where trigger_id = #{triggerId} and vaild_status = '0'
+		where trigger_id = #{triggerId} and valid_status = '0'
 	</select>
 
 	<select id="selectOne1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
@@ -108,7 +108,7 @@
 			<if test="triggerEndTime != null">trigger_end_time = #{triggerEndTime},</if>
 			<if test="triggerCrontrigger != null">trigger_crontrigger = #{triggerCrontrigger},</if>
 			<if test="createDate != null">create_date = #{createDate},</if>
-			<if test="vaildStatus != null">vaild_status = #{vaildStatus},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
 			<if test="triggerRemark != null">trigger_remark = #{triggerRemark},</if>
 		</trim>
 		where trigger_id = #{triggerId}
@@ -122,10 +122,10 @@
 			<if test="triggerEndTime != null">trigger_end_time = #{triggerEndTime},</if>
 			<if test="triggerCrontrigger != null">trigger_crontrigger = #{triggerCrontrigger},</if>
 			<if test="createDate != null">create_date = #{createDate},</if>
-			<if test="vaildStatus != null">vaild_status = #{vaildStatus},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
 			<if test="triggerRemark != null">trigger_remark = #{triggerRemark},</if>
 		</trim>
-		where trigger_id = #{triggerId} and vaild_status = '0'
+		where trigger_id = #{triggerId} and valid_status = '0'
 	</update>
 
 	<update id="updateOne1L" parameterType="org.mine.model.BatchTriggerDefinition">
@@ -136,7 +136,7 @@
 			<if test="triggerEndTime != null">trigger_end_time = #{triggerEndTime},</if>
 			<if test="triggerCrontrigger != null">trigger_crontrigger = #{triggerCrontrigger},</if>
 			<if test="createDate != null">create_date = #{createDate},</if>
-			<if test="vaildStatus != null">vaild_status = #{vaildStatus},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
 			<if test="triggerRemark != null">trigger_remark = #{triggerRemark},</if>
 		</trim>
 		where trigger_id = #{triggerId} for update
@@ -179,10 +179,10 @@
 				</if>
 			</foreach>
 		</trim>
-		<trim prefix="vaild_status=case" suffix="end,">
+		<trim prefix="valid_status=case" suffix="end,">
 			<foreach collection="list" item="item" index="index">
-				<if test="item.vaildStatus != null">
-					when trigger_id = #{item.triggerId} then #{item.vaildStatus}
+				<if test="item.validStatus != null">
+					when trigger_id = #{item.triggerId} then #{item.validStatus}
 				</if>
 			</foreach>
 		</trim>
@@ -207,7 +207,7 @@
 			<if test="triggerEndTime != null">trigger_end_time = #{triggerEndTime},</if>
 			<if test="triggerCrontrigger != null">trigger_crontrigger = #{triggerCrontrigger},</if>
 			<if test="createDate != null">create_date = #{createDate},</if>
-			<if test="vaildStatus != null">vaild_status = #{vaildStatus},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
 			<if test="triggerRemark != null">trigger_remark = #{triggerRemark},</if>
 		</trim>
 		where trigger_id = #{triggerId}
@@ -224,7 +224,7 @@
 		select
 		<include refid="BatchTriggerDefinition.Base_Select_List"/>
 		from batch_trigger_definition
-		where null = #{taskAssociateGroupId} and vaild_status = '0'
+		where null = #{taskAssociateGroupId} and valid_status = '0'
 	</select>
 
 	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">

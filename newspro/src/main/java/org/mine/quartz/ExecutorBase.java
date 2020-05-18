@@ -19,13 +19,13 @@ import org.springframework.stereotype.Repository;
  * @Copyright: 2019 org.mine.* newspro
  */  
 @Repository
-public class ExcutorBase implements ApplicationContextAware{
+public class ExecutorBase implements ApplicationContextAware{
 
 	private static ApplicationContext applicationContext;
 	
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		ExcutorBase.applicationContext = applicationContext;
+		ExecutorBase.applicationContext = applicationContext;
 	}
 
 	/**

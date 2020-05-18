@@ -746,7 +746,7 @@ public class CodeGeneration {
 		String flag = methodName.substring(methodName.length() - 1, methodName.length());
 		String suffix = "";
 		if(flag.equals("R")){
-			suffix = " and vaild_status = '0'";
+			suffix = " and valid_status = '0'";
 		} else if(flag.equals("L")){
 			suffix = " for update";
 		}

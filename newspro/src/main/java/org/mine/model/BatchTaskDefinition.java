@@ -1,10 +1,10 @@
 package org.mine.model;
 
 /**
- * batch_task_definition--批量任务定义表
+ * batch_task_definition--
  * @filename BatchTaskDefinition.java
  * @author wzaUsers
- * @date 2020-01-09 15:01:43
+ * @date 2020-04-30 16:04:06
  * @version v1.0
 */
 public class BatchTaskDefinition {
@@ -29,6 +29,10 @@ public class BatchTaskDefinition {
 	 */
 	private String taskInitValue;
 	/**
+	 * 任务执行序号
+	 */
+	private Integer taskExecutionNum;
+	/**
 	 * 创建时间
 	 */
 	private String createDate;
@@ -47,6 +51,7 @@ public class BatchTaskDefinition {
 		this.taskAssociateGroupId = 0L;
 		this.taskSkipFlag = 1;
 		this.taskInitValue = "";
+		this.taskExecutionNum = 0;
 		this.createDate = "";
 		this.validStatus = "0";
 		this.remark = "";
@@ -123,6 +128,20 @@ public class BatchTaskDefinition {
 		this.taskInitValue = taskInitValue;
 	}
 	/**
+	 * 任务执行序号
+	 * @return thetaskExecutionNum
+	 */
+	public Integer getTaskExecutionNum() {
+		return taskExecutionNum;
+	}
+	/**
+	 * 任务执行序号
+	 * @param taskExecutionNum the taskExecutionNum to set
+	 */
+	public void setTaskExecutionNum(Integer taskExecutionNum) {
+		this.taskExecutionNum = taskExecutionNum;
+	}
+	/**
 	 * 创建时间
 	 * @return thecreateDate
 	 */
@@ -172,7 +191,7 @@ public class BatchTaskDefinition {
 	public String toString() {
 		return "BatchTaskDefinition[" + 
 		"taskId=" + taskId + ", taskName=" + taskName + ", taskAssociateGroupId=" + taskAssociateGroupId + ", taskSkipFlag=" + taskSkipFlag + 
-		", taskInitValue=" + taskInitValue + ", createDate=" + createDate + ", validStatus=" + validStatus + 
-		", remark=" + remark + "]";
+		", taskInitValue=" + taskInitValue + ", taskExecutionNum=" + taskExecutionNum + ", createDate=" + createDate + 
+		", validStatus=" + validStatus + ", remark=" + remark + "]";
 	}
 }

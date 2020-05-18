@@ -1,5 +1,11 @@
 package org.mine.quartz.dto;
 
+/**
+ * @Description: 监视器Dto
+ * @ClassName: JobMonitorDto
+ * @author: wntl
+ * @date: 2020年4月29日 下午8:34:53
+ */
 public class JobMonitorDto {
 	/**
 	 * 任务ID

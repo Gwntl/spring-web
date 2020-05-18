@@ -9,7 +9,7 @@ import org.mine.aplt.constant.ApltContanst;
 import org.mine.aplt.support.bean.GitContext;
 import org.mine.aplt.support.dao.BatchOperator;
 import org.mine.dao.custom.BatchDefineCostomDao;
-import org.mine.quartz.ExcutorBase;
+import org.mine.quartz.ExecutorBase;
 import org.mine.quartz.schduler.AutoScheduler;
 import org.quartz.SchedulerException;
 import org.quartz.TriggerKey;

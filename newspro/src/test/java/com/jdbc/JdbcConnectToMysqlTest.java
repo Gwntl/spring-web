@@ -6,11 +6,13 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mine.model.Tuser;
+import org.mine.quartz.schduler.AutoScheduler;
 import org.mine.service.TuserService;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -148,5 +150,21 @@ public class JdbcConnectToMysqlTest {
 //		detailConf.setJobdetailActuator("");
 //		detailConf.setJobdetailGroupId(groupConf2.getJobGroupId());
 //		jobDetailConfDao.insertOne(detailConf);
+	}
+	@Autowired
+	private AutoScheduler schduler;
+	
+	@Test
+	public void test6() throws Exception{
+//		schduler.addQueue(1L, "test", 0);
+//		schduler.addGroup(1L, "test_group", 1L);
+//		schduler.addTask(1L, "test_task", 1L, new ArrayList<>());
+//		schduler.addJob(1L, "test_job", "1", new ArrayList<>(), "org.mine.quartz.job.ConcurrentExcutorJob", 0, 0, 0, "");
+//		schduler.addStep(1L, "test_step", "actualAddFourJob", new ArrayList<>());
+//		List<Long> list = new ArrayList<>();
+//		list.add(1L);
+//		schduler.orchestrationTask(1L, list);
+//		schduler.orchestrationJob(1L, list);
+//		schduler.addTrigger(1L, "test", "20200410001010", "20200510121010", "0/1 * * * * ? *", "每秒执行一次");
 	}
 }
