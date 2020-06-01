@@ -1,10 +1,10 @@
 package org.mine.model;
 
 /**
- * batch_timing_step_log_register--
+ * batch_timing_step_log_register--定时批量步骤执行日志登记表
  * @filename BatchTimingStepLogRegister.java
  * @author wzaUsers
- * @date 2020-04-30 16:04:06
+ * @date 2020-06-01 15:06:24
  * @version v1.0
 */
 public class BatchTimingStepLogRegister {
@@ -29,7 +29,7 @@ public class BatchTimingStepLogRegister {
 	 */
 	private String stepEndTime;
 	/**
-	 * 步骤状态,COMPLETED-处理中, SUCCSS-成功, FAILED-失败,UNKOWN-非正常状态
+	 * 
 	 */
 	private String stepJobStatus;
 	/**
@@ -138,14 +138,14 @@ public class BatchTimingStepLogRegister {
 		this.stepEndTime = stepEndTime;
 	}
 	/**
-	 * 步骤状态,COMPLETED-处理中, SUCCSS-成功, FAILED-失败,UNKOWN-非正常状态
+	 * 
 	 * @return thestepJobStatus
 	 */
 	public String getStepJobStatus() {
 		return stepJobStatus;
 	}
 	/**
-	 * 步骤状态,COMPLETED-处理中, SUCCSS-成功, FAILED-失败,UNKOWN-非正常状态
+	 * 
 	 * @param stepJobStatus the stepJobStatus to set
 	 */
 	public void setStepJobStatus(String stepJobStatus) {

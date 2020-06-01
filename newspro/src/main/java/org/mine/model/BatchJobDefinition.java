@@ -1,10 +1,10 @@
 package org.mine.model;
 
 /**
- * batch_job_definition--
+ * batch_job_definition--批量作业定义表
  * @filename BatchJobDefinition.java
  * @author wzaUsers
- * @date 2020-04-30 16:04:06
+ * @date 2020-06-01 15:06:24
  * @version v1.0
 */
 public class BatchJobDefinition {

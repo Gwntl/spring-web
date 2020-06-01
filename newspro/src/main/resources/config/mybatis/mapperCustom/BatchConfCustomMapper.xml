@@ -24,4 +24,19 @@
 	<select id="getBatchSequence" resultType="java.lang.Long">
 		select nextVal(#{seqName})
 	</select>
+	
+	<select id="getMaxNumByTbName" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select
+		<if test="dbname != null and dbname == 'batch_group_definition'">
+			IFNULL(MAX(group_execution_num) + 1, 1) from batch_group_definition
+		</if>
+		<if test="dbname != null and dbname = 'batch_trigger_definition'">
+			IFNULL(MAX(trigger_id) + 1, 1) from batch_trigger_definition
+		</if>
+	</select>
+	
+	<update id="updateStepLogExecuStatus" parameterType="java.util.Map">
+		update batch_timing_step_log_register set step_job_status = #{stepJobStatus}, step_job_errmsg= #{stepJobErrmsg} where step_execution_id = #{stepExecutionId}
+	</update>
+	
 </mapper>

@@ -22,4 +22,13 @@ public class BatchDefineCostomDaoImpl extends BaseDaoSupport implements BatchDef
 		map.put("seqName", seqName);
 		return getSqlSessionTemplate().selectOne("BatchConfCustom.getBatchSequence", map);
 	}
+
+	@Override
+	public int updateStepLogExecuStatus(Long stepExecutionId, String stepJobStatus, String stepJobErrmsg) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("stepExecutionId", stepExecutionId);
+		map.put("stepJobStatus", stepJobStatus);
+		map.put("stepJobErrmsg", stepJobErrmsg);
+		return getSqlSessionTemplate().update("BatchConfCustom.updateStepLogExecuStatus", map);
+	}
 }

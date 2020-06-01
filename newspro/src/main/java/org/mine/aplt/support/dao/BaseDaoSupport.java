@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.stereotype.Component;
 
 /**
  * MyBatisDao操作基类.</br>
@@ -45,6 +46,7 @@ import org.springframework.context.ApplicationContextAware;
  * @date 2019年12月9日下午2:54:46 
  * @version v1.0
  */
+@Component
 public class BaseDaoSupport implements ApplicationContextAware{
 
 	@Autowired

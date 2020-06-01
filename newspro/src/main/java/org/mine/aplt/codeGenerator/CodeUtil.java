@@ -89,18 +89,23 @@ public class CodeUtil {
 	public static void tableInfos(String tableName){
 		try {
 			DatabaseMetaData metaData = conn.getMetaData();
+			
+			logger.debug("{}", metaData.getClass());
 			//获取Table表(不是系统表之类的), 去掉new String[]{"TABLE"}便是获取数据库中所有表
 //			ResultSet resultSet = metaData.getTables(null, null, null, new String[]{"TABLE"});
 			//获取指定表明
-			ResultSet resultSet = metaData.getTables(null, null, tableName, new String[]{"TABLE"});
-			logger.debug("条数: {}", resultSet.getRow());
-			while(resultSet.next()){
-				logger.debug("数据库中表名为: {}, 注释为: {}", resultSet.getString(3), resultSet.getString(5));
-			}
+//			ResultSet resultSet = metaData.getTables("msbadb", null, tableName, new String[]{"TABLE"});
+//			logger.debug("条数: {}", resultSet.getRow());
+//			while(resultSet.next()){
+//				logger.debug("数据库中表名为: {}, 注释为: {}", resultSet.getString(3), resultSet.getString(5));
+//			}
+			logger.debug("数据库中表名为: {}, 注释为: {}", tableName, getTableDefintion(tableName));
 			//获取主键
-			ResultSet primary = metaData.getPrimaryKeys(null, null, tableName);
-			while(primary.next()){
-				logger.debug("数据库中表名为: {}, 主键为: {}", primary.getString(3), primary.getString(4));
+			ResultSet primary = metaData.getPrimaryKeys("msbadb", null, tableName);
+			while(primary != null && primary.next()){
+				for(int i =  1; i < 11; i++){
+					logger.debug("{} = {}", i, primary.getString(i));
+				}
 			}
 			
 			ResultSet indexInfo = metaData.getIndexInfo(null, null, tableName, false, false);
@@ -117,6 +122,27 @@ public class CodeUtil {
 		} catch (SQLException e) {
 			logger.error("获取数据库信息失败!!!!错误信息: {}", MineException.getStackTrace(e));
 		}
+	}
+	
+	/**
+	 * 根据表名获取表注释
+	 * @param tableName
+	 * @return
+	 */
+	public static String getTableDefintion(String tableName){
+		try {
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("SELECT TABLE_COMMENT FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = ?");
+			PreparedStatement statement = conn.prepareStatement(buffer.toString());
+			statement.setString(1, tableName);
+			ResultSet resultSet = statement.executeQuery();
+			while(resultSet.next()){
+				return resultSet.getString(1);
+			}
+		} catch (SQLException e) {
+			logger.error("error message : {}", GitWebException.getStackTrace(e));
+		}
+		return null;
 	}
 	
 	/**
@@ -147,12 +173,16 @@ public class CodeUtil {
 			
 			DatabaseMetaData metaData = conn.getMetaData();
 			
-			ResultSet resultSetTable = metaData.getTables(null, null, tableName, new String[]{"TABLE"});
-			while(resultSetTable.next()){
-				String comment = resultSetTable.getString(5);
-				dto.setTableComment(comment);
-				logger.debug("数据库中表名为: {}, 注释为: {}", resultSetTable.getString(3), comment);
-			}
+//			ResultSet resultSetTable = metaData.getTables(null, null, tableName, new String[]{"TABLE"});
+//			while(resultSetTable.next()){
+//				String comment = resultSetTable.getString(5);
+//				dto.setTableComment(comment);
+//				logger.debug("数据库中表名为: {}, 注释为: {}", resultSetTable.getString(3), comment);
+//			}
+			String comment = getTableDefintion(tableName);
+			dto.setTableComment(comment);
+			logger.debug("数据库中表名为: {}, 注释为: {}", tableName, comment);
+			
 			
 			ResultSet resultSet = metaData.getColumns(null, null, tableName, null);
 			while(resultSet.next()){
@@ -508,6 +538,9 @@ public class CodeUtil {
 			createMyBatisMapperXml(codeDto, tableName);
 			CodeGeneration.setIsOneIndex();
 		}
+		
+//		tableInfos("t_user");
+//		getTableDefintion("t_user");
 		destory();
 	}
 }

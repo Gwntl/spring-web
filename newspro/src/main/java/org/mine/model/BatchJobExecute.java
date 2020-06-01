@@ -1,10 +1,10 @@
 package org.mine.model;
 
 /**
- * batch_job_execute--
+ * batch_job_execute--批量作业执行表(并发)
  * @filename BatchJobExecute.java
  * @author wzaUsers
- * @date 2020-04-30 16:04:15
+ * @date 2020-06-01 15:06:59
  * @version v1.0
 */
 public class BatchJobExecute {

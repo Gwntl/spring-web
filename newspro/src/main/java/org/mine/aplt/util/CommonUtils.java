@@ -177,11 +177,13 @@ public final class CommonUtils {
 		if(map != null && isNotEmpty(initValue)){
 			String[] values = initValue.split(";");
 			for(int i = 0, length = values.length; i < length; i++){
-				String[] key_value = values[i].split("=");
-				map.put(key_value[0], key_value[1]);
+				if(values[i].length() > 0){
+					String[] key_value = values[i].split("=");
+					map.put(key_value[0], key_value[1]);
+				}
 			}
 		} else {
-			logger.error("设置值为空!!!!");
+			logger.warn("设置值为空!!!!");
 		}
 		return map;
 	}

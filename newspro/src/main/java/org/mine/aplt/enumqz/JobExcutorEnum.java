@@ -1,7 +1,7 @@
 package org.mine.aplt.enumqz;
 
 public enum JobExcutorEnum {
-	STARTED("STARTED"), COMPLETING("COMPLETING"), SUCCESS("SUCCESS"),FAILED("FAILED"),UNKOWN("UNKOWN"),CANCEL("CANCLE_MANUAL");
+	NEW("NEW"), COMPLETING("COMPLETING"), SUCCESS("SUCCESS"),FAILED("FAILED"),UNKOWN("UNKOWN"),CANCEL("CANCLE_MANUAL");
 	
 	/**
 	 * JOB执行并发
@@ -34,23 +34,23 @@ public enum JobExcutorEnum {
 	 */
 	public static final String NO_SAVE_LOG = "1";
 	
-	private String id;
+	private String value;
 	
-	private JobExcutorEnum(String id) {
-		this.id = id;
+	private JobExcutorEnum(String value) {
+		this.value = value;
 	}
 	
 	/**
 	 * @return the id
 	 */
-	public String getId() {
-		return id;
+	public String getValue() {
+		return value;
 	}
 
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(String id) {
-		this.id = id;
+	public void setValue(String value) {
+		this.value = value;
 	}
 }

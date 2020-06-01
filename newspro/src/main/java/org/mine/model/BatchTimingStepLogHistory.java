@@ -1,10 +1,10 @@
 package org.mine.model;
 
 /**
- * batch_timing_step_log_history--
+ * batch_timing_step_log_history--定时批量步骤执行日志历史表
  * @filename BatchTimingStepLogHistory.java
  * @author wzaUsers
- * @date 2020-04-30 16:04:06
+ * @date 2020-06-01 15:06:24
  * @version v1.0
 */
 public class BatchTimingStepLogHistory {
@@ -29,7 +29,7 @@ public class BatchTimingStepLogHistory {
 	 */
 	private String historyStepEndTime;
 	/**
-	 * 步骤状态,COMPLETED-处理中, SUCCSS-成功, FAILED-失败,UNKOWN-非正常状态
+	 * 
 	 */
 	private String historyStepJobStatus;
 	/**
@@ -138,14 +138,14 @@ public class BatchTimingStepLogHistory {
 		this.historyStepEndTime = historyStepEndTime;
 	}
 	/**
-	 * 步骤状态,COMPLETED-处理中, SUCCSS-成功, FAILED-失败,UNKOWN-非正常状态
+	 * 
 	 * @return thehistoryStepJobStatus
 	 */
 	public String getHistoryStepJobStatus() {
 		return historyStepJobStatus;
 	}
 	/**
-	 * 步骤状态,COMPLETED-处理中, SUCCSS-成功, FAILED-失败,UNKOWN-非正常状态
+	 * 
 	 * @param historyStepJobStatus the historyStepJobStatus to set
 	 */
 	public void setHistoryStepJobStatus(String historyStepJobStatus) {

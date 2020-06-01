@@ -4,10 +4,16 @@ import java.text.ParseException;
 
 import org.mine.aplt.util.CommonUtils;
 import org.quartz.CronExpression;
+import org.quartz.CronScheduleBuilder;
+import org.quartz.JobBuilder;
+import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
 import org.quartz.JobKey;
+import org.quartz.ScheduleBuilder;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 import org.quartz.impl.JobDetailImpl;
 import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.triggers.CronTriggerImpl;
@@ -15,6 +21,35 @@ import org.quartz.impl.triggers.CronTriggerImpl;
 public class MulCronTest {
 
 	public static void main(String[] args) {
+//		test_1();
+		test_0();
+	}
+	
+	public static void test_0(){
+		try {
+			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+			Inner inner = new Inner();
+			inner.setName("1");
+			JobDataMap dataMap = new JobDataMap();
+			dataMap.put("ONE", inner);
+			JobDetail detail = JobBuilder.newJob(MulCronJob.class).withIdentity("TEST_JOB_" + 1L, "TEST_GROUP").usingJobData(dataMap).build();
+			Trigger trigger = TriggerBuilder.newTrigger().withIdentity("TEST_TRIGGER_" + 1L, "TEST_TRIGGER").withSchedule(CronScheduleBuilder.cronSchedule("*/1 * * * * ? *")).build();
+			scheduler.scheduleJob(detail, trigger);
+			
+			JobDataMap dataMap1 = new JobDataMap();
+			inner.setName("2");
+			dataMap1.put("ONE", inner);
+			JobDetail detail1 = JobBuilder.newJob(MulCronJob.class).withIdentity("TEST_JOB_" + 2L, "TEST_GROUP").usingJobData(dataMap1).build();
+			Trigger trigger1 = TriggerBuilder.newTrigger().withIdentity("TEST_TRIGGER_" + 2L, "TEST_TRIGGER").withSchedule(CronScheduleBuilder.cronSchedule("*/3 * * * * ? *")).build();
+			scheduler.scheduleJob(detail1, trigger1);
+			
+			scheduler.start();
+		} catch (SchedulerException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static void test_1(){
 		try {
 			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 			
@@ -51,4 +86,16 @@ public class MulCronTest {
 		}
 	}
 	
+	static class Inner {
+		private String name;
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+		
+	}
 }

@@ -94,6 +94,14 @@ public class GitWebException extends MineBizException{
 	}
 	
 	/**
+	 * 定时触发器设置不合法
+	 * @return
+	 */
+	public static MineBizException GIT_CRONEXPRESSION(String expression){
+		return newException(PROPERTIES, "GIT_CRONEXPRESSION", new Object[]{expression});
+	}
+	
+	/**
 	 * 队列赋值失败,请技术人员尽快查看错误信息!!!
 	 * @return
 	 */

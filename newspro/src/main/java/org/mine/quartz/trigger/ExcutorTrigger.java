@@ -84,8 +84,8 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 	public void afterPropertiesSet() throws Exception {
 		//初始化执行器缓存
 		quartzStepCache.putAll(context.getBeansOfType(BaseServiceTasketExcutor.class));
-		System.out.println(">>>>> " + CommonUtils.toString(quartzStepCache));
 		loadTimingData();
+		logger.debug("load timing task over....");
 	}
 	
 	/**
@@ -96,19 +96,17 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 		try{
 			//查询出需定时执行的任务
 			List<BatchQueueDefinition> queueDefinitions = definitionDao.selectAll1R(JobExcutorEnum.AUTO_RUN);
-			ConcurrTaskDto taskDto = null;
 			int size = queueDefinitions.size();
 			if(size > 0){
-				for(int i = 0; i < size; i++){
-					taskDto = new ConcurrTaskDto();
-					BatchQueueDefinition queueDefinition = queueDefinitions.get(i);
+				for(BatchQueueDefinition queueDefinition : queueDefinitions){
 					Long queueId = queueDefinition.getQueueId();
 					List<BatchGroupDefinition> groupDefinitions = groupDefinitionDao.selectAll1R(queueId);
 					if(CommonUtils.isEmpty(groupDefinitions)){
 						logger.error("No executable groups exists on the current queue[{}]!!!!", queueId);
 					} else {
-						for(int group = 0, groupSize = groupDefinitions.size(); group < groupSize; group++){
-							BatchGroupDefinition groupDefinition = groupDefinitions.get(group);
+						ConcurrTaskDto taskDto = null;
+						for(BatchGroupDefinition groupDefinition : groupDefinitions){
+							taskDto = new ConcurrTaskDto();
 							taskDto.setGroupId(groupDefinition.getGroupId());
 							Long groupId = groupDefinition.getGroupId();
 							List<BatchTaskDefinition> taskDefinitions = taskDefinitionDao.selectAll1R(groupId);
@@ -124,20 +122,26 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 									if(CommonUtils.isEmpty(taskExecutes)){
 										logger.error("No executable jobs exists on the current task[{}]", taskId);
 									} else {
-										for(int taskE = 0, taskESize = taskExecutes.size(); taskE < taskESize; taskE++){
-											BatchTaskExecute taskExecute = taskExecutes.get(taskE);
+										for(BatchTaskExecute taskExecute : taskExecutes){
 											Long jobId = taskExecute.getExecuteJobId();
 											BatchJobDefinition jobDefinition = jobDefinitionDao.selectOne1R(jobId, false);
 											if(jobDefinition != null){
-												taskDto.setJobId(jobId);
-												taskDto.setJobName(jobDefinition.getJobName());
-												taskDto.setJobSkipFlag(jobDefinition.getJobSkipFlag());
-												taskDto.setJobRunMutiFlag(jobDefinition.getJobRunMutiFlag());
-												taskDto.setJobTimeDelayFlag(jobDefinition.getJobTimeDelayFlag());
-												taskDto.setJobTimeDelayValue(jobDefinition.getJobTimeDelayValue());
-												taskDto.setJobOneTime(taskExecute.getExecuteJobOneTime());
-												CommonUtils.initMapValue(taskDto.getJobInitValue(), jobDefinition.getJobInitValue());
-												registerQuartz(jobDefinition, taskDto);
+												//由于jobdatamap中保存的为对象的引用, 因此需要new对象.
+												ConcurrTaskDto dto = new ConcurrTaskDto();
+												dto.setGroupId(taskDto.getGroupId());
+												dto.setTaskId(taskDto.getTaskId());
+												dto.setTaskSkipFlag(taskDto.getTaskSkipFlag());
+												dto.setTaskInitValue(taskDto.getTaskInitValue());
+												
+												dto.setJobId(jobId);
+												dto.setJobName(jobDefinition.getJobName());
+												dto.setJobSkipFlag(jobDefinition.getJobSkipFlag());
+												dto.setJobRunMutiFlag(jobDefinition.getJobRunMutiFlag());
+												dto.setJobTimeDelayFlag(jobDefinition.getJobTimeDelayFlag());
+												dto.setJobTimeDelayValue(jobDefinition.getJobTimeDelayValue());
+												dto.setJobOneTime(taskExecute.getExecuteJobOneTime());
+												CommonUtils.initMapValue(dto.getJobInitValue(), jobDefinition.getJobInitValue());
+												registerQuartz(jobDefinition, dto);
 											} else {
 												logger.error("The current job[{}] does not exist", jobId);
 											}
@@ -166,6 +170,8 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 	 * @throws SchedulerException
 	 */
 	public void registerQuartz(BatchJobDefinition jobDefinition, ConcurrTaskDto taskDto)throws SchedulerException{
+//		JobDetail detail = JobBuilder.newJob(ExecutorBase.getExcutorJob(jobDefinition.getJobExecutor())).withIdentity(ApltContanst.DEFAULT_JOB_NAME 
+//				+ jobDefinition.getJobId(), ApltContanst.DEFAULT_JOB_GROUP).usingJobData(dataMap).build();
 		JobDetailImpl detailImpl = new JobDetailImpl();
 		detailImpl.setName(ApltContanst.DEFAULT_JOB_NAME + jobDefinition.getJobId());
 		detailImpl.setKey(new JobKey(detailImpl.getName(), ApltContanst.DEFAULT_JOB_GROUP));
@@ -183,8 +189,8 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 		 * 当注册时若发现未配置Job信息, Spring会从Map中自动获取jobDetail的值,注册进Schedule中.
 		 * */
 //		getJobDataMap().put("jobDetail", detail);
-		ExecutorBase.getSchedulerFactoryBean().getScheduler().scheduleJob(detailImpl, trigger);
 //		map.put(detailImpl, trigger);
+		ExecutorBase.getSchedulerFactoryBean().getScheduler().scheduleJob(detailImpl, trigger);
 		
 		//注册该JOB中其他触发器
 		int triggerSize = triggerIds.size();
@@ -209,6 +215,8 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 			if(CommonUtils.isEmpty(triggerDefinition.getTriggerCrontrigger())){
 				throw GitWebException.GIT1002("batch_trigger_conf.trigger_crontrigger 触发器参数");
 			}
+//			CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(ApltContanst.DEFAULT_TRIGGER_NAME + triggerDefinition.getTriggerId(), ApltContanst.DEFAULT_TRIGGER_GROUP).
+//			withSchedule(CronScheduleBuilder.cronSchedule(triggerDefinition.getTriggerCrontrigger())).build();
 			ExcutorTrigger trigger = new ExcutorTrigger();
 			trigger.setName(ApltContanst.DEFAULT_TRIGGER_NAME + triggerDefinition.getTriggerId());
 			trigger.setGroup(ApltContanst.DEFAULT_TRIGGER_GROUP);

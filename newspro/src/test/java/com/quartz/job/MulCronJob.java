@@ -11,6 +11,6 @@ public class MulCronJob implements Job{
 
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		System.out.println(CommonUtils.dateToString(new Date(), "HH:mm:ss") + ">>>---->>");
+		System.out.println(CommonUtils.dateToString(new Date(), "HH:mm:ss") + ">>>---->>" + CommonUtils.toString(context.getJobDetail().getJobDataMap()));
 	}
 }

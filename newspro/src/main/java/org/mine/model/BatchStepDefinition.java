@@ -1,10 +1,10 @@
 package org.mine.model;
 
 /**
- * batch_step_definition--
+ * batch_step_definition--批量执行步骤定义表(串行)
  * @filename BatchStepDefinition.java
  * @author wzaUsers
- * @date 2020-04-30 16:04:06
+ * @date 2020-06-01 15:06:24
  * @version v1.0
 */
 public class BatchStepDefinition {

@@ -7,7 +7,7 @@ import org.mine.model.BatchQueueDefinition;
  * 
  * @filename BatchQueueDefinitionDao.java
  * @author wzaUsers
- * @date 2020-04-30 16:04:06
+ * @date 2020-06-01 15:06:24
  * @version v1.0
 */
 

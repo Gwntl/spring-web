@@ -23,8 +23,10 @@ import org.mine.model.BatchStepDefinition;
 import org.mine.model.BatchTaskDefinition;
 import org.mine.model.BatchTaskExecute;
 import org.mine.model.BatchTriggerDefinition;
+import org.quartz.CronExpression;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 @Repository
 public class AutoScheduler{
@@ -187,6 +189,11 @@ public class AutoScheduler{
 		if(triggerId == null){
 			throw GitWebException.GIT1002("触发器ID");
 		}
+		
+		if (!CronExpression.isValidExpression(cronTrigger)) {
+			throw GitWebException.GIT_CRONEXPRESSION(cronTrigger);
+		}
+		
 		BatchTriggerDefinition definition = new BatchTriggerDefinition();
 		definition.setTriggerId(triggerId);
 		definition.setTriggerName(triggerName);
@@ -209,13 +216,18 @@ public class AutoScheduler{
 	 * @param remark
 	 * @return
 	 */
-	public int updateTrigger(Long triggerId, String triggerName, String startTime, String endTime, String cronTrigger, String remark){
-		BatchTriggerDefinition definition = triggerDefinitionDao.selectOne1R(triggerId, true);
-		definition.setTriggerName(triggerName);
-		definition.setTriggerStartTime(startTime);
-		definition.setTriggerEndTime(endTime);
-		definition.setTriggerCrontrigger(cronTrigger);
-		definition.setTriggerRemark(remark);
+	@Transactional
+	public int updateTrigger(BatchTriggerDefinition triggerDefinition){
+		if (CommonUtils.isNotEmpty(triggerDefinition.getTriggerCrontrigger()) && !CronExpression.isValidExpression(triggerDefinition.getTriggerCrontrigger())) {
+			throw GitWebException.GIT_CRONEXPRESSION(triggerDefinition.getTriggerCrontrigger());
+		}
+		BatchTriggerDefinition definition = triggerDefinitionDao.selectOne1R(triggerDefinition.getTriggerId(), true);
+		if (CommonUtils.isNotEmpty(triggerDefinition.getTriggerName())) triggerDefinition.setTriggerName(triggerDefinition.getTriggerName());
+		definition.setTriggerStartTime(triggerDefinition.getTriggerStartTime());
+		definition.setTriggerEndTime(triggerDefinition.getTriggerEndTime());
+		if (CommonUtils.isNotEmpty(triggerDefinition.getTriggerCrontrigger())) definition.setTriggerCrontrigger(triggerDefinition.getTriggerCrontrigger());
+		if (CommonUtils.isNotEmpty(triggerDefinition.getTriggerRemark())) definition.setTriggerRemark(triggerDefinition.getTriggerRemark());
+		System.out.println(">>>>>>>>>" + definition.toString());
 		return triggerDefinitionDao.updateOne1R(definition);
 	}
 	
@@ -261,4 +273,13 @@ public class AutoScheduler{
 			jobExecuteDao.insertOne(jobExecute);
 		}
 	}
+	
+//	/**
+//	 * 在已存在的作业中增加执行的step
+//	 * @param jobId
+//	 * @param steps
+//	 */
+//	public void appendStepsInJob(Long jobId, List<Long> steps){
+//		
+//	}
 }

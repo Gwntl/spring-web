@@ -129,6 +129,18 @@
 	<!-- 将事务交给切面进行管理 -->
 	<aop:config>
 		<!-- expression表达式中对应包下面的所有类  多个表法式 使用or分割-->
+		<!--  execution表达式:
+				1、拦截任意公共方法: execution(public * *(..))
+				2、拦截以set开头的任意方法: execution(* set*(..))
+				3、拦截类或者接口中的方法: execution(* org.mine.service.TuserService.*(..)) -> 拦截TuserService(类、接口)中定义的所有方法
+				4、拦截包中定义的方法，不包含子包中的方法: execution(* org.mine.service.*.*(..))  -> 拦截org.mine.service包中所有类中任意方法，不包含子包中的类
+				5、拦截包或者子包中定义的方法: execution(* org.mine.service..*.*(..)) -> 拦截org.mine.service包或者子包中定义的所有方法
+				within表达式(表达式格式：包名.* 或者 包名..*):
+				1、拦截包中任意方法，不包含子包中的方法: within(org.mine.service.*) -> 拦截service包中任意类的任意方法
+				2、拦截包或者子包中定义的方法: within(org.mine.service..*) -> 拦截service包及子包中任意类的任意方法
+				this表达式(代理对象为指定的类型会被拦截):
+				目标对象使用aop之后生成的代理对象必须是指定的类型才会被拦截，注意是目标对象被代理之后生成的代理对象和指定的类型匹配才会被拦截 -> this(org.mine.service.TuserService)
+		 -->
 		<aop:pointcut expression="execution(* org.mine.service.*.*(..))" id="controller"/>
 		<aop:advisor advice-ref="transaction" pointcut-ref="controller"/>
 	</aop:config>

@@ -1,10 +1,10 @@
 package org.mine.model;
 
 /**
- * batch_timing_task_log_history--
+ * batch_timing_task_log_history--定时批量任务日志历史表
  * @filename BatchTimingTaskLogHistory.java
  * @author wzaUsers
- * @date 2020-04-30 16:04:06
+ * @date 2020-06-01 15:06:24
  * @version v1.0
 */
 public class BatchTimingTaskLogHistory {
@@ -33,7 +33,7 @@ public class BatchTimingTaskLogHistory {
 	 */
 	private String historyTimingEndTime;
 	/**
-	 * 定时任务状态,COMPLETED-处理中, SUCCSS-成功, FAILED-失败,UNKOWN-非正常状态
+	 * 
 	 */
 	private String historyTimingJobStatus;
 	/**
@@ -152,14 +152,14 @@ public class BatchTimingTaskLogHistory {
 		this.historyTimingEndTime = historyTimingEndTime;
 	}
 	/**
-	 * 定时任务状态,COMPLETED-处理中, SUCCSS-成功, FAILED-失败,UNKOWN-非正常状态
+	 * 
 	 * @return thehistoryTimingJobStatus
 	 */
 	public String getHistoryTimingJobStatus() {
 		return historyTimingJobStatus;
 	}
 	/**
-	 * 定时任务状态,COMPLETED-处理中, SUCCSS-成功, FAILED-失败,UNKOWN-非正常状态
+	 * 
 	 * @param historyTimingJobStatus the historyTimingJobStatus to set
 	 */
 	public void setHistoryTimingJobStatus(String historyTimingJobStatus) {

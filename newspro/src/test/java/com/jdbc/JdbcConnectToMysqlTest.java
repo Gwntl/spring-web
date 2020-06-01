@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mine.model.BatchTriggerDefinition;
 import org.mine.model.Tuser;
 import org.mine.quartz.schduler.AutoScheduler;
 import org.mine.service.TuserService;
@@ -159,12 +160,18 @@ public class JdbcConnectToMysqlTest {
 //		schduler.addQueue(1L, "test", 0);
 //		schduler.addGroup(1L, "test_group", 1L);
 //		schduler.addTask(1L, "test_task", 1L, new ArrayList<>());
-//		schduler.addJob(1L, "test_job", "1", new ArrayList<>(), "org.mine.quartz.job.ConcurrentExcutorJob", 0, 0, 0, "");
-//		schduler.addStep(1L, "test_step", "actualAddFourJob", new ArrayList<>());
-//		List<Long> list = new ArrayList<>();
-//		list.add(1L);
+//		schduler.addJob(2L, "test_job1", "2", new ArrayList<>(), "org.mine.quartz.job.ConcurrentExcutorJob", 0, 0, 0, "");
+		schduler.addStep(5L, "test_step_5", "dataPrintServiceImpl", new ArrayList<>());
+		List<Long> list = new ArrayList<>();
+		list.add(5L);
 //		schduler.orchestrationTask(1L, list);
-//		schduler.orchestrationJob(1L, list);
-//		schduler.addTrigger(1L, "test", "20200410001010", "20200510121010", "0/1 * * * * ? *", "每秒执行一次");
+		schduler.orchestrationJob(2L, list);
+//		schduler.addTrigger(2L, "test2", "20080410001010", "20990510121010", "0 */1 * * * ? *", "每分钟执行一次");
+//		BatchTriggerDefinition triggerDefinition = new BatchTriggerDefinition();
+//		triggerDefinition.setTriggerId(2L);
+//		triggerDefinition.setTriggerCrontrigger("0 0/1 * * * ? *");
+//		triggerDefinition.setTriggerStartTime(null);
+//		triggerDefinition.setTriggerEndTime(null);
+//		schduler.updateTrigger(triggerDefinition);
 	}
 }

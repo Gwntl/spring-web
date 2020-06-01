@@ -1,5 +1,9 @@
 package org.mine.quartz.dto;
 
+import java.util.Map;
+
+import org.mine.aplt.util.CommonUtils;
+
 public class CallableResultDto {
 	/**
 	 * 运行结果
@@ -11,6 +15,11 @@ public class CallableResultDto {
 	 * mseeage
 	 */
 	private String mseeage;
+	/**
+	 * 传递值
+	 * @Fields map
+	 */
+	private Map<String, Object> map;
 	/**
 	 * @return the result
 	 */
@@ -35,11 +44,15 @@ public class CallableResultDto {
 	public void setMseeage(String mseeage) {
 		this.mseeage = mseeage;
 	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
+	
+	public Map<String, Object> getMap() {
+		return map;
+	}
+	public void setMap(Map<String, Object> map) {
+		this.map = map;
+	}
 	@Override
 	public String toString() {
-		return "CallableResultDto [result=" + result + ", mseeage=" + mseeage + "]";
+		return "CallableResultDto [result=" + result + ", mseeage=" + mseeage + ", map=" + CommonUtils.toString(map) + "]";
 	}
 }
