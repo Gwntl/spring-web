@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
  * 
  * @filename BatchQueueDefinitionDaoImpl.java
  * @author wzaUsers
- * @date 2020-06-01 15:06:24
+ * @date 2020-06-09 10:06:03
  * @version v1.0
 */
 @Repository
@@ -177,34 +177,34 @@ public class BatchQueueDefinitionDaoImpl extends BaseDaoSupport implements Batch
 
 	/**
 	 * 查询多笔数据
-	 * @param queueTimingtaskFlag 是否为定时任务. 0-是,1-否
+	 * @param queueExcFlag 任务执行标志. 0-手动, 1-自动, 2-手/自.
 	 */
 	@Override
-	public List<BatchQueueDefinition> selectAll1(Integer queueTimingtaskFlag){
+	public List<BatchQueueDefinition> selectAll1(Integer queueExcFlag){
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("queueTimingtaskFlag", queueTimingtaskFlag);
+		map.put("queueExcFlag", queueExcFlag);
 		return getSqlSessionTemplate().selectList("BatchQueueDefinition.selectAll1", map);
 	}
 
 	/**
 	 * 查询多笔数据(正常状态 valid_status = 0)
-	 * @param queueTimingtaskFlag 是否为定时任务. 0-是,1-否
+	 * @param queueExcFlag 任务执行标志. 0-手动, 1-自动, 2-手/自.
 	 */
 	@Override
-	public List<BatchQueueDefinition> selectAll1R(Integer queueTimingtaskFlag){
+	public List<BatchQueueDefinition> selectAll1R(Integer queueExcFlag){
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("queueTimingtaskFlag", queueTimingtaskFlag);
+		map.put("queueExcFlag", queueExcFlag);
 		return getSqlSessionTemplate().selectList("BatchQueueDefinition.selectAll1R", map);
 	}
 
 	/**
 	 * 查询多笔数据(加锁  for update: 当使用索引时锁行, 其他锁表)
-	 * @param queueTimingtaskFlag 是否为定时任务. 0-是,1-否
+	 * @param queueExcFlag 任务执行标志. 0-手动, 1-自动, 2-手/自.
 	 */
 	@Override
-	public List<BatchQueueDefinition> selectAll1L(Integer queueTimingtaskFlag){
+	public List<BatchQueueDefinition> selectAll1L(Integer queueExcFlag){
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("queueTimingtaskFlag", queueTimingtaskFlag);
+		map.put("queueExcFlag", queueExcFlag);
 		return getSqlSessionTemplate().selectList("BatchQueueDefinition.selectAll1L", map);
 	}
 

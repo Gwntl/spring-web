@@ -7,7 +7,7 @@ import org.mine.model.BatchTimingStepLogRegister;
  * 
  * @filename BatchTimingStepLogRegisterDao.java
  * @author wzaUsers
- * @date 2020-06-01 15:06:24
+ * @date 2020-06-08 10:06:39
  * @version v1.0
 */
 

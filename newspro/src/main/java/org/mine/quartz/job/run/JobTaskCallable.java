@@ -53,7 +53,6 @@ public class JobTaskCallable implements Runnable, InitializingBean{
 	
 	private static final Logger logger = LoggerFactory.getLogger(JobTaskCallable.class);
 	private static final int AVAIL_CPU = Runtime.getRuntime().availableProcessors();
-//	private static final int THREADMINLENGTH = 50;
 	private static final int THREADMINLENGTH = AVAIL_CPU << 2;
 	private static final int THREADMAXLENGTH = AVAIL_CPU << 3;
 	/**

@@ -7,7 +7,7 @@ import org.mine.model.BatchTaskDefinition;
  * 
  * @filename BatchTaskDefinitionDao.java
  * @author wzaUsers
- * @date 2020-06-01 15:06:24
+ * @date 2020-06-08 10:06:39
  * @version v1.0
 */
 
@@ -84,17 +84,32 @@ public interface BatchTaskDefinitionDao {
 	void batchDelete(List<BatchTaskDefinition> list);
 	/**
 	 * 查询多笔数据
-	 * @param taskAssociateGroupId 关联任务组ID
+	 * @param taskAssociateQueueId 关联队列ID
 	 */
-	List<BatchTaskDefinition> selectAll1(Long taskAssociateGroupId);
+	List<BatchTaskDefinition> selectAll1(Long taskAssociateQueueId);
 	/**
 	 * 查询多笔数据(正常状态 valid_status = 0)
-	 * @param taskAssociateGroupId 关联任务组ID
+	 * @param taskAssociateQueueId 关联队列ID
 	 */
-	List<BatchTaskDefinition> selectAll1R(Long taskAssociateGroupId);
+	List<BatchTaskDefinition> selectAll1R(Long taskAssociateQueueId);
 	/**
 	 * 查询多笔数据(加锁  for update: 当使用索引时锁行, 其他锁表)
-	 * @param taskAssociateGroupId 关联任务组ID
+	 * @param taskAssociateQueueId 关联队列ID
 	 */
-	List<BatchTaskDefinition> selectAll1L(Long taskAssociateGroupId);
+	List<BatchTaskDefinition> selectAll1L(Long taskAssociateQueueId);
+	/**
+	 * 查询多笔数据
+	 * @param taskAutoFlag 是否自动执行. 0-是, 1-否
+	 */
+	List<BatchTaskDefinition> selectAll2(Integer taskAutoFlag);
+	/**
+	 * 查询多笔数据(正常状态 valid_status = 0)
+	 * @param taskAutoFlag 是否自动执行. 0-是, 1-否
+	 */
+	List<BatchTaskDefinition> selectAll2R(Integer taskAutoFlag);
+	/**
+	 * 查询多笔数据(加锁  for update: 当使用索引时锁行, 其他锁表)
+	 * @param taskAutoFlag 是否自动执行. 0-是, 1-否
+	 */
+	List<BatchTaskDefinition> selectAll2L(Integer taskAutoFlag);
 }

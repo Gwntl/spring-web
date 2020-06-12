@@ -14,13 +14,17 @@ import org.mine.aplt.util.CommonUtils;
  */
 public class ConcurrTaskDto {
 	/**
+	 * 当前队列初始值
+	 */
+	private Map<String, Object> queueInitValue;
+	/**
 	 * 组别ID
 	 */
 	private Long groupId;
 	/**
 	 * 当前组别是否记录日志
 	 */
-	private Integer groupSaveLog;
+	private Integer jobLogFlag;
 	/**
 	 * 当前作业是否一次性任务
 	 */
@@ -80,8 +84,9 @@ public class ConcurrTaskDto {
 	
 	public ConcurrTaskDto() {
 		super();
+		this.queueInitValue = new HashMap<>();
 		this.groupId = 0L;
-		this.groupSaveLog = 0;
+		this.jobLogFlag = 0;
 		this.jobOneTime = 0;
 		this.taskId = 0L;
 		this.taskSkipFlag = 0;
@@ -97,6 +102,23 @@ public class ConcurrTaskDto {
 		this.stepInitValue = new HashMap<>();
 		this.historyId = 0L;
 	}
+	
+	/**
+	 * 当前队列初始值
+	 * @return the queueInitValue
+	 */
+	public Map<String, Object> getQueueInitValue() {
+		return queueInitValue;
+	}
+
+	/**
+	 * 当前队列初始值
+	 * @param queueInitValue the queueInitValue to set
+	 */
+	public void setQueueInitValue(Map<String, Object> queueInitValue) {
+		this.queueInitValue = queueInitValue;
+	}
+
 	/**
 	 * 组别ID
 	 * @return the groupId
@@ -117,15 +139,15 @@ public class ConcurrTaskDto {
 	 * 当前组别是否记录日志
 	 * @return the groupSaveLog
 	 */
-	public Integer getGroupSaveLog() {
-		return groupSaveLog;
+	public Integer getJobLogFlag() {
+		return jobLogFlag;
 	}
 	/**
 	 * 当前组别是否记录日志
 	 * @param groupSaveLog the groupSaveLog to set
 	 */
-	public void setGroupSaveLog(Integer groupSaveLog) {
-		this.groupSaveLog = groupSaveLog;
+	public void setJobLogFlag(Integer groupSaveLog) {
+		this.jobLogFlag = groupSaveLog;
 	}
 	/**
 	 * 当前作业是否一次性任务
@@ -328,12 +350,13 @@ public class ConcurrTaskDto {
 	 */
 	@Override
 	public String toString() {
-		return "ConcurrTaskDto [groupId= " + groupId + ", groupSaveLog=" + groupSaveLog + ", jobOneTime="
-				+ jobOneTime + ", taskId=" + taskId + ", taskSkipFlag=" + taskSkipFlag + ", taskInitValue="
-				+ CommonUtils.toString(taskInitValue) + ", jobInitValue=" + CommonUtils.toString(jobInitValue)
-				+ ", jobSkipFlag=" + jobSkipFlag + ", jobRunMutiFlag=" + jobRunMutiFlag + ", jobTimeDelayFlag="
-				+ jobTimeDelayFlag + ", jobTimeDelayValue=" + jobTimeDelayValue + ", jobId=" + jobId + ", jobName="
-				+ jobName + ", stepMdcValue=" + stepMdcValue + ", stepInitValue=" + CommonUtils.toString(stepInitValue)
+		return "ConcurrTaskDto [queueInitValue = " + CommonUtils.toString(jobInitValue) + "groupId= " + groupId
+				+ ", groupSaveLog=" + jobLogFlag + ", jobOneTime=" + jobOneTime + ", taskId=" + taskId
+				+ ", taskSkipFlag=" + taskSkipFlag + ", taskInitValue=" + CommonUtils.toString(taskInitValue)
+				+ ", jobInitValue=" + CommonUtils.toString(jobInitValue) + ", jobSkipFlag=" + jobSkipFlag
+				+ ", jobRunMutiFlag=" + jobRunMutiFlag + ", jobTimeDelayFlag=" + jobTimeDelayFlag
+				+ ", jobTimeDelayValue=" + jobTimeDelayValue + ", jobId=" + jobId + ", jobName=" + jobName
+				+ ", stepMdcValue=" + stepMdcValue + ", stepInitValue=" + CommonUtils.toString(stepInitValue)
 				+ ", historyId=" + historyId + "]";
 	}
 }

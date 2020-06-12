@@ -31,22 +31,25 @@ import org.slf4j.LoggerFactory;
  * 定义表: batch_queue_definition, batch_group_definition, batch_trigger_definition, batch_task_definition, batch_job_definition, batch_step_definition.</br>
  * 执行定义表为:batch_task_execute,batch_job_execute. 其他表均为配置表, 可根据要求在各种配置中灵活组合.</br>
  * 
- * @filename ConcurrentExcutorJob.java
+ * @filename AsyncTaskJob.java
  * @author wzaUsers
  * @date 2019年11月26日下午8:13:01
  * @version v1.0
  */
-public class ConcurrentExcutorJob implements Job{
-	private static final Logger logger = LoggerFactory.getLogger(ConcurrentExcutorJob.class);
+public class AsyncTaskLogJob implements Job{
+	private static final Logger logger = LoggerFactory.getLogger(AsyncTaskLogJob.class);
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
-		logger.debug("ConcurrentExcutorJob begin >>>>>>>>>> {}, \n{} ", System.currentTimeMillis(), CommonUtils.toString(context.getJobDetail().getJobDataMap()));
+		logger.debug("AsyncTaskJob begin >>>>>>>>>>");
 		GitContext.doIndependentTransActionControl(new BatchOperator<Integer, Map<String, Object>>() {
 
 			@Override
 			public Integer call(Map<String, Object> dataMap) {
 				ConcurrTaskDto taskDto = (ConcurrTaskDto) dataMap.get("dto");
-				
+				if (taskDto.getJobLogFlag() != 0) {
+					logger.error("The current job does not logged.");
+					return null;
+				}
 				BatchTimingTaskLogRegister logRegister = new BatchTimingTaskLogRegister();
 				logRegister.setTimingExecutionId(GitContext.getBean(BatchDefineCostomDao.class).getBatchSequence("timing_sequence_task"));
 				logRegister.setTimingJobId(taskDto.getJobId());
@@ -59,13 +62,13 @@ public class ConcurrentExcutorJob implements Job{
 				GitContext.getBean(BatchTimingTaskLogRegisterDao.class).insertOne(logRegister);
 				
 				taskDto.setHistoryId(logRegister.getTimingExecutionId());
-				JobExcutorFactory.getNewInstance().execute(new JobTaskCallable(taskDto));
+				JobExcutorFactory.call(new JobTaskCallable(taskDto), taskDto.getJobLogFlag());
 				
 				logRegister.setTimingJobStatus(JobExcutorEnum.COMPLETING.getValue());
 				return GitContext.getBean(BatchTimingTaskLogRegisterDao.class).updateOne1R(logRegister);
 			}
 			
 		}, context.getJobDetail().getJobDataMap());
-		logger.debug("ConcurrentExcutorJob end >>>>>>>>>> ");
+		logger.debug("AsyncTaskJob end >>>>>>>>>>");
 	}
 }

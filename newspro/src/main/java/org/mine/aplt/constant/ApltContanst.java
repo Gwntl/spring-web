@@ -2,6 +2,14 @@ package org.mine.aplt.constant;
 
 public class ApltContanst {
 	/**
+	 * QUEUE默认name前缀
+	 */
+	public static final String DEFAULT_QUEUE_NAME = "excutor_queue_";
+	/**
+	 * QUEUE默认组别
+	 */
+	public static final String DEFAULT_QUEUE_GROUP = "excutor_queue_groups";
+	/**
 	 * JOB默认name前缀
 	 */
 	public static final String DEFAULT_JOB_NAME = "excutor_job_";

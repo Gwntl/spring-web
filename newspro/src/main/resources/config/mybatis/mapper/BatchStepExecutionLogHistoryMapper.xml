@@ -261,21 +261,42 @@
 		select
 		<include refid="BatchStepExecutionLogHistory.Base_Select_List"/>
 		from batch_step_execution_log_history
-		where null = #{taskAssociateGroupId}
+		where null = #{taskAssociateQueueId}
 	</select>
 
 	<select id="selectAll1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
 		select
 		<include refid="BatchStepExecutionLogHistory.Base_Select_List"/>
 		from batch_step_execution_log_history
-		where null = #{taskAssociateGroupId} and valid_status = '0'
+		where null = #{taskAssociateQueueId} and valid_status = '0'
 	</select>
 
 	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
 		select
 		<include refid="BatchStepExecutionLogHistory.Base_Select_List"/>
 		from batch_step_execution_log_history
-		where null = #{taskAssociateGroupId} for update
+		where null = #{taskAssociateQueueId} for update
+	</select>
+
+	<select id="selectAll2" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchStepExecutionLogHistory.Base_Select_List"/>
+		from batch_step_execution_log_history
+		where null = #{taskAutoFlag}
+	</select>
+
+	<select id="selectAll2R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchStepExecutionLogHistory.Base_Select_List"/>
+		from batch_step_execution_log_history
+		where null = #{taskAutoFlag} and valid_status = '0'
+	</select>
+
+	<select id="selectAll2L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchStepExecutionLogHistory.Base_Select_List"/>
+		from batch_step_execution_log_history
+		where null = #{taskAutoFlag} for update
 	</select>
 
 </mapper>

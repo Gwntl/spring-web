@@ -45,7 +45,6 @@ public class ActualAddMultiJobImpl extends BaseServiceTasketExcutor{
 			queueDefinition.setQueueId(5L);
 			queueDefinition.setQueueName("INSERT_TEST_5L");
 			queueDefinition.setQueueExecutionNum(1);
-			queueDefinition.setQueueTimingtaskFlag(1);
 			queueDefinition.setRemark("R");
 			queueDefinition.setValidStatus("R");
 			queueDefinition.setCreateDate("20200529");

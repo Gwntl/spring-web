@@ -4,7 +4,7 @@ package org.mine.model;
  * batch_task_execution_log_register--批量任务执行日志登记表
  * @filename BatchTaskExecutionLogRegister.java
  * @author wzaUsers
- * @date 2020-06-01 15:06:24
+ * @date 2020-06-08 10:06:39
  * @version v1.0
 */
 public class BatchTaskExecutionLogRegister {

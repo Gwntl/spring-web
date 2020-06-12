@@ -60,7 +60,7 @@ public class AutoScheduler{
 		BatchQueueDefinition definition = new BatchQueueDefinition();
 		definition.setQueueId(queueId);
 		definition.setQueueName(queueName);
-		definition.setQueueTimingtaskFlag(timingFlag);
+//		definition.setQueueTimingtaskFlag(timingFlag);
 		definition.setQueueExecutionNum(0);
 		definition.setCreateDate(CommonUtils.dateToString(new Date(), "yyyyMMdd"));
 		definition.setValidStatus(JobContanst.VALID_STATUS_0);
@@ -113,7 +113,7 @@ public class AutoScheduler{
 		BatchTaskDefinition definition = new BatchTaskDefinition();
 		definition.setTaskId(taskId);
 		definition.setTaskName(taskName);
-		definition.setTaskAssociateGroupId(groupId);
+//		definition.setTaskAssociateGroupId(groupId);
 		definition.setTaskSkipFlag(0);
 		definition.setTaskInitValue(CommonUtils.listToStr(list,";"));
 		definition.setTaskExecutionNum(0);

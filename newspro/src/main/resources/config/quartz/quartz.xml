@@ -3,7 +3,8 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-	<bean id="quartzSch_bean" lazy-init="false" autowire="no" 
+	<!-- 该bena为常规JOB服务 -->
+	<bean id="DefaultQuartzScheduler" lazy-init="false" autowire="no" 
 	class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 <!-- 		<property name="triggers"> -->
 <!-- 			<list> -->
@@ -12,7 +13,21 @@
 <!-- 		</property> -->
 		<property name="quartzProperties">
 			<props>
+			<!-- quartz中的scsheduler以实例名作为每个实例之间的区别, 如果需要多个实例的话,组名信息不可一致 -->
+<!-- 				<prop key="org.quartz.scheduler.instanceName">DynamicScheduler</prop> -->
+<!-- 				<prop key="org.quartz.scheduler.instanceId">DynamicScheduler</prop> -->
 				<prop key="org.quartz.threadPool.threadCount">20</prop>
+			</props>
+		</property>
+	</bean>
+	<!-- 该bean为可暂停重启JOB服务.该bean使用的trigger应使用MisfireHandlingInstructionDoNothing策略 -->
+	<bean id="DynamicOperationScheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="schedulerName" value="DynamicOperationScheduler"></property>
+		<property name="quartzProperties">
+			<props>
+				<!-- misfire时间(此处设定100mis)>misfireThreshold 起效 -->
+				<prop key="org.quartz.jobStore.misfireThreshold">100</prop>
+				<prop key="org.quartz.threadPool.threadCount">15</prop>
 			</props>
 		</property>
 	</bean>

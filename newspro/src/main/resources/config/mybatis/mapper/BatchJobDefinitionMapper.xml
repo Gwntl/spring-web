@@ -7,6 +7,7 @@
 		<result column="job_associate_trigger_id" property="jobAssociateTriggerId"/>
 		<result column="job_executor" property="jobExecutor"/>
 		<result column="job_init_value" property="jobInitValue"/>
+		<result column="job_log_flag" property="jobLogFlag"/>
 		<result column="job_skip_flag" property="jobSkipFlag"/>
 		<result column="job_run_muti_flag" property="jobRunMutiFlag"/>
 		<result column="job_time_delay_flag" property="jobTimeDelayFlag"/>
@@ -17,9 +18,9 @@
 	</resultMap>
 
 	<sql id="Base_Select_List">
-		job_id,job_name,job_associate_trigger_id,job_executor,job_init_value,job_skip_flag,
-		job_run_muti_flag,job_time_delay_flag,job_time_delay_value,create_date,valid_status,
-		remark
+		job_id,job_name,job_associate_trigger_id,job_executor,job_init_value,job_log_flag,
+		job_skip_flag,job_run_muti_flag,job_time_delay_flag,job_time_delay_value,create_date,
+		valid_status,remark
 	</sql>
 
 	<sql id="Base_Insert_Column">
@@ -29,6 +30,7 @@
 			<if test="jobAssociateTriggerId != null">job_associate_trigger_id,</if>
 			<if test="jobExecutor != null">job_executor,</if>
 			<if test="jobInitValue != null">job_init_value,</if>
+			<if test="jobLogFlag != null">job_log_flag,</if>
 			<if test="jobSkipFlag != null">job_skip_flag,</if>
 			<if test="jobRunMutiFlag != null">job_run_muti_flag,</if>
 			<if test="jobTimeDelayFlag != null">job_time_delay_flag,</if>
@@ -46,6 +48,7 @@
 			<if test="jobAssociateTriggerId != null">#{jobAssociateTriggerId},</if>
 			<if test="jobExecutor != null">#{jobExecutor},</if>
 			<if test="jobInitValue != null">#{jobInitValue},</if>
+			<if test="jobLogFlag != null">#{jobLogFlag},</if>
 			<if test="jobSkipFlag != null">#{jobSkipFlag},</if>
 			<if test="jobRunMutiFlag != null">#{jobRunMutiFlag},</if>
 			<if test="jobTimeDelayFlag != null">#{jobTimeDelayFlag},</if>
@@ -73,13 +76,13 @@
 	<insert id="batchInsertXML" parameterType="java.util.List">
 		insert into batch_job_definition
 		(job_id,job_name,job_associate_trigger_id,job_executor,job_init_value
-			,job_skip_flag,job_run_muti_flag,job_time_delay_flag,job_time_delay_value
-			,create_date,valid_status,remark)
+			,job_log_flag,job_skip_flag,job_run_muti_flag,job_time_delay_flag
+			,job_time_delay_value,create_date,valid_status,remark)
 		values
 		<foreach collection="list" item="item" index="index" separator=",">
 			(#{item.jobId},#{item.jobName},#{item.jobAssociateTriggerId},#{item.jobExecutor},#{item.jobInitValue}
-				,#{item.jobSkipFlag},#{item.jobRunMutiFlag},#{item.jobTimeDelayFlag},#{item.jobTimeDelayValue}
-				,#{item.createDate},#{item.validStatus},#{item.remark})
+				,#{item.jobLogFlag},#{item.jobSkipFlag},#{item.jobRunMutiFlag},#{item.jobTimeDelayFlag}
+				,#{item.jobTimeDelayValue},#{item.createDate},#{item.validStatus},#{item.remark})
 		</foreach>
 	</insert>
 	<select id="selectOne1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
@@ -122,6 +125,7 @@
 			<if test="jobAssociateTriggerId != null">job_associate_trigger_id = #{jobAssociateTriggerId},</if>
 			<if test="jobExecutor != null">job_executor = #{jobExecutor},</if>
 			<if test="jobInitValue != null">job_init_value = #{jobInitValue},</if>
+			<if test="jobLogFlag != null">job_log_flag = #{jobLogFlag},</if>
 			<if test="jobSkipFlag != null">job_skip_flag = #{jobSkipFlag},</if>
 			<if test="jobRunMutiFlag != null">job_run_muti_flag = #{jobRunMutiFlag},</if>
 			<if test="jobTimeDelayFlag != null">job_time_delay_flag = #{jobTimeDelayFlag},</if>
@@ -140,6 +144,7 @@
 			<if test="jobAssociateTriggerId != null">job_associate_trigger_id = #{jobAssociateTriggerId},</if>
 			<if test="jobExecutor != null">job_executor = #{jobExecutor},</if>
 			<if test="jobInitValue != null">job_init_value = #{jobInitValue},</if>
+			<if test="jobLogFlag != null">job_log_flag = #{jobLogFlag},</if>
 			<if test="jobSkipFlag != null">job_skip_flag = #{jobSkipFlag},</if>
 			<if test="jobRunMutiFlag != null">job_run_muti_flag = #{jobRunMutiFlag},</if>
 			<if test="jobTimeDelayFlag != null">job_time_delay_flag = #{jobTimeDelayFlag},</if>
@@ -158,6 +163,7 @@
 			<if test="jobAssociateTriggerId != null">job_associate_trigger_id = #{jobAssociateTriggerId},</if>
 			<if test="jobExecutor != null">job_executor = #{jobExecutor},</if>
 			<if test="jobInitValue != null">job_init_value = #{jobInitValue},</if>
+			<if test="jobLogFlag != null">job_log_flag = #{jobLogFlag},</if>
 			<if test="jobSkipFlag != null">job_skip_flag = #{jobSkipFlag},</if>
 			<if test="jobRunMutiFlag != null">job_run_muti_flag = #{jobRunMutiFlag},</if>
 			<if test="jobTimeDelayFlag != null">job_time_delay_flag = #{jobTimeDelayFlag},</if>
@@ -196,6 +202,13 @@
 			<foreach collection="list" item="item" index="index">
 				<if test="item.jobInitValue != null">
 					when job_id = #{item.jobId} then #{item.jobInitValue}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="job_log_flag=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.jobLogFlag != null">
+					when job_id = #{item.jobId} then #{item.jobLogFlag}
 				</if>
 			</foreach>
 		</trim>
@@ -261,6 +274,7 @@
 			<if test="jobAssociateTriggerId != null">job_associate_trigger_id = #{jobAssociateTriggerId},</if>
 			<if test="jobExecutor != null">job_executor = #{jobExecutor},</if>
 			<if test="jobInitValue != null">job_init_value = #{jobInitValue},</if>
+			<if test="jobLogFlag != null">job_log_flag = #{jobLogFlag},</if>
 			<if test="jobSkipFlag != null">job_skip_flag = #{jobSkipFlag},</if>
 			<if test="jobRunMutiFlag != null">job_run_muti_flag = #{jobRunMutiFlag},</if>
 			<if test="jobTimeDelayFlag != null">job_time_delay_flag = #{jobTimeDelayFlag},</if>
@@ -271,26 +285,5 @@
 		</trim>
 		where job_id = #{jobId}
 	</update>
-
-	<select id="selectAll1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchJobDefinition.Base_Select_List"/>
-		from batch_job_definition
-		where null = #{taskAssociateGroupId}
-	</select>
-
-	<select id="selectAll1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchJobDefinition.Base_Select_List"/>
-		from batch_job_definition
-		where null = #{taskAssociateGroupId} and valid_status = '0'
-	</select>
-
-	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchJobDefinition.Base_Select_List"/>
-		from batch_job_definition
-		where null = #{taskAssociateGroupId} for update
-	</select>
 
 </mapper>

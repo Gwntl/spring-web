@@ -4,7 +4,7 @@ package org.mine.model;
  * batch_job_definition--批量作业定义表
  * @filename BatchJobDefinition.java
  * @author wzaUsers
- * @date 2020-06-01 15:06:24
+ * @date 2020-06-09 16:06:46
  * @version v1.0
 */
 public class BatchJobDefinition {
@@ -28,6 +28,10 @@ public class BatchJobDefinition {
 	 * 作业初始化值
 	 */
 	private String jobInitValue;
+	/**
+	 * 日志等级标记. 0-登记, 1-不登记
+	 */
+	private Integer jobLogFlag;
 	/**
 	 * 可跳过标志. 0-是, 1-否
 	 */
@@ -63,6 +67,7 @@ public class BatchJobDefinition {
 		this.jobAssociateTriggerId = "";
 		this.jobExecutor = "";
 		this.jobInitValue = "";
+		this.jobLogFlag = 0;
 		this.jobSkipFlag = 1;
 		this.jobRunMutiFlag = 0;
 		this.jobTimeDelayFlag = 1;
@@ -141,6 +146,20 @@ public class BatchJobDefinition {
 	 */
 	public void setJobInitValue(String jobInitValue) {
 		this.jobInitValue = jobInitValue;
+	}
+	/**
+	 * 日志等级标记. 0-登记, 1-不登记
+	 * @return thejobLogFlag
+	 */
+	public Integer getJobLogFlag() {
+		return jobLogFlag;
+	}
+	/**
+	 * 日志等级标记. 0-登记, 1-不登记
+	 * @param jobLogFlag the jobLogFlag to set
+	 */
+	public void setJobLogFlag(Integer jobLogFlag) {
+		this.jobLogFlag = jobLogFlag;
 	}
 	/**
 	 * 可跳过标志. 0-是, 1-否
@@ -248,8 +267,9 @@ public class BatchJobDefinition {
 	public String toString() {
 		return "BatchJobDefinition[" + 
 		"jobId=" + jobId + ", jobName=" + jobName + ", jobAssociateTriggerId=" + jobAssociateTriggerId + ", jobExecutor=" + jobExecutor + 
-		", jobInitValue=" + jobInitValue + ", jobSkipFlag=" + jobSkipFlag + ", jobRunMutiFlag=" + jobRunMutiFlag + 
-		", jobTimeDelayFlag=" + jobTimeDelayFlag + ", jobTimeDelayValue=" + jobTimeDelayValue + ", createDate=" + createDate + 
-		", validStatus=" + validStatus + ", remark=" + remark + "]";
+		", jobInitValue=" + jobInitValue + ", jobLogFlag=" + jobLogFlag + ", jobSkipFlag=" + jobSkipFlag + 
+		", jobRunMutiFlag=" + jobRunMutiFlag + ", jobTimeDelayFlag=" + jobTimeDelayFlag + ", jobTimeDelayValue=" + jobTimeDelayValue + 
+		", createDate=" + createDate + ", validStatus=" + validStatus + ", remark=" + remark + 
+		"]";
 	}
 }

@@ -14,15 +14,31 @@ public enum JobExcutorEnum {
 	 */
 	public static final String NO_CURR_JOB = "1";
 	/**
-	 * JOB自动执行-定时任务
+	 * TASK自动执行-定时任务
 	 * AUTO_RUN
 	 */
-	public static final int AUTO_RUN = 0;
+	public static final int TASK_AUTO_RUN = 0;
 	/**
-	 * JOB不自动执行-非定时任务
+	 * TASK不自动执行-非定时任务
 	 * NO_AUTO_RUN
 	 */
-	public static final int NO_AUTO_RUN = 1;
+	public static final int TASK_NO_AUTO_RUN = 1;
+	/**
+	 * 队列手动执行
+	 * @Fields QUEUE_MANUAL
+	 */
+	public static final int QUEUE_MANUAL = 0;
+	/**
+	 * 队列自动执行
+	 * @Fields QUEUE_AUTO
+	 */
+	public static final int QUEUE_AUTO = 1;
+	/**
+	 * 队列手/自动执行
+	 * @Fields QUEUE_HAND_OR_AUTO
+	 */
+	public static final int QUEUE_HAND_OR_AUTO = 2;
+	
 	/**
 	 * 保存日志: 0-是
 	 * SAVE_LOG

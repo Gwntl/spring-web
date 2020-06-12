@@ -1,6 +1,7 @@
 package org.mine.quartz.trigger;
 
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,13 +13,11 @@ import org.mine.aplt.exception.MineBizException;
 import org.mine.aplt.support.BaseServiceTasketExcutor;
 import org.mine.aplt.support.bean.GitContext;
 import org.mine.aplt.util.CommonUtils;
-import org.mine.dao.BatchGroupDefinitionDao;
 import org.mine.dao.BatchJobDefinitionDao;
 import org.mine.dao.BatchQueueDefinitionDao;
 import org.mine.dao.BatchTaskDefinitionDao;
 import org.mine.dao.BatchTaskExecuteDao;
 import org.mine.dao.BatchTriggerDefinitionDao;
-import org.mine.model.BatchGroupDefinition;
 import org.mine.model.BatchJobDefinition;
 import org.mine.model.BatchQueueDefinition;
 import org.mine.model.BatchTaskDefinition;
@@ -26,7 +25,9 @@ import org.mine.model.BatchTaskExecute;
 import org.mine.model.BatchTriggerDefinition;
 import org.mine.quartz.ExecutorBase;
 import org.mine.quartz.dto.ConcurrTaskDto;
+import org.quartz.CronScheduleBuilder;
 import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
 import org.quartz.JobKey;
 import org.quartz.SchedulerException;
 import org.quartz.impl.JobDetailImpl;
@@ -47,9 +48,7 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 	@Autowired
 	private BatchTriggerDefinitionDao triggerDefinitionDao;
 	@Autowired
-	private BatchQueueDefinitionDao definitionDao;
-	@Autowired
-	private BatchGroupDefinitionDao groupDefinitionDao;
+	private BatchQueueDefinitionDao queueDefinitionDao;
 	@Autowired
 	private BatchTaskDefinitionDao taskDefinitionDao;
 	@Autowired
@@ -84,105 +83,127 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 	public void afterPropertiesSet() throws Exception {
 		//初始化执行器缓存
 		quartzStepCache.putAll(context.getBeansOfType(BaseServiceTasketExcutor.class));
-		loadTimingData();
-		logger.debug("load timing task over....");
+		loadTimingTaskData();
+		loadTimingQueueData();
+		logger.info("load timing data over....");
 	}
 	
-	/**
-	 * 加载定时任务
-	 * @return
-	 */
-	public Map<JobDetailImpl, ExcutorTrigger> loadTimingData(){
+	public void loadTimingTaskData(){
+		logger.info("loadTimingTaskData begin>>>>>>>>>>>>>>>");
 		try{
-			//查询出需定时执行的任务
-			List<BatchQueueDefinition> queueDefinitions = definitionDao.selectAll1R(JobExcutorEnum.AUTO_RUN);
-			int size = queueDefinitions.size();
-			if(size > 0){
-				for(BatchQueueDefinition queueDefinition : queueDefinitions){
-					Long queueId = queueDefinition.getQueueId();
-					List<BatchGroupDefinition> groupDefinitions = groupDefinitionDao.selectAll1R(queueId);
-					if(CommonUtils.isEmpty(groupDefinitions)){
-						logger.error("No executable groups exists on the current queue[{}]!!!!", queueId);
+			List<BatchTaskDefinition> taskDefinitions = taskDefinitionDao.selectAll2(JobExcutorEnum.TASK_AUTO_RUN);
+			int size = taskDefinitions.size();
+			if (size > 0) {
+				Map<String, Object> taskInitValue = null;
+				for (BatchTaskDefinition taskDefinition : taskDefinitions) {
+					Long taskID = taskDefinition.getTaskId();
+					CommonUtils.initMapValue(taskInitValue = new HashMap<>(), taskDefinition.getTaskInitValue());
+					List<BatchTaskExecute> taskExecutes = taskExecuteDao.selectAll1R(taskID);
+					if (CommonUtils.isEmpty(taskExecutes)) {
+						logger.error("No executable jobs exists on the current task[{}]", taskID);
 					} else {
-						ConcurrTaskDto taskDto = null;
-						for(BatchGroupDefinition groupDefinition : groupDefinitions){
-							taskDto = new ConcurrTaskDto();
-							taskDto.setGroupId(groupDefinition.getGroupId());
-							Long groupId = groupDefinition.getGroupId();
-							List<BatchTaskDefinition> taskDefinitions = taskDefinitionDao.selectAll1R(groupId);
-							if(CommonUtils.isEmpty(taskDefinitions)){
-								logger.error("No executable tasks exists on the current group[{}]!!!", groupId);
+						for (BatchTaskExecute taskExecute : taskExecutes) {
+							Long jobID = taskExecute.getExecuteJobId();
+							BatchJobDefinition jobDefinition = jobDefinitionDao.selectOne1R(jobID, false);
+							if (jobDefinition != null) {
+								//由于jobdatamap中保存的为对象的引用, 因此需要new对象.
+								ConcurrTaskDto dto = new ConcurrTaskDto();
+								//赋TASK值
+								dto.setTaskId(taskID);
+								dto.setTaskSkipFlag(taskDefinition.getTaskSkipFlag());
+								dto.setTaskInitValue(taskInitValue);
+								//赋JOB值
+								dto.setJobId(jobID);
+								dto.setJobName(jobDefinition.getJobName());
+								dto.setJobLogFlag(jobDefinition.getJobLogFlag());
+								dto.setJobSkipFlag(jobDefinition.getJobSkipFlag());
+								dto.setJobRunMutiFlag(jobDefinition.getJobRunMutiFlag());
+								dto.setJobTimeDelayFlag(jobDefinition.getJobTimeDelayFlag());
+								dto.setJobTimeDelayValue(jobDefinition.getJobTimeDelayValue());
+								dto.setJobOneTime(taskExecute.getExecuteJobOneTime());
+								CommonUtils.initMapValue(dto.getJobInitValue(), jobDefinition.getJobInitValue());
+								registerQuartz(jobDefinition.getJobId(), jobDefinition.getJobExecutor(), jobDefinition.getJobAssociateTriggerId(), dto);
 							} else {
-								for(BatchTaskDefinition taskDefinition : taskDefinitions){
-									Long taskId = taskDefinition.getTaskId();
-									taskDto.setTaskId(taskId);
-									taskDto.setTaskSkipFlag(taskDefinition.getTaskSkipFlag());
-									CommonUtils.initMapValue(taskDto.getTaskInitValue(), taskDefinition.getTaskInitValue());
-									List<BatchTaskExecute> taskExecutes = taskExecuteDao.selectAll1R(taskId);
-									if(CommonUtils.isEmpty(taskExecutes)){
-										logger.error("No executable jobs exists on the current task[{}]", taskId);
-									} else {
-										for(BatchTaskExecute taskExecute : taskExecutes){
-											Long jobId = taskExecute.getExecuteJobId();
-											BatchJobDefinition jobDefinition = jobDefinitionDao.selectOne1R(jobId, false);
-											if(jobDefinition != null){
-												//由于jobdatamap中保存的为对象的引用, 因此需要new对象.
-												ConcurrTaskDto dto = new ConcurrTaskDto();
-												dto.setGroupId(taskDto.getGroupId());
-												dto.setTaskId(taskDto.getTaskId());
-												dto.setTaskSkipFlag(taskDto.getTaskSkipFlag());
-												dto.setTaskInitValue(taskDto.getTaskInitValue());
-												
-												dto.setJobId(jobId);
-												dto.setJobName(jobDefinition.getJobName());
-												dto.setJobSkipFlag(jobDefinition.getJobSkipFlag());
-												dto.setJobRunMutiFlag(jobDefinition.getJobRunMutiFlag());
-												dto.setJobTimeDelayFlag(jobDefinition.getJobTimeDelayFlag());
-												dto.setJobTimeDelayValue(jobDefinition.getJobTimeDelayValue());
-												dto.setJobOneTime(taskExecute.getExecuteJobOneTime());
-												CommonUtils.initMapValue(dto.getJobInitValue(), jobDefinition.getJobInitValue());
-												registerQuartz(jobDefinition, dto);
-											} else {
-												logger.error("The current job[{}] does not exist", jobId);
-											}
-										}
-									}
-								}
+								logger.error("The current job[{}] does not exist", jobID);
 							}
 						}
 					}
 				}
 				logger.info("Loading timing job was successful!!!!!");
 			} else {
-				logger.warn("There is no timing job in the current system!!!!!");
+				if (logger.isTraceEnabled()) {
+					logger.trace("There is no timing job in the current system!!!!!");
+				}
+			}
+		} catch (SchedulerException e) {
+			logger.error("加载Quartz信息失败: {}" + MineBizException.getStackTrace(e));
+			throw GitWebException.GIT_APPRUNEXC("加载Quartz信息失败");
+		}
+		logger.info("loadTimingTaskData end>>>>>>>>>>>>>>>");
+	}
+	
+	/**
+	 * 加载定时任务数据
+	 * @return
+	 */
+	public Map<JobDetailImpl, ExcutorTrigger> loadTimingQueueData(){
+		logger.info("loadTimingQueueData begin>>>>>>>>>>>>>>>");
+		try{
+			//查询出需定时执行的任务.当前queue仅区分手动和自动.
+			List<BatchQueueDefinition> queueDefinitions = queueDefinitionDao.selectAll1R(JobExcutorEnum.QUEUE_AUTO);
+			if(queueDefinitions != null && queueDefinitions.size() > 0){
+				for(BatchQueueDefinition queueDefinition : queueDefinitions){
+					ConcurrTaskDto dto = new ConcurrTaskDto();
+					CommonUtils.initMapValue(dto.getQueueInitValue(), queueDefinition.getQueueInitValue());
+					registerQuartz(queueDefinition.getQueueId(), queueDefinition.getQueueExecutor(), queueDefinition.getQueueTriggerId(), dto);
+				}
+				logger.info("Loading timing queue was successful!!!!!");
+			} else {
+				if (logger.isTraceEnabled()) {
+					logger.trace("There is no timing job in the current system!!!!!");
+				}
 			}
 		} catch(SchedulerException e){
 			logger.error("加载Quartz信息失败: {}" + MineBizException.getStackTrace(e));
 			throw GitWebException.GIT_APPRUNEXC("加载Quartz信息失败");
 		}
-		
+		logger.info("loadTimingQueueData end>>>>>>>>>>>>>>>");
 		return null;
 	}
 	
 	/**
-	 * 注册定时任务
-	 * @param jobDefinition
+	 * 注册定时作业
+	 * @param id
+	 * @param executor
+	 * @param associTrgId
+	 * @param taskDto
 	 * @throws SchedulerException
 	 */
-	public void registerQuartz(BatchJobDefinition jobDefinition, ConcurrTaskDto taskDto)throws SchedulerException{
-//		JobDetail detail = JobBuilder.newJob(ExecutorBase.getExcutorJob(jobDefinition.getJobExecutor())).withIdentity(ApltContanst.DEFAULT_JOB_NAME 
-//				+ jobDefinition.getJobId(), ApltContanst.DEFAULT_JOB_GROUP).usingJobData(dataMap).build();
+	public void registerQuartz(Long id, String executor, String associTrgId, ConcurrTaskDto taskDto)throws SchedulerException{
+//		JobDetail detail = JobBuilder.newJob(ExecutorBase.getExcutorJob(executor)).withIdentity(ApltContanst.DEFAULT_JOB_NAME 
+//		+ id, ApltContanst.DEFAULT_JOB_GROUP).usingJobData(dataMap).build();
 		JobDetailImpl detailImpl = new JobDetailImpl();
-		detailImpl.setName(ApltContanst.DEFAULT_JOB_NAME + jobDefinition.getJobId());
+		detailImpl.setName(ApltContanst.DEFAULT_JOB_NAME + id);
 		detailImpl.setKey(new JobKey(detailImpl.getName(), ApltContanst.DEFAULT_JOB_GROUP));
-		detailImpl.setJobClass(ExecutorBase.getExcutorJob(jobDefinition.getJobExecutor()));
+		detailImpl.setJobClass(ExecutorBase.getExcutorJob(executor));
 		JobDataMap dataMap = new JobDataMap();
 		dataMap.put("dto", taskDto);
 		detailImpl.setJobDataMap(dataMap);
-		//确保job执行完后不从jobstore中移除
+		// 确保job执行完后不从jobstore中移除
 		detailImpl.setDurability(true);
-		
-		List<String> triggerIds = CommonUtils.splitStrToList(jobDefinition.getJobAssociateTriggerId(), ",", false);
+
+		scheduleJobByTriggers(detailImpl, associTrgId);
+	}
+	
+	/**
+	 * 注册服务
+	 * @param detail job实例
+	 * @param associateTriggerID 触发器ID
+	 * @throws SchedulerException
+	 */
+	public void scheduleJobByTriggers(JobDetail detail, String associateTriggerID) throws SchedulerException{
+		List<String> triggerIds = CommonUtils.splitStrToList(associateTriggerID, ",", false);
+		if (triggerIds.size() <= 0) throw GitWebException.GIT1001(detail.getKey().toString() + ", 未设置触发器参数.");
 		ExcutorTrigger trigger = definationTrigger(Long.valueOf(triggerIds.get(0)));
 		/*
 		 * Spring当使用bean配置触发器的形式的时候,将jobdetail放至trigger的dataMap中.
@@ -190,15 +211,13 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 		 * */
 //		getJobDataMap().put("jobDetail", detail);
 //		map.put(detailImpl, trigger);
-		ExecutorBase.getSchedulerFactoryBean().getScheduler().scheduleJob(detailImpl, trigger);
-		
+		ExecutorBase.getSchedulerFactoryBean().getScheduler().scheduleJob(detail, trigger);
 		//注册该JOB中其他触发器
-		int triggerSize = triggerIds.size();
-		if(triggerSize > 1){
+		if(triggerIds.size() > 1){
 			ExcutorTrigger extraTrigger = null;
-			for(int register = 1; register < triggerSize; register ++){
-				extraTrigger = definationTrigger(Long.valueOf(triggerIds.get(register)));
-				extraTrigger.setJobKey(detailImpl.getKey());
+			for(String triggerId : triggerIds){
+				extraTrigger = definationTrigger(Long.valueOf(triggerId));
+				extraTrigger.setJobKey(detail.getKey());
 				ExecutorBase.getSchedulerFactoryBean().getScheduler().scheduleJob(extraTrigger);
 			}
 		}
@@ -227,6 +246,9 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 			if(CommonUtils.isNotEmpty(triggerDefinition.getTriggerEndTime())){
 				trigger.setEndTime(CommonUtils.stringToDate(triggerDefinition.getTriggerEndTime(), "yyyy-MM-dd HH:mm:ss"));
 			}
+			//当为可暂停的JOB时
+//			trigger.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
+			
 			return trigger;
 		} catch(ParseException e){
 			logger.error("加载trigger信息失败: {}" + MineBizException.getStackTrace(e));

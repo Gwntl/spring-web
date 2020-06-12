@@ -1,6 +1,7 @@
 package org.mine.quartz;
 
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -8,9 +9,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class JobExcutorFactory{
 	
-	private static JobExcutorFactory factory = null;
+	private volatile static JobExcutorFactory factory = null;
 	
 	public volatile static ThreadPoolExecutor executor = null;
+	
+	public volatile static ThreadPoolExecutor executorNoLog = null;
 	
 	private JobExcutorFactory(){}
 	
@@ -30,7 +33,7 @@ public class JobExcutorFactory{
 	 * 根据不同场景实现不同的线程池.
 	 * @return
 	 */
-	public static ThreadPoolExecutor getNewInstance(){
+	private static ThreadPoolExecutor getNewInstance(){
 		if(executor == null){
 			synchronized (JobExcutorFactory.class) {
 				if(executor == null){
@@ -39,6 +42,19 @@ public class JobExcutorFactory{
 			}
 		}
 		return executor;
+	}
+	
+	private static ThreadPoolExecutor getNoLogInstance(){
+		if (executorNoLog == null) {
+			synchronized(JobExcutorFactory.class){
+				if (executorNoLog == null) {
+					executorNoLog = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() << 1,
+							Runtime.getRuntime().availableProcessors() << 1, 1000, TimeUnit.MILLISECONDS,
+							new LinkedBlockingQueue<>(4096));
+				}
+			}
+		}
+		return executorNoLog;
 	}
 	
 	/**
@@ -69,7 +85,11 @@ public class JobExcutorFactory{
 		}
 	}
 	
-	public void call(Runnable runnable){
-		getNewInstance().execute(runnable);
+	public static void call(Runnable runnable, int logFalg) {
+		if (logFalg == 0)
+			getNewInstance().execute(runnable);
+
+		if (logFalg == 1)
+			getNoLogInstance().execute(runnable);
 	}
 }

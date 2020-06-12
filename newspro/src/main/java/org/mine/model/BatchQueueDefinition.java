@@ -4,7 +4,7 @@ package org.mine.model;
  * batch_queue_definition--批量执行队列定义表(串行)
  * @filename BatchQueueDefinition.java
  * @author wzaUsers
- * @date 2020-06-01 15:06:24
+ * @date 2020-06-09 10:06:03
  * @version v1.0
 */
 public class BatchQueueDefinition {
@@ -17,9 +17,21 @@ public class BatchQueueDefinition {
 	 */
 	private String queueName;
 	/**
-	 * 是否为定时任务. 0-是,1-否
+	 * 任务执行标志. 0-手动, 1-自动, 2-手/自.
 	 */
-	private Integer queueTimingtaskFlag;
+	private Integer queueExcFlag;
+	/**
+	 * 关联触发器ID
+	 */
+	private String queueTriggerId;
+	/**
+	 * 队列执行器
+	 */
+	private String queueExecutor;
+	/**
+	 * 队列初始值
+	 */
+	private String queueInitValue;
 	/**
 	 * 队列执行序号
 	 */
@@ -40,7 +52,10 @@ public class BatchQueueDefinition {
 	public BatchQueueDefinition() {
 		this.queueId = 0L;
 		this.queueName = "";
-		this.queueTimingtaskFlag = 1;
+		this.queueExcFlag = 0;
+		this.queueTriggerId = "";
+		this.queueExecutor = "";
+		this.queueInitValue = "";
 		this.queueExecutionNum = 0;
 		this.createDate = "";
 		this.validStatus = "0";
@@ -76,18 +91,60 @@ public class BatchQueueDefinition {
 		this.queueName = queueName;
 	}
 	/**
-	 * 是否为定时任务. 0-是,1-否
-	 * @return thequeueTimingtaskFlag
+	 * 任务执行标志. 0-手动, 1-自动, 2-手/自.
+	 * @return thequeueExcFlag
 	 */
-	public Integer getQueueTimingtaskFlag() {
-		return queueTimingtaskFlag;
+	public Integer getQueueExcFlag() {
+		return queueExcFlag;
 	}
 	/**
-	 * 是否为定时任务. 0-是,1-否
-	 * @param queueTimingtaskFlag the queueTimingtaskFlag to set
+	 * 任务执行标志. 0-手动, 1-自动, 2-手/自.
+	 * @param queueExcFlag the queueExcFlag to set
 	 */
-	public void setQueueTimingtaskFlag(Integer queueTimingtaskFlag) {
-		this.queueTimingtaskFlag = queueTimingtaskFlag;
+	public void setQueueExcFlag(Integer queueExcFlag) {
+		this.queueExcFlag = queueExcFlag;
+	}
+	/**
+	 * 关联触发器ID
+	 * @return thequeueTriggerId
+	 */
+	public String getQueueTriggerId() {
+		return queueTriggerId;
+	}
+	/**
+	 * 关联触发器ID
+	 * @param queueTriggerId the queueTriggerId to set
+	 */
+	public void setQueueTriggerId(String queueTriggerId) {
+		this.queueTriggerId = queueTriggerId;
+	}
+	/**
+	 * 队列执行器
+	 * @return thequeueExecutor
+	 */
+	public String getQueueExecutor() {
+		return queueExecutor;
+	}
+	/**
+	 * 队列执行器
+	 * @param queueExecutor the queueExecutor to set
+	 */
+	public void setQueueExecutor(String queueExecutor) {
+		this.queueExecutor = queueExecutor;
+	}
+	/**
+	 * 队列初始值
+	 * @return thequeueInitValue
+	 */
+	public String getQueueInitValue() {
+		return queueInitValue;
+	}
+	/**
+	 * 队列初始值
+	 * @param queueInitValue the queueInitValue to set
+	 */
+	public void setQueueInitValue(String queueInitValue) {
+		this.queueInitValue = queueInitValue;
 	}
 	/**
 	 * 队列执行序号
@@ -152,7 +209,8 @@ public class BatchQueueDefinition {
 	@Override
 	public String toString() {
 		return "BatchQueueDefinition[" + 
-		"queueId=" + queueId + ", queueName=" + queueName + ", queueTimingtaskFlag=" + queueTimingtaskFlag + ", queueExecutionNum=" + queueExecutionNum + 
+		"queueId=" + queueId + ", queueName=" + queueName + ", queueExcFlag=" + queueExcFlag + ", queueTriggerId=" + queueTriggerId + 
+		", queueExecutor=" + queueExecutor + ", queueInitValue=" + queueInitValue + ", queueExecutionNum=" + queueExecutionNum + 
 		", createDate=" + createDate + ", validStatus=" + validStatus + ", remark=" + remark + 
 		"]";
 	}

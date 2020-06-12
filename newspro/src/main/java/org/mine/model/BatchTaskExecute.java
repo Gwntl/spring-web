@@ -4,7 +4,7 @@ package org.mine.model;
  * batch_task_execute--批量任务运行表
  * @filename BatchTaskExecute.java
  * @author wzaUsers
- * @date 2020-06-01 15:06:59
+ * @date 2020-06-08 10:06:21
  * @version v1.0
 */
 public class BatchTaskExecute {

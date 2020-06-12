@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
  * 
  * @filename BatchTaskDefinitionDaoImpl.java
  * @author wzaUsers
- * @date 2020-06-01 15:06:24
+ * @date 2020-06-08 10:06:39
  * @version v1.0
 */
 @Repository
@@ -177,35 +177,68 @@ public class BatchTaskDefinitionDaoImpl extends BaseDaoSupport implements BatchT
 
 	/**
 	 * 查询多笔数据
-	 * @param taskAssociateGroupId 关联任务组ID
+	 * @param taskAssociateQueueId 关联队列ID
 	 */
 	@Override
-	public List<BatchTaskDefinition> selectAll1(Long taskAssociateGroupId){
+	public List<BatchTaskDefinition> selectAll1(Long taskAssociateQueueId){
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("taskAssociateGroupId", taskAssociateGroupId);
+		map.put("taskAssociateQueueId", taskAssociateQueueId);
 		return getSqlSessionTemplate().selectList("BatchTaskDefinition.selectAll1", map);
 	}
 
 	/**
 	 * 查询多笔数据(正常状态 valid_status = 0)
-	 * @param taskAssociateGroupId 关联任务组ID
+	 * @param taskAssociateQueueId 关联队列ID
 	 */
 	@Override
-	public List<BatchTaskDefinition> selectAll1R(Long taskAssociateGroupId){
+	public List<BatchTaskDefinition> selectAll1R(Long taskAssociateQueueId){
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("taskAssociateGroupId", taskAssociateGroupId);
+		map.put("taskAssociateQueueId", taskAssociateQueueId);
 		return getSqlSessionTemplate().selectList("BatchTaskDefinition.selectAll1R", map);
 	}
 
 	/**
 	 * 查询多笔数据(加锁  for update: 当使用索引时锁行, 其他锁表)
-	 * @param taskAssociateGroupId 关联任务组ID
+	 * @param taskAssociateQueueId 关联队列ID
 	 */
 	@Override
-	public List<BatchTaskDefinition> selectAll1L(Long taskAssociateGroupId){
+	public List<BatchTaskDefinition> selectAll1L(Long taskAssociateQueueId){
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("taskAssociateGroupId", taskAssociateGroupId);
+		map.put("taskAssociateQueueId", taskAssociateQueueId);
 		return getSqlSessionTemplate().selectList("BatchTaskDefinition.selectAll1L", map);
+	}
+
+	/**
+	 * 查询多笔数据
+	 * @param taskAutoFlag 是否自动执行. 0-是, 1-否
+	 */
+	@Override
+	public List<BatchTaskDefinition> selectAll2(Integer taskAutoFlag){
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("taskAutoFlag", taskAutoFlag);
+		return getSqlSessionTemplate().selectList("BatchTaskDefinition.selectAll2", map);
+	}
+
+	/**
+	 * 查询多笔数据(正常状态 valid_status = 0)
+	 * @param taskAutoFlag 是否自动执行. 0-是, 1-否
+	 */
+	@Override
+	public List<BatchTaskDefinition> selectAll2R(Integer taskAutoFlag){
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("taskAutoFlag", taskAutoFlag);
+		return getSqlSessionTemplate().selectList("BatchTaskDefinition.selectAll2R", map);
+	}
+
+	/**
+	 * 查询多笔数据(加锁  for update: 当使用索引时锁行, 其他锁表)
+	 * @param taskAutoFlag 是否自动执行. 0-是, 1-否
+	 */
+	@Override
+	public List<BatchTaskDefinition> selectAll2L(Integer taskAutoFlag){
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("taskAutoFlag", taskAutoFlag);
+		return getSqlSessionTemplate().selectList("BatchTaskDefinition.selectAll2L", map);
 	}
 
 }

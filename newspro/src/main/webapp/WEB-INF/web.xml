@@ -40,7 +40,7 @@
 	</filter>
 	<filter-mapping>
 		<filter-name>characterEncodingFilter</filter-name>
-		<url-pattern>*.d0</url-pattern>
+		<url-pattern>*.do</url-pattern>
 	</filter-mapping>
 	
 	<session-config>

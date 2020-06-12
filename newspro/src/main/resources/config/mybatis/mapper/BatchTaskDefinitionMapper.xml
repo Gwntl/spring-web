@@ -4,7 +4,8 @@
 	<resultMap type="org.mine.model.BatchTaskDefinition" id="BaseResultMap">
 		<result column="task_id" property="taskId"/>
 		<result column="task_name" property="taskName"/>
-		<result column="task_associate_group_id" property="taskAssociateGroupId"/>
+		<result column="task_auto_flag" property="taskAutoFlag"/>
+		<result column="task_associate_queue_id" property="taskAssociateQueueId"/>
 		<result column="task_skip_flag" property="taskSkipFlag"/>
 		<result column="task_init_value" property="taskInitValue"/>
 		<result column="task_execution_num" property="taskExecutionNum"/>
@@ -14,15 +15,16 @@
 	</resultMap>
 
 	<sql id="Base_Select_List">
-		task_id,task_name,task_associate_group_id,task_skip_flag,task_init_value,task_execution_num,
-		create_date,valid_status,remark
+		task_id,task_name,task_auto_flag,task_associate_queue_id,task_skip_flag,task_init_value,
+		task_execution_num,create_date,valid_status,remark
 	</sql>
 
 	<sql id="Base_Insert_Column">
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="taskId != null">task_id,</if>
 			<if test="taskName != null">task_name,</if>
-			<if test="taskAssociateGroupId != null">task_associate_group_id,</if>
+			<if test="taskAutoFlag != null">task_auto_flag,</if>
+			<if test="taskAssociateQueueId != null">task_associate_queue_id,</if>
 			<if test="taskSkipFlag != null">task_skip_flag,</if>
 			<if test="taskInitValue != null">task_init_value,</if>
 			<if test="taskExecutionNum != null">task_execution_num,</if>
@@ -36,7 +38,8 @@
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="taskId != null">#{taskId},</if>
 			<if test="taskName != null">#{taskName},</if>
-			<if test="taskAssociateGroupId != null">#{taskAssociateGroupId},</if>
+			<if test="taskAutoFlag != null">#{taskAutoFlag},</if>
+			<if test="taskAssociateQueueId != null">#{taskAssociateQueueId},</if>
 			<if test="taskSkipFlag != null">#{taskSkipFlag},</if>
 			<if test="taskInitValue != null">#{taskInitValue},</if>
 			<if test="taskExecutionNum != null">#{taskExecutionNum},</if>
@@ -62,12 +65,14 @@
 
 	<insert id="batchInsertXML" parameterType="java.util.List">
 		insert into batch_task_definition
-		(task_id,task_name,task_associate_group_id,task_skip_flag,task_init_value
-			,task_execution_num,create_date,valid_status,remark)
+		(task_id,task_name,task_auto_flag,task_associate_queue_id,task_skip_flag
+			,task_init_value,task_execution_num,create_date,valid_status
+			,remark)
 		values
 		<foreach collection="list" item="item" index="index" separator=",">
-			(#{item.taskId},#{item.taskName},#{item.taskAssociateGroupId},#{item.taskSkipFlag},#{item.taskInitValue}
-				,#{item.taskExecutionNum},#{item.createDate},#{item.validStatus},#{item.remark})
+			(#{item.taskId},#{item.taskName},#{item.taskAutoFlag},#{item.taskAssociateQueueId},#{item.taskSkipFlag}
+				,#{item.taskInitValue},#{item.taskExecutionNum},#{item.createDate},#{item.validStatus}
+				,#{item.remark})
 		</foreach>
 	</insert>
 	<select id="selectOne1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
@@ -107,7 +112,8 @@
 		update batch_task_definition
 		<trim prefix="set" suffixOverrides=",">
 			<if test="taskName != null">task_name = #{taskName},</if>
-			<if test="taskAssociateGroupId != null">task_associate_group_id = #{taskAssociateGroupId},</if>
+			<if test="taskAutoFlag != null">task_auto_flag = #{taskAutoFlag},</if>
+			<if test="taskAssociateQueueId != null">task_associate_queue_id = #{taskAssociateQueueId},</if>
 			<if test="taskSkipFlag != null">task_skip_flag = #{taskSkipFlag},</if>
 			<if test="taskInitValue != null">task_init_value = #{taskInitValue},</if>
 			<if test="taskExecutionNum != null">task_execution_num = #{taskExecutionNum},</if>
@@ -122,7 +128,8 @@
 		update batch_task_definition
 		<trim prefix="set" suffixOverrides=",">
 			<if test="taskName != null">task_name = #{taskName},</if>
-			<if test="taskAssociateGroupId != null">task_associate_group_id = #{taskAssociateGroupId},</if>
+			<if test="taskAutoFlag != null">task_auto_flag = #{taskAutoFlag},</if>
+			<if test="taskAssociateQueueId != null">task_associate_queue_id = #{taskAssociateQueueId},</if>
 			<if test="taskSkipFlag != null">task_skip_flag = #{taskSkipFlag},</if>
 			<if test="taskInitValue != null">task_init_value = #{taskInitValue},</if>
 			<if test="taskExecutionNum != null">task_execution_num = #{taskExecutionNum},</if>
@@ -137,7 +144,8 @@
 		update batch_task_definition
 		<trim prefix="set" suffixOverrides=",">
 			<if test="taskName != null">task_name = #{taskName},</if>
-			<if test="taskAssociateGroupId != null">task_associate_group_id = #{taskAssociateGroupId},</if>
+			<if test="taskAutoFlag != null">task_auto_flag = #{taskAutoFlag},</if>
+			<if test="taskAssociateQueueId != null">task_associate_queue_id = #{taskAssociateQueueId},</if>
 			<if test="taskSkipFlag != null">task_skip_flag = #{taskSkipFlag},</if>
 			<if test="taskInitValue != null">task_init_value = #{taskInitValue},</if>
 			<if test="taskExecutionNum != null">task_execution_num = #{taskExecutionNum},</if>
@@ -157,10 +165,17 @@
 				</if>
 			</foreach>
 		</trim>
-		<trim prefix="task_associate_group_id=case" suffix="end,">
+		<trim prefix="task_auto_flag=case" suffix="end,">
 			<foreach collection="list" item="item" index="index">
-				<if test="item.taskAssociateGroupId != null">
-					when task_id = #{item.taskId} then #{item.taskAssociateGroupId}
+				<if test="item.taskAutoFlag != null">
+					when task_id = #{item.taskId} then #{item.taskAutoFlag}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="task_associate_queue_id=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.taskAssociateQueueId != null">
+					when task_id = #{item.taskId} then #{item.taskAssociateQueueId}
 				</if>
 			</foreach>
 		</trim>
@@ -216,7 +231,8 @@
 		update batch_task_definition
 		<trim prefix="set" suffixOverrides=",">
 			<if test="taskName != null">task_name = #{taskName},</if>
-			<if test="taskAssociateGroupId != null">task_associate_group_id = #{taskAssociateGroupId},</if>
+			<if test="taskAutoFlag != null">task_auto_flag = #{taskAutoFlag},</if>
+			<if test="taskAssociateQueueId != null">task_associate_queue_id = #{taskAssociateQueueId},</if>
 			<if test="taskSkipFlag != null">task_skip_flag = #{taskSkipFlag},</if>
 			<if test="taskInitValue != null">task_init_value = #{taskInitValue},</if>
 			<if test="taskExecutionNum != null">task_execution_num = #{taskExecutionNum},</if>
@@ -231,21 +247,42 @@
 		select
 		<include refid="BatchTaskDefinition.Base_Select_List"/>
 		from batch_task_definition
-		where task_associate_group_id = #{taskAssociateGroupId}
+		where task_associate_queue_id = #{taskAssociateQueueId}
 	</select>
 
 	<select id="selectAll1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
 		select
 		<include refid="BatchTaskDefinition.Base_Select_List"/>
 		from batch_task_definition
-		where task_associate_group_id = #{taskAssociateGroupId} and valid_status = '0'
+		where task_associate_queue_id = #{taskAssociateQueueId} and valid_status = '0'
 	</select>
 
 	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
 		select
 		<include refid="BatchTaskDefinition.Base_Select_List"/>
 		from batch_task_definition
-		where task_associate_group_id = #{taskAssociateGroupId} for update
+		where task_associate_queue_id = #{taskAssociateQueueId} for update
+	</select>
+
+	<select id="selectAll2" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchTaskDefinition.Base_Select_List"/>
+		from batch_task_definition
+		where task_auto_flag = #{taskAutoFlag}
+	</select>
+
+	<select id="selectAll2R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchTaskDefinition.Base_Select_List"/>
+		from batch_task_definition
+		where task_auto_flag = #{taskAutoFlag} and valid_status = '0'
+	</select>
+
+	<select id="selectAll2L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchTaskDefinition.Base_Select_List"/>
+		from batch_task_definition
+		where task_auto_flag = #{taskAutoFlag} for update
 	</select>
 
 </mapper>

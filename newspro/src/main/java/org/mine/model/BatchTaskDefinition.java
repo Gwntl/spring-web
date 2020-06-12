@@ -4,7 +4,7 @@ package org.mine.model;
  * batch_task_definition--批量任务定义表
  * @filename BatchTaskDefinition.java
  * @author wzaUsers
- * @date 2020-06-01 15:06:24
+ * @date 2020-06-08 10:06:39
  * @version v1.0
 */
 public class BatchTaskDefinition {
@@ -17,9 +17,13 @@ public class BatchTaskDefinition {
 	 */
 	private String taskName;
 	/**
-	 * 关联任务组ID
+	 * 是否自动执行. 0-是, 1-否
 	 */
-	private Long taskAssociateGroupId;
+	private Integer taskAutoFlag;
+	/**
+	 * 关联队列ID
+	 */
+	private Long taskAssociateQueueId;
 	/**
 	 * 可跳过标志. 0-是, 1-否
 	 */
@@ -48,7 +52,8 @@ public class BatchTaskDefinition {
 	public BatchTaskDefinition() {
 		this.taskId = 0L;
 		this.taskName = "";
-		this.taskAssociateGroupId = 0L;
+		this.taskAutoFlag = 1;
+		this.taskAssociateQueueId = 0L;
 		this.taskSkipFlag = 1;
 		this.taskInitValue = "";
 		this.taskExecutionNum = 0;
@@ -86,18 +91,32 @@ public class BatchTaskDefinition {
 		this.taskName = taskName;
 	}
 	/**
-	 * 关联任务组ID
-	 * @return thetaskAssociateGroupId
+	 * 是否自动执行. 0-是, 1-否
+	 * @return thetaskAutoFlag
 	 */
-	public Long getTaskAssociateGroupId() {
-		return taskAssociateGroupId;
+	public Integer getTaskAutoFlag() {
+		return taskAutoFlag;
 	}
 	/**
-	 * 关联任务组ID
-	 * @param taskAssociateGroupId the taskAssociateGroupId to set
+	 * 是否自动执行. 0-是, 1-否
+	 * @param taskAutoFlag the taskAutoFlag to set
 	 */
-	public void setTaskAssociateGroupId(Long taskAssociateGroupId) {
-		this.taskAssociateGroupId = taskAssociateGroupId;
+	public void setTaskAutoFlag(Integer taskAutoFlag) {
+		this.taskAutoFlag = taskAutoFlag;
+	}
+	/**
+	 * 关联队列ID
+	 * @return thetaskAssociateQueueId
+	 */
+	public Long getTaskAssociateQueueId() {
+		return taskAssociateQueueId;
+	}
+	/**
+	 * 关联队列ID
+	 * @param taskAssociateQueueId the taskAssociateQueueId to set
+	 */
+	public void setTaskAssociateQueueId(Long taskAssociateQueueId) {
+		this.taskAssociateQueueId = taskAssociateQueueId;
 	}
 	/**
 	 * 可跳过标志. 0-是, 1-否
@@ -190,8 +209,9 @@ public class BatchTaskDefinition {
 	@Override
 	public String toString() {
 		return "BatchTaskDefinition[" + 
-		"taskId=" + taskId + ", taskName=" + taskName + ", taskAssociateGroupId=" + taskAssociateGroupId + ", taskSkipFlag=" + taskSkipFlag + 
-		", taskInitValue=" + taskInitValue + ", taskExecutionNum=" + taskExecutionNum + ", createDate=" + createDate + 
-		", validStatus=" + validStatus + ", remark=" + remark + "]";
+		"taskId=" + taskId + ", taskName=" + taskName + ", taskAutoFlag=" + taskAutoFlag + ", taskAssociateQueueId=" + taskAssociateQueueId + 
+		", taskSkipFlag=" + taskSkipFlag + ", taskInitValue=" + taskInitValue + ", taskExecutionNum=" + taskExecutionNum + 
+		", createDate=" + createDate + ", validStatus=" + validStatus + ", remark=" + remark + 
+		"]";
 	}
 }

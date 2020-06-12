@@ -7,7 +7,7 @@ import org.mine.model.BatchQueueDefinition;
  * 
  * @filename BatchQueueDefinitionDao.java
  * @author wzaUsers
- * @date 2020-06-01 15:06:24
+ * @date 2020-06-09 10:06:03
  * @version v1.0
 */
 
@@ -84,17 +84,17 @@ public interface BatchQueueDefinitionDao {
 	void batchDelete(List<BatchQueueDefinition> list);
 	/**
 	 * 查询多笔数据
-	 * @param queueTimingtaskFlag 是否为定时任务. 0-是,1-否
+	 * @param queueExcFlag 任务执行标志. 0-手动, 1-自动, 2-手/自.
 	 */
-	List<BatchQueueDefinition> selectAll1(Integer queueTimingtaskFlag);
+	List<BatchQueueDefinition> selectAll1(Integer queueExcFlag);
 	/**
 	 * 查询多笔数据(正常状态 valid_status = 0)
-	 * @param queueTimingtaskFlag 是否为定时任务. 0-是,1-否
+	 * @param queueExcFlag 任务执行标志. 0-手动, 1-自动, 2-手/自.
 	 */
-	List<BatchQueueDefinition> selectAll1R(Integer queueTimingtaskFlag);
+	List<BatchQueueDefinition> selectAll1R(Integer queueExcFlag);
 	/**
 	 * 查询多笔数据(加锁  for update: 当使用索引时锁行, 其他锁表)
-	 * @param queueTimingtaskFlag 是否为定时任务. 0-是,1-否
+	 * @param queueExcFlag 任务执行标志. 0-手动, 1-自动, 2-手/自.
 	 */
-	List<BatchQueueDefinition> selectAll1L(Integer queueTimingtaskFlag);
+	List<BatchQueueDefinition> selectAll1L(Integer queueExcFlag);
 }

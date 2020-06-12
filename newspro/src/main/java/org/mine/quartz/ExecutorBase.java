@@ -32,7 +32,7 @@ public class ExecutorBase implements ApplicationContextAware{
 	 * 获取Spring容器中的SchedulerFactoryBean对象,以便于获取Scheduler对象
 	 */
 	public static SchedulerFactoryBean getSchedulerFactoryBean() {
-		return (SchedulerFactoryBean) applicationContext.getBean("&quartzSch_bean");
+		return (SchedulerFactoryBean) applicationContext.getBean("&DefaultQuartzScheduler");
 	}
 	
 	public static Class<? extends Job> getExcutorJob(String jobPath){
