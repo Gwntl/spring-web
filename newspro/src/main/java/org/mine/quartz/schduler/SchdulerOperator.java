@@ -86,12 +86,22 @@ public class SchdulerOperator {
 			StdScheduler scheduler = (StdScheduler) ExecutorBase.getSchedulerFactoryBean().getScheduler();
 			JobKey jobKey = new JobKey(ApltContanst.DEFAULT_JOB_NAME + jobID, ApltContanst.DEFAULT_JOB_GROUP);
 			ExcutorTrigger trigger = new ExcutorTrigger();
-			for (Long triggerId : triggerIds) {
-				CronTriggerImpl cronTriggerImpl = trigger.definationTrigger(triggerId);
-				cronTriggerImpl.setJobKey(jobKey);
-				scheduler.scheduleJob(cronTriggerImpl);
+			@SuppressWarnings("unchecked")
+			List<CronTriggerImpl> triggerImpls =  (List<CronTriggerImpl>) scheduler.getTriggersOfJob(jobKey);
+			
+			if (scheduler.deleteJob(jobKey)) {
+				for(CronTriggerImpl triggerImpl : triggerImpls){
+					triggerImpl.setJobKey(jobKey);
+					scheduler.scheduleJob(triggerImpl);
+				}
+				
+				for (Long triggerId : triggerIds) {
+					CronTriggerImpl cronTriggerImpl = trigger.definationTrigger(triggerId);
+					cronTriggerImpl.setJobKey(jobKey);
+					scheduler.scheduleJob(cronTriggerImpl);
+				}
+				isSuccess = true;
 			}
-			isSuccess = true;
 		} catch (SchedulerException e) {
 			logger.error(GitWebException.getStackTrace(e));
 			throw GitWebException.GIT1001("JOB更新失败....");

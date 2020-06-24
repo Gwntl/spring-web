@@ -1,7 +1,10 @@
 package org.mine.quartz.job;
 
+import org.mine.aplt.support.bean.GitContext;
+import org.mine.dao.custom.BatchDefineCostomDao;
 import org.mine.quartz.JobExcutorFactory;
 import org.mine.quartz.dto.ConcurrTaskDto;
+import org.mine.quartz.job.run.JobDirectCall;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -18,16 +21,15 @@ public class AsyncTaskNoLogJob implements Job{
 	private static final Logger logger = LoggerFactory.getLogger(AsyncTaskNoLogJob.class);
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
+		logger.debug("AsyncTaskNoLogJob begin>>>>>>>>>>>>>>>>>>>>");
 		ConcurrTaskDto taskDto = (ConcurrTaskDto) context.getJobDetail().getJobDataMap().get("dto");
+		logger.debug("input info : {}", taskDto.toString());
 		if (taskDto.getJobLogFlag() != null && taskDto.getJobLogFlag() != 0) {
 			logger.error("The current job need logging.");
 		} else {
-			JobExcutorFactory.call(new Runnable() {
-				@Override
-				public void run() {
-					taskDto.getJobId();
-				}
-			}, taskDto.getJobLogFlag());
+			taskDto.setHistoryId(GitContext.getBean(BatchDefineCostomDao.class).getBatchSequence("sequence_id"));
+			JobExcutorFactory.call(new JobDirectCall(taskDto), taskDto.getJobLogFlag());
 		}
+		logger.debug("AsyncTaskNoLogJob begin>>>>>>>>>>>>>>>>>>>>");
 	}
 }

@@ -10,6 +10,7 @@
 		<result column="job_log_flag" property="jobLogFlag"/>
 		<result column="job_skip_flag" property="jobSkipFlag"/>
 		<result column="job_run_muti_flag" property="jobRunMutiFlag"/>
+		<result column="job_pause_flag" property="jobPauseFlag"/>
 		<result column="job_time_delay_flag" property="jobTimeDelayFlag"/>
 		<result column="job_time_delay_value" property="jobTimeDelayValue"/>
 		<result column="create_date" property="createDate"/>
@@ -19,8 +20,8 @@
 
 	<sql id="Base_Select_List">
 		job_id,job_name,job_associate_trigger_id,job_executor,job_init_value,job_log_flag,
-		job_skip_flag,job_run_muti_flag,job_time_delay_flag,job_time_delay_value,create_date,
-		valid_status,remark
+		job_skip_flag,job_run_muti_flag,job_pause_flag,job_time_delay_flag,job_time_delay_value,
+		create_date,valid_status,remark
 	</sql>
 
 	<sql id="Base_Insert_Column">
@@ -33,6 +34,7 @@
 			<if test="jobLogFlag != null">job_log_flag,</if>
 			<if test="jobSkipFlag != null">job_skip_flag,</if>
 			<if test="jobRunMutiFlag != null">job_run_muti_flag,</if>
+			<if test="jobPauseFlag != null">job_pause_flag,</if>
 			<if test="jobTimeDelayFlag != null">job_time_delay_flag,</if>
 			<if test="jobTimeDelayValue != null">job_time_delay_value,</if>
 			<if test="createDate != null">create_date,</if>
@@ -51,6 +53,7 @@
 			<if test="jobLogFlag != null">#{jobLogFlag},</if>
 			<if test="jobSkipFlag != null">#{jobSkipFlag},</if>
 			<if test="jobRunMutiFlag != null">#{jobRunMutiFlag},</if>
+			<if test="jobPauseFlag != null">#{jobPauseFlag},</if>
 			<if test="jobTimeDelayFlag != null">#{jobTimeDelayFlag},</if>
 			<if test="jobTimeDelayValue != null">#{jobTimeDelayValue},</if>
 			<if test="createDate != null">#{createDate},</if>
@@ -76,13 +79,15 @@
 	<insert id="batchInsertXML" parameterType="java.util.List">
 		insert into batch_job_definition
 		(job_id,job_name,job_associate_trigger_id,job_executor,job_init_value
-			,job_log_flag,job_skip_flag,job_run_muti_flag,job_time_delay_flag
-			,job_time_delay_value,create_date,valid_status,remark)
+			,job_log_flag,job_skip_flag,job_run_muti_flag,job_pause_flag
+			,job_time_delay_flag,job_time_delay_value,create_date,valid_status
+			,remark)
 		values
 		<foreach collection="list" item="item" index="index" separator=",">
 			(#{item.jobId},#{item.jobName},#{item.jobAssociateTriggerId},#{item.jobExecutor},#{item.jobInitValue}
-				,#{item.jobLogFlag},#{item.jobSkipFlag},#{item.jobRunMutiFlag},#{item.jobTimeDelayFlag}
-				,#{item.jobTimeDelayValue},#{item.createDate},#{item.validStatus},#{item.remark})
+				,#{item.jobLogFlag},#{item.jobSkipFlag},#{item.jobRunMutiFlag},#{item.jobPauseFlag}
+				,#{item.jobTimeDelayFlag},#{item.jobTimeDelayValue},#{item.createDate},#{item.validStatus}
+				,#{item.remark})
 		</foreach>
 	</insert>
 	<select id="selectOne1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
@@ -128,6 +133,7 @@
 			<if test="jobLogFlag != null">job_log_flag = #{jobLogFlag},</if>
 			<if test="jobSkipFlag != null">job_skip_flag = #{jobSkipFlag},</if>
 			<if test="jobRunMutiFlag != null">job_run_muti_flag = #{jobRunMutiFlag},</if>
+			<if test="jobPauseFlag != null">job_pause_flag = #{jobPauseFlag},</if>
 			<if test="jobTimeDelayFlag != null">job_time_delay_flag = #{jobTimeDelayFlag},</if>
 			<if test="jobTimeDelayValue != null">job_time_delay_value = #{jobTimeDelayValue},</if>
 			<if test="createDate != null">create_date = #{createDate},</if>
@@ -147,6 +153,7 @@
 			<if test="jobLogFlag != null">job_log_flag = #{jobLogFlag},</if>
 			<if test="jobSkipFlag != null">job_skip_flag = #{jobSkipFlag},</if>
 			<if test="jobRunMutiFlag != null">job_run_muti_flag = #{jobRunMutiFlag},</if>
+			<if test="jobPauseFlag != null">job_pause_flag = #{jobPauseFlag},</if>
 			<if test="jobTimeDelayFlag != null">job_time_delay_flag = #{jobTimeDelayFlag},</if>
 			<if test="jobTimeDelayValue != null">job_time_delay_value = #{jobTimeDelayValue},</if>
 			<if test="createDate != null">create_date = #{createDate},</if>
@@ -166,6 +173,7 @@
 			<if test="jobLogFlag != null">job_log_flag = #{jobLogFlag},</if>
 			<if test="jobSkipFlag != null">job_skip_flag = #{jobSkipFlag},</if>
 			<if test="jobRunMutiFlag != null">job_run_muti_flag = #{jobRunMutiFlag},</if>
+			<if test="jobPauseFlag != null">job_pause_flag = #{jobPauseFlag},</if>
 			<if test="jobTimeDelayFlag != null">job_time_delay_flag = #{jobTimeDelayFlag},</if>
 			<if test="jobTimeDelayValue != null">job_time_delay_value = #{jobTimeDelayValue},</if>
 			<if test="createDate != null">create_date = #{createDate},</if>
@@ -226,6 +234,13 @@
 				</if>
 			</foreach>
 		</trim>
+		<trim prefix="job_pause_flag=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.jobPauseFlag != null">
+					when job_id = #{item.jobId} then #{item.jobPauseFlag}
+				</if>
+			</foreach>
+		</trim>
 		<trim prefix="job_time_delay_flag=case" suffix="end,">
 			<foreach collection="list" item="item" index="index">
 				<if test="item.jobTimeDelayFlag != null">
@@ -277,6 +292,7 @@
 			<if test="jobLogFlag != null">job_log_flag = #{jobLogFlag},</if>
 			<if test="jobSkipFlag != null">job_skip_flag = #{jobSkipFlag},</if>
 			<if test="jobRunMutiFlag != null">job_run_muti_flag = #{jobRunMutiFlag},</if>
+			<if test="jobPauseFlag != null">job_pause_flag = #{jobPauseFlag},</if>
 			<if test="jobTimeDelayFlag != null">job_time_delay_flag = #{jobTimeDelayFlag},</if>
 			<if test="jobTimeDelayValue != null">job_time_delay_value = #{jobTimeDelayValue},</if>
 			<if test="createDate != null">create_date = #{createDate},</if>

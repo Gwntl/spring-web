@@ -10,6 +10,12 @@ public class AbstractDemo implements InitializingBean{
 	protected String className;
 	protected String classPath;
 	
+	public AbstractDemo() {
+	}
+	
+	public AbstractDemo(String className, String classPath) {
+	}
+	
 	/**
 	 * @return the className
 	 */
@@ -53,5 +59,9 @@ public class AbstractDemo implements InitializingBean{
 	
 	public void init(){
 		System.out.println(">>>>>>>>>>cacheMap>>>>>>>>>>" + cacheMap.size());
+	}
+	
+	public void test(){
+		System.out.println("-------");
 	}
 }

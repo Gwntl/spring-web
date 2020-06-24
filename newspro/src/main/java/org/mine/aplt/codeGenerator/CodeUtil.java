@@ -529,7 +529,7 @@ public class CodeUtil {
 //				"batch_step_execution_log_history", "batch_timing_task_log_register", "batch_timing_task_log_history",
 //				"batch_timing_step_log_register", "batch_timing_step_log_history" };
 //		String[] tables = {"batch_task_execute", "batch_job_execute", "batch_queue_execute"};
-		String[] tables = {"batch_job_definition"};
+		String[] tables = {"batch_executor_seqlog"};
 		for(String tableName : tables){
 			CodeDto codeDto = columnInfos(tableName);
 			createJavaFile(codeDto, tableName);

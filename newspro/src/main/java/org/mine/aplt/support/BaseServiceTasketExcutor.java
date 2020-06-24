@@ -50,7 +50,7 @@ public abstract class BaseServiceTasketExcutor implements ExcutorTask, GroupTask
 					if(Thread.interrupted()){
 						throw GitWebException.GIT1001("the current step is cancelled.");
 					}
-				} catch (Exception e) {
+				} catch (Throwable e) {
 					logger.error("JobdetailProvider运行异常: {}", MineBizException.getStackTrace(e));
 					throw e;
 				}

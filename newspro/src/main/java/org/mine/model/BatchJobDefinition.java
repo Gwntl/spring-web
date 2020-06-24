@@ -4,7 +4,7 @@ package org.mine.model;
  * batch_job_definition--批量作业定义表
  * @filename BatchJobDefinition.java
  * @author wzaUsers
- * @date 2020-06-09 16:06:46
+ * @date 2020-06-23 16:06:55
  * @version v1.0
 */
 public class BatchJobDefinition {
@@ -41,6 +41,10 @@ public class BatchJobDefinition {
 	 */
 	private Integer jobRunMutiFlag;
 	/**
+	 * 可暂停标志, 0-是, 1-否
+	 */
+	private Integer jobPauseFlag;
+	/**
 	 * 延时执行标志, 0-是, 1-否
 	 */
 	private Integer jobTimeDelayFlag;
@@ -70,6 +74,7 @@ public class BatchJobDefinition {
 		this.jobLogFlag = 0;
 		this.jobSkipFlag = 1;
 		this.jobRunMutiFlag = 0;
+		this.jobPauseFlag = 1;
 		this.jobTimeDelayFlag = 1;
 		this.jobTimeDelayValue = "";
 		this.createDate = "";
@@ -190,6 +195,20 @@ public class BatchJobDefinition {
 		this.jobRunMutiFlag = jobRunMutiFlag;
 	}
 	/**
+	 * 可暂停标志, 0-是, 1-否
+	 * @return thejobPauseFlag
+	 */
+	public Integer getJobPauseFlag() {
+		return jobPauseFlag;
+	}
+	/**
+	 * 可暂停标志, 0-是, 1-否
+	 * @param jobPauseFlag the jobPauseFlag to set
+	 */
+	public void setJobPauseFlag(Integer jobPauseFlag) {
+		this.jobPauseFlag = jobPauseFlag;
+	}
+	/**
 	 * 延时执行标志, 0-是, 1-否
 	 * @return thejobTimeDelayFlag
 	 */
@@ -268,8 +287,8 @@ public class BatchJobDefinition {
 		return "BatchJobDefinition[" + 
 		"jobId=" + jobId + ", jobName=" + jobName + ", jobAssociateTriggerId=" + jobAssociateTriggerId + ", jobExecutor=" + jobExecutor + 
 		", jobInitValue=" + jobInitValue + ", jobLogFlag=" + jobLogFlag + ", jobSkipFlag=" + jobSkipFlag + 
-		", jobRunMutiFlag=" + jobRunMutiFlag + ", jobTimeDelayFlag=" + jobTimeDelayFlag + ", jobTimeDelayValue=" + jobTimeDelayValue + 
-		", createDate=" + createDate + ", validStatus=" + validStatus + ", remark=" + remark + 
-		"]";
+		", jobRunMutiFlag=" + jobRunMutiFlag + ", jobPauseFlag=" + jobPauseFlag + ", jobTimeDelayFlag=" + jobTimeDelayFlag + 
+		", jobTimeDelayValue=" + jobTimeDelayValue + ", createDate=" + createDate + ", validStatus=" + validStatus + 
+		", remark=" + remark + "]";
 	}
 }

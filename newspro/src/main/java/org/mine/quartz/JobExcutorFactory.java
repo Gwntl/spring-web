@@ -7,6 +7,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.mine.aplt.constant.ApltContanst;
+
 public class JobExcutorFactory{
 	
 	private volatile static JobExcutorFactory factory = null;
@@ -37,6 +39,7 @@ public class JobExcutorFactory{
 		if(executor == null){
 			synchronized (JobExcutorFactory.class) {
 				if(executor == null){
+					//此处使用有界队列, 由于需要记录日志的异步定时任务偏少.
 					executor = new ThreadPoolExecutor(20, 30, 50L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(20), new CustomThreadFactory("job-executor-"));
 				}
 			}
@@ -48,9 +51,9 @@ public class JobExcutorFactory{
 		if (executorNoLog == null) {
 			synchronized(JobExcutorFactory.class){
 				if (executorNoLog == null) {
-					executorNoLog = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors() << 1,
-							Runtime.getRuntime().availableProcessors() << 1, 1000, TimeUnit.MILLISECONDS,
-							new LinkedBlockingQueue<>(4096));
+					//高并发执行任务时间短.
+					executorNoLog = new ThreadPoolExecutor(ApltContanst.CPU_COUNT << 1, ApltContanst.CPU_COUNT << 1,
+							1000, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(4096), new CustomThreadFactory("nolog-job-executor"));
 				}
 			}
 		}

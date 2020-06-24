@@ -20,7 +20,7 @@ public class ConcurrTaskDto {
 	/**
 	 * 组别ID
 	 */
-	private Long groupId;
+	private Long queueId;
 	/**
 	 * 当前组别是否记录日志
 	 */
@@ -85,7 +85,7 @@ public class ConcurrTaskDto {
 	public ConcurrTaskDto() {
 		super();
 		this.queueInitValue = new HashMap<>();
-		this.groupId = 0L;
+		this.queueId = 0L;
 		this.jobLogFlag = 0;
 		this.jobOneTime = 0;
 		this.taskId = 0L;
@@ -121,18 +121,18 @@ public class ConcurrTaskDto {
 
 	/**
 	 * 组别ID
-	 * @return the groupId
+	 * @return the queueId
 	 */
-	public Long getGroupId() {
-		return groupId;
+	public Long getQueueId() {
+		return queueId;
 	}
 
 	/**
 	 * 组别ID
-	 * @param groupId the groupId to set
+	 * @param queueId the queueId to set
 	 */
-	public void setGroupId(Long groupId) {
-		this.groupId = groupId;
+	public void setQueueId(Long queueId) {
+		this.queueId = queueId;
 	}
 
 	/**
@@ -350,7 +350,7 @@ public class ConcurrTaskDto {
 	 */
 	@Override
 	public String toString() {
-		return "ConcurrTaskDto [queueInitValue = " + CommonUtils.toString(jobInitValue) + "groupId= " + groupId
+		return "ConcurrTaskDto [queueInitValue = " + CommonUtils.toString(jobInitValue) + "queueId= " + queueId
 				+ ", groupSaveLog=" + jobLogFlag + ", jobOneTime=" + jobOneTime + ", taskId=" + taskId
 				+ ", taskSkipFlag=" + taskSkipFlag + ", taskInitValue=" + CommonUtils.toString(taskInitValue)
 				+ ", jobInitValue=" + CommonUtils.toString(jobInitValue) + ", jobSkipFlag=" + jobSkipFlag

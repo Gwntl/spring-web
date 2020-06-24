@@ -1,6 +1,7 @@
 package org.mine.aplt.constant;
 
 public class ApltContanst {
+	public static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
 	/**
 	 * QUEUE默认name前缀
 	 */

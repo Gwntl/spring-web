@@ -25,10 +25,10 @@ import org.mine.model.BatchTaskExecute;
 import org.mine.model.BatchTriggerDefinition;
 import org.mine.quartz.ExecutorBase;
 import org.mine.quartz.dto.ConcurrTaskDto;
-import org.quartz.CronScheduleBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
+import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.JobDetailImpl;
 import org.quartz.impl.triggers.CronTriggerImpl;
@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 	/**
@@ -58,9 +59,25 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 	@Autowired
 	private GitContext context;
 
+	private int isPauseFlag;
+	
+	/**
+	 * @return the isPauseFlag
+	 */
+	public int getIsPauseFlag() {
+		return isPauseFlag;
+	}
+
+	/**
+	 * @param isPauseFlag the isPauseFlag to set
+	 */
+	public void setIsPauseFlag(int isPauseFlag) {
+		this.isPauseFlag = isPauseFlag;
+	}
+
 	protected static Map<String, BaseServiceTasketExcutor> quartzStepCache = new ConcurrentHashMap<>(1 >> 5);
 	
-	public static BaseServiceTasketExcutor getExecutor(String key){
+	public static BaseServiceTasketExcutor getExecutor(String key) {
 		if (quartzStepCache.containsKey(key)) {
 			return quartzStepCache.get(key);
 		} else {
@@ -88,7 +105,7 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 		logger.info("load timing data over....");
 	}
 	
-	public void loadTimingTaskData(){
+	public void loadTimingTaskData() {
 		logger.info("loadTimingTaskData begin>>>>>>>>>>>>>>>");
 		try{
 			List<BatchTaskDefinition> taskDefinitions = taskDefinitionDao.selectAll2(JobExcutorEnum.TASK_AUTO_RUN);
@@ -105,7 +122,7 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 						for (BatchTaskExecute taskExecute : taskExecutes) {
 							Long jobID = taskExecute.getExecuteJobId();
 							BatchJobDefinition jobDefinition = jobDefinitionDao.selectOne1R(jobID, false);
-							if (jobDefinition != null) {
+							if (jobDefinition != null && (jobDefinition.getJobPauseFlag() == this.isPauseFlag)) {
 								//由于jobdatamap中保存的为对象的引用, 因此需要new对象.
 								ConcurrTaskDto dto = new ConcurrTaskDto();
 								//赋TASK值
@@ -146,14 +163,15 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 	 * 加载定时任务数据
 	 * @return
 	 */
-	public Map<JobDetailImpl, ExcutorTrigger> loadTimingQueueData(){
+	public Map<JobDetailImpl, ExcutorTrigger> loadTimingQueueData() {
 		logger.info("loadTimingQueueData begin>>>>>>>>>>>>>>>");
 		try{
 			//查询出需定时执行的任务.当前queue仅区分手动和自动.
 			List<BatchQueueDefinition> queueDefinitions = queueDefinitionDao.selectAll1R(JobExcutorEnum.QUEUE_AUTO);
-			if(queueDefinitions != null && queueDefinitions.size() > 0){
+			if (queueDefinitions != null && queueDefinitions.size() > 0) {
 				for(BatchQueueDefinition queueDefinition : queueDefinitions){
 					ConcurrTaskDto dto = new ConcurrTaskDto();
+					dto.setQueueId(queueDefinition.getQueueId());
 					CommonUtils.initMapValue(dto.getQueueInitValue(), queueDefinition.getQueueInitValue());
 					registerQuartz(queueDefinition.getQueueId(), queueDefinition.getQueueExecutor(), queueDefinition.getQueueTriggerId(), dto);
 				}
@@ -179,7 +197,7 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 	 * @param taskDto
 	 * @throws SchedulerException
 	 */
-	public void registerQuartz(Long id, String executor, String associTrgId, ConcurrTaskDto taskDto)throws SchedulerException{
+	public void registerQuartz(Long id, String executor, String associTrgId, ConcurrTaskDto taskDto) throws SchedulerException {
 //		JobDetail detail = JobBuilder.newJob(ExecutorBase.getExcutorJob(executor)).withIdentity(ApltContanst.DEFAULT_JOB_NAME 
 //		+ id, ApltContanst.DEFAULT_JOB_GROUP).usingJobData(dataMap).build();
 		JobDetailImpl detailImpl = new JobDetailImpl();
@@ -201,7 +219,7 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 	 * @param associateTriggerID 触发器ID
 	 * @throws SchedulerException
 	 */
-	public void scheduleJobByTriggers(JobDetail detail, String associateTriggerID) throws SchedulerException{
+	public void scheduleJobByTriggers(JobDetail detail, String associateTriggerID) throws SchedulerException {
 		List<String> triggerIds = CommonUtils.splitStrToList(associateTriggerID, ",", false);
 		if (triggerIds.size() <= 0) throw GitWebException.GIT1001(detail.getKey().toString() + ", 未设置触发器参数.");
 		ExcutorTrigger trigger = definationTrigger(Long.valueOf(triggerIds.get(0)));
@@ -211,14 +229,16 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 		 * */
 //		getJobDataMap().put("jobDetail", detail);
 //		map.put(detailImpl, trigger);
-		ExecutorBase.getSchedulerFactoryBean().getScheduler().scheduleJob(detail, trigger);
+		SchedulerFactoryBean factoryBean = this.isPauseFlag == 0 ? ExecutorBase.getDymicScheduler() : ExecutorBase.getSchedulerFactoryBean();
+		Scheduler scheduler = factoryBean.getScheduler();
+		scheduler.scheduleJob(detail, trigger);
 		//注册该JOB中其他触发器
-		if(triggerIds.size() > 1){
+		if (triggerIds.size() > 1) {
 			ExcutorTrigger extraTrigger = null;
 			for(String triggerId : triggerIds){
 				extraTrigger = definationTrigger(Long.valueOf(triggerId));
 				extraTrigger.setJobKey(detail.getKey());
-				ExecutorBase.getSchedulerFactoryBean().getScheduler().scheduleJob(extraTrigger);
+				scheduler.scheduleJob(extraTrigger);
 			}
 		}
 	}
@@ -228,10 +248,10 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 	 * @param triggerId
 	 * @return ExcutorTrigger
 	 */
-	public ExcutorTrigger definationTrigger(Long triggerId){
+	public ExcutorTrigger definationTrigger(Long triggerId) {
 		try{
 			BatchTriggerDefinition triggerDefinition = triggerDefinitionDao.selectOne1R(triggerId, false);
-			if(CommonUtils.isEmpty(triggerDefinition.getTriggerCrontrigger())){
+			if (CommonUtils.isEmpty(triggerDefinition.getTriggerCrontrigger())) {
 				throw GitWebException.GIT1002("batch_trigger_conf.trigger_crontrigger 触发器参数");
 			}
 //			CronTrigger trigger = TriggerBuilder.newTrigger().withIdentity(ApltContanst.DEFAULT_TRIGGER_NAME + triggerDefinition.getTriggerId(), ApltContanst.DEFAULT_TRIGGER_GROUP).
@@ -240,15 +260,14 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 			trigger.setName(ApltContanst.DEFAULT_TRIGGER_NAME + triggerDefinition.getTriggerId());
 			trigger.setGroup(ApltContanst.DEFAULT_TRIGGER_GROUP);
 			trigger.setCronExpression(triggerDefinition.getTriggerCrontrigger());
-			if(CommonUtils.isNotEmpty(triggerDefinition.getTriggerStartTime())){
+			if (CommonUtils.isNotEmpty(triggerDefinition.getTriggerStartTime())) {
 				trigger.setStartTime(CommonUtils.stringToDate(triggerDefinition.getTriggerStartTime(), "yyyy-MM-dd HH:mm:ss"));
 			}
-			if(CommonUtils.isNotEmpty(triggerDefinition.getTriggerEndTime())){
+			if (CommonUtils.isNotEmpty(triggerDefinition.getTriggerEndTime())) {
 				trigger.setEndTime(CommonUtils.stringToDate(triggerDefinition.getTriggerEndTime(), "yyyy-MM-dd HH:mm:ss"));
 			}
 			//当为可暂停的JOB时
 //			trigger.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
-			
 			return trigger;
 		} catch(ParseException e){
 			logger.error("加载trigger信息失败: {}" + MineBizException.getStackTrace(e));

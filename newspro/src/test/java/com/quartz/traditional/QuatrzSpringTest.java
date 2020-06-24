@@ -24,11 +24,11 @@ public class QuatrzSpringTest {
 	public static void main(String[] args) throws Exception {
 		ApplicationContext context = new ClassPathXmlApplicationContext("classpath:config/quartz/quartz_spring_test.xml");
 		
-		String[] strs = context.getBeanNamesForType(SchedulerFactoryBean.class);
-		System.out.println(CommonUtils.toString(strs));
-		
-		Map<String, SchedulerFactoryBean> map = context.getBeansOfType(SchedulerFactoryBean.class);
-		System.out.println(CommonUtils.toString(map));
+//		String[] strs = context.getBeanNamesForType(SchedulerFactoryBean.class);
+//		System.out.println(CommonUtils.toString(strs));
+//		
+//		Map<String, SchedulerFactoryBean> map = context.getBeansOfType(SchedulerFactoryBean.class);
+//		System.out.println(CommonUtils.toString(map));
 		
 //		SchedulerFactoryBean scheduler = (SchedulerFactoryBean) context.getBean("&quartzSch_bean");
 //		SchedulerFactoryBean scheduler_1 = (SchedulerFactoryBean) context.getBean("&quartzSch_bean_1");

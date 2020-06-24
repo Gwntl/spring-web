@@ -8,7 +8,8 @@
 	class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
 <!-- 		<property name="triggers"> -->
 <!-- 			<list> -->
-<!-- 				<ref bean="triggerExcutor"/> -->
+<!-- 				<ref bean="defaultExcutor"/> -->
+<!-- 				<ref bean="dynamicExcutor"/> -->
 <!-- 			</list> -->
 <!-- 		</property> -->
 		<property name="quartzProperties">
@@ -34,6 +35,12 @@
 	
 <!-- 	<bean id="baseExcutor" class="org.mine.quartz.ExcutorBase"></bean> -->
 	
-	<bean id="triggerExcutor" class="org.mine.quartz.trigger.ExcutorTrigger">
+	<bean id="defaultExcutor" class="org.mine.quartz.trigger.ExcutorTrigger">
+		<property name="isPauseFlag" value="1"></property>
 	</bean>
+	
+	<bean id="dynamicExcutor" class="org.mine.quartz.trigger.ExcutorTrigger">
+		<property name="isPauseFlag" value="0"></property>
+	</bean>
+	
 </beans>

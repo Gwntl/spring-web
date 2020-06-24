@@ -7,7 +7,7 @@ import org.mine.model.BatchJobDefinition;
  * 
  * @filename BatchJobDefinitionDao.java
  * @author wzaUsers
- * @date 2020-06-09 16:06:46
+ * @date 2020-06-23 16:06:55
  * @version v1.0
 */
 

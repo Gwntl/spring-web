@@ -35,6 +35,10 @@ public class ExecutorBase implements ApplicationContextAware{
 		return (SchedulerFactoryBean) applicationContext.getBean("&DefaultQuartzScheduler");
 	}
 	
+	public static SchedulerFactoryBean getDymicScheduler() {
+		return (SchedulerFactoryBean) applicationContext.getBean("&DynamicOperationScheduler");
+	}
+	
 	public static Class<? extends Job> getExcutorJob(String jobPath){
 		try {
 			return (Class<? extends Job>) Class.forName(jobPath);
