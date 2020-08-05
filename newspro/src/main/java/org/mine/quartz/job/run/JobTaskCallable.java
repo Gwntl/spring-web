@@ -191,8 +191,8 @@ public class JobTaskCallable implements Runnable, InitializingBean{
 
 	/**
 	 * 执行下一个step
-	 * @param node
-	 * @param jobId
+	 * @param jobHistoryId
+	 * @param deliverValueMap
 	 */
 	private void poolExecute(Long jobHistoryId, Map<String, Object> deliverValueMap){
 		InnerStepNode node = stepsCache.get(jobHistoryId).removeFirst();
