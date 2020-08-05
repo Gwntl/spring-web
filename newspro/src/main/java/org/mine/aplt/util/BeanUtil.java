@@ -5,7 +5,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -212,6 +214,147 @@ public class BeanUtil extends BeanUtils{
 			throw new FatalBeanException("");
 		}
 		
+	}
+	
+	public static Boolean valueToBoolean(Object obj){
+		if (obj == null) {
+			return null;
+		}
+		if (obj.getClass().equals(Boolean.class) || obj.getClass().equals(boolean.class)) {
+			return (Boolean)obj;
+		} else {
+			return new Boolean(valueToString(obj));
+		}
+	}
+	
+	public static Long valueToLong(Object obj){
+		if (obj == null) {
+			return null;
+		}
+		if (obj.getClass().equals(Long.class) || obj.getClass().equals(long.class)) {
+			return (Long)obj;
+		} else {
+			String s = valueToString(obj);
+			if (s == null || s.length() <= 0) {
+				s = "0";
+			}
+			return new Long(s);
+		}
+	}
+	
+	public static Short valueToShort(Object obj){
+		if (obj == null) {
+			return null;
+		}
+		if (obj.getClass().equals(Short.class) || obj.getClass().equals(short.class)) {
+			return (Short)obj;
+		} else {
+			String s = valueToString(obj);
+			if (s == null || s.length() <= 0) {
+				s = "0.0";
+			}
+			return new Short(s);
+		}
+	}
+	
+	public static Integer valueToInteger(Object obj){
+		if (obj == null) {
+			return null;
+		}
+		if (obj.getClass().equals(Integer.class) || obj.getClass().equals(int.class)) {
+			return (Integer)obj;
+		} else {
+			String s = valueToString(obj);
+			if (s == null || s.length() <= 0) {
+				s = "0";
+			}
+			return new Integer(s);
+		}
+	}
+	
+	public static Double valueToDouble(Object obj){
+		if (obj == null) {
+			return null;
+		}
+		if (obj.getClass().equals(Double.class) || obj.getClass().equals(double.class)) {
+			return (Double)obj;
+		} else {
+			String s = valueToString(obj);
+			if (s == null || s.length() <= 0) {
+				s = "0.00";
+			}
+			return new Double(s);
+		}
+	}
+	
+	public static Float valueToFloat(Object obj){
+		if (obj == null) {
+			return null;
+		}
+		if (obj.getClass().equals(Float.class) || obj.getClass().equals(float.class)) {
+			return (Float)obj;
+		} else {
+			String s = valueToString(obj);
+			if (s == null || s.length() <= 0) {
+				s = "0";
+			}
+			return new Float(s);
+		}
+	}
+	
+	public static BigDecimal valueToBigDecimal(Object obj){
+		if (obj == null) {
+			return null;
+		}
+		if (obj.getClass().equals(BigDecimal.class)) {
+			return (BigDecimal)obj;
+		} else {
+			String s = valueToString(obj);
+			if (s == null || s.length() <= 0) {
+				s = "0.00";
+			}
+			return new BigDecimal(s);
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	public static Date valueToDate(Object obj){
+		if (obj == null) {
+			return null;
+		}
+		if (obj.getClass().equals(Date.class)) {
+			return (Date)obj;
+		} else {
+			return new Date(valueToString(obj));
+		}
+	}
+	
+	public static String valueToString(Object obj){
+		if (obj == null) {
+			return null;
+		}
+		Class<?> clz = obj.getClass();
+		if (clz.equals(Long.class) || clz.equals(long.class)) {
+			return ((Long)obj) + "";
+		} else if (clz.equals(Integer.class) || clz.equals(int.class)) {
+			return ((Integer)obj) + "";
+		} else if (clz.equals(Double.class) || clz.equals(double.class)) {
+			return ((Double)obj) + "";
+		} else if (clz.equals(Short.class) || clz.equals(short.class)) {
+			return ((Short)obj) + "";
+		} else if (clz.equals(Float.class) || clz.equals(float.class)) {
+			return ((Float)obj) + "";
+		} else if (clz.equals(Boolean.class) || clz.equals(boolean.class)) {
+			return ((Boolean)obj) + "";
+		} else if (clz.equals(BigDecimal.class)) {
+			return ((BigDecimal)obj).toPlainString();
+		} else if (clz.equals(BigInteger.class)) {
+			return ((BigInteger)obj).toString();
+		} else if (clz.equals(Date.class)) {
+			return ((Date)obj).toString();
+		} else {
+			return obj.toString();
+		}
 	}
 	
 	

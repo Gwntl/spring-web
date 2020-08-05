@@ -1,6 +1,8 @@
 package org.mine.aplt.support.bean;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 import java.util.ArrayList;
@@ -12,11 +14,14 @@ import org.mine.aplt.exception.GitWebException;
 import org.mine.aplt.util.CommonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.ColumnMapRowMapper;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.datasource.JdbcTransactionObjectSupport;
+import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionStatus;
+import org.springframework.util.LinkedCaseInsensitiveMap;
 
 public class CurrThreadExecutionEnv {
 	private static final Logger logger = LoggerFactory.getLogger(CurrThreadExecutionEnv.class);
@@ -91,7 +96,7 @@ public class CurrThreadExecutionEnv {
 	 * 获取当前环境的数据库连接对象
 	 * @return
 	 */
-	protected Connection getConnection(){
+	protected Connection getConnection() {
 		if(status == null){
 			throw GitWebException.GIT_DB_CONNECT("当前线程环境下未初始化事务连接.");
 		}
@@ -104,7 +109,7 @@ public class CurrThreadExecutionEnv {
 	 * 创建事务点
 	 * @param savepointName 事务点名称
 	 */
-	public void createSavepoint(String savepointName){
+	public void createSavepoint(String savepointName) {
 		if(savepointMap.get(savepointName) != null){
 			throw GitWebException.GIT_DB_OPERATOR("当前环境已创建该事务点" + savepointName);
 		}
@@ -126,7 +131,7 @@ public class CurrThreadExecutionEnv {
 	 * 回滚事务点
 	 * @param savepointName
 	 */
-	public void rollbackSavepoint(String savepointName){
+	public void rollbackSavepoint(String savepointName) {
 		if(logger.isTraceEnabled()){
 			logger.trace("当前环境事务点内容为: {}", CommonUtils.toString(savepointMap));
 		}
@@ -154,7 +159,7 @@ public class CurrThreadExecutionEnv {
 	 * 撤销事务点
 	 * @param savepointName
 	 */
-	public void releaseSavepoint(String savepointName){
+	public void releaseSavepoint(String savepointName) {
 		if(logger.isTraceEnabled()){
 			logger.trace("当前环境事务点内容为: {}", CommonUtils.toString(savepointMap));
 		}
@@ -178,7 +183,7 @@ public class CurrThreadExecutionEnv {
 		}
 	}
 	
-	class InnerSavepoint{
+	class InnerSavepoint {
 		private String savepointName;
 		private String innerName;
 		private Savepoint savepoint;
@@ -193,11 +198,66 @@ public class CurrThreadExecutionEnv {
 		}
 	}
 	
-	public List<Map<String, Object>> queryForList(String sql, Object[] args){
+	public List<Map<String, Object>> queryForList(String sql, Object[] args) {
 		return jdbcTemplate.queryForList(sql, args);
 	}
 	
-	public <T> List<T> queryForList(String sql, Object[] args, Class<T> obj){
-		return (List<T>) jdbcTemplate.query(sql, args, new CustomRowMapper<T>(obj));
+	public <T> List<T> queryForList(String sql, Object[] args, Class<T> clz) {
+		return (List<T>) jdbcTemplate.query(sql, args, new CustomRowMapper<T>(clz));
+	}
+	
+	public Map<String,Object> queryForMap(String sql, Object[] args) {
+		return this.jdbcTemplate.queryForMap(sql, args);
+	}
+	
+	public Map<String, Object> queryForMap(String sql, Object[] args, final String key, final String value) {
+		return this.jdbcTemplate.query(sql, new ResultSetExtractor<Map<String, Object>>() {
+
+			@Override
+			public Map<String, Object> extractData(ResultSet rs) throws SQLException, DataAccessException {
+				Map<String, Object> map = new LinkedCaseInsensitiveMap<>();
+				String k = "";
+				Object v = null;
+				while (rs.next()) {
+					ResultSetMetaData metaData = rs.getMetaData();
+					int columnCount = metaData.getColumnCount();
+					for (int index = 1; index <= columnCount; index++) {
+						String column = JdbcUtils.lookupColumnName(metaData, index);
+						if (column.equalsIgnoreCase(key)) {
+							k = (String) JdbcUtils.getResultSetValue(rs, index);
+						}
+						if (column.equalsIgnoreCase(value)) {
+							v = JdbcUtils.getResultSetValue(rs, index);
+						}
+					}
+					map.put(k, v);
+				}
+				return map;
+			}
+		}, args);
+	}
+	
+	public <T> T queryForObject(String sql, Object[] args, Class<T> clz) {
+		return (T) this.jdbcTemplate.queryForObject(sql, args, new CustomRowMapper<T>(clz));
+	}
+	
+	public <T> T queryForObject(String sql, Class<T> clz) {
+		return this.jdbcTemplate.queryForObject(sql, clz);
+	}
+	
+	public int update(String sql) {
+		return this.jdbcTemplate.update(sql);
+	}
+	
+	public int update(String sql, Object[] args) {
+		return this.jdbcTemplate.update(sql, args);
+	}
+	
+	public int[] batchUpdate(String sql) {
+		return this.jdbcTemplate.batchUpdate(sql);
+	}
+	
+	public int [] batchUpdate(String sql, List<Object[]> batchArgs) {
+		return this.jdbcTemplate.batchUpdate(sql, batchArgs);
 	}
 }

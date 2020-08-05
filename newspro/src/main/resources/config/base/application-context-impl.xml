@@ -89,7 +89,7 @@
 		<property name="dataSource" ref="dataSource"></property>
 	</bean>
 	
-	<!-- 独立事务管理 -->
+	<!-- 独立事务管理, 当前事务下处理. -->
 	<bean id="transActionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
 		<property name="transactionManager" ref="transactionManager"></property>
 		<!-- 
@@ -107,12 +107,19 @@
 		<!-- 
 		事务隔离级别:
 		ReadUncommitted(READ_UNCOMMITTED)：未提交读。当事务A更新某条数据的时候，不容许其他事务来更新该数据，但可以进行读取操作.(容易产生脏读,一个事务读取后一个事务提交的数据)
-　　		ReadCommitted(READ_COMMITTED)：提交读。当事务A更新数据时，不容许其他事务进行任何的操作包括读取，但事务A读取时，其他事务可以进行读取、更新
+　　	ReadCommitted(READ_COMMITTED)：提交读。当事务A更新数据时，不容许其他事务进行任何的操作包括读取，但事务A读取时，其他事务可以进行读取、更新
 		RepeatableRead(READ_REPEATABLE)：重复读。当事务A更新数据时，不容许其他事务进行任何的操作，但是当事务A进行读取的时候，其他事务只能读取，不能更新
 		Serializable(SERIALIZABLE)：序列化。最严格的隔离级别，当然并发性也是最差的，事务必须依次进行。 -->
 		<property name="isolationLevelName" value="ISOLATION_READ_COMMITTED"></property>
 		<property name="timeout" value="86000"></property>
 	</bean>
+	<bean id="independentTransActionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+		<property name="transactionManager" ref="transactionManager"></property>
+		<property name="propagationBehaviorName" value="PROPAGATION_REQUIRES_NEW"></property>
+		<property name="isolationLevelName" value="ISOLATION_READ_COMMITTED"></property>
+		<property name="timeout" value="86000"></property>
+	</bean>
+	
 	<bean id="jdncTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
 		<property name="dataSource" ref="dataSource"></property>
 	</bean>

@@ -7,18 +7,18 @@ import java.util.concurrent.TimeUnit;
 public class CountDownTest {
 	
 	public static void main(String[] args) {
-		try {
+//		try {
 //			CountDownLatch startSignal = new CountDownLatch(1);
 //			CountDownLatch endSignal = new CountDownLatch(10);
 			//每次准许执行的线程数
-			Semaphore semaphore = new Semaphore(1);
+//			Semaphore semaphore = new Semaphore(1);
 //			for(int i = 0; i < 10; i++){
 //				new Thread(new Worker(startSignal, endSignal), "THREAD_" + i).start();
 //			}
 			
-			for(int i = 0; i < 10; i++){
-				new Thread(new WorkerSem(semaphore), "THREAD_" + i).start();
-			}
+//			for(int i = 0; i < 10; i++){
+//				new Thread(new WorkerSem(semaphore), "THREAD_" + i).start();
+//			}
 			
 //			System.out.println("线程执行前处理");
 //			startSignal.countDown();
@@ -26,9 +26,11 @@ public class CountDownTest {
 			//等待指定线程数执行完毕
 //			endSignal.await();
 //			System.out.println("线程执行完毕");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+		int a = 0;
+		System.out.println(0b1001);
 	}
 	
 	static class Worker implements Runnable {

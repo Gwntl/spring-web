@@ -8,10 +8,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mine.model.BatchTriggerDefinition;
+import org.mine.aplt.support.bean.GitContext;
+import org.mine.aplt.util.CommonUtils;
+import org.mine.model.BatchGroupDefinition;
 import org.mine.model.Tuser;
 import org.mine.quartz.schduler.AutoScheduler;
 import org.mine.service.TuserService;
@@ -173,5 +176,12 @@ public class JdbcConnectToMysqlTest {
 //		triggerDefinition.setTriggerStartTime(null);
 //		triggerDefinition.setTriggerEndTime(null);
 //		schduler.updateTrigger(triggerDefinition);
+	}
+	@Test
+	public void test7(){
+//		Map<String, Object> map = GitContext.queryForMap("select * from batch_group_definition", null, "group_name", "create_date");
+//		System.out.println(CommonUtils.toString(map));
+		Long list = GitContext.queryForLong("select count(1) from batch_group_definition");
+		System.out.println(list);
 	}
 }

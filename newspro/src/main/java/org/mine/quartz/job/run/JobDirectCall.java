@@ -39,7 +39,7 @@ import org.springframework.stereotype.Component;
  * @author: wntl
  * @date: 2020年6月23日 下午5:19:13
  */
-@Component
+//@Component
 public class JobDirectCall extends JobCall {
 	
 	private ConcurrTaskDto dto;
@@ -60,19 +60,19 @@ public class JobDirectCall extends JobCall {
 		poolExecutor = new ThreadPoolExecutor(ApltContanst.CPU_COUNT << 1, ApltContanst.CPU_COUNT << 1,
 				5, TimeUnit.SECONDS, new ArrayBlockingQueue<>(ApltContanst.CPU_COUNT << 8));
 	}
-	/**
-	 * @return the dto
-	 */
-	public ConcurrTaskDto getDto() {
-		return dto;
-	}
-
-	/**
-	 * @param dto the dto to set
-	 */
-	public void setDto(ConcurrTaskDto dto) {
-		this.dto = dto;
-	}
+//	/**
+//	 * @return the dto
+//	 */
+//	public ConcurrTaskDto getDto() {
+//		return dto;
+//	}
+//
+//	/**
+//	 * @param dto the dto to set
+//	 */
+//	public void setDto(ConcurrTaskDto dto) {
+//		this.dto = dto;
+//	}
 
 	public JobDirectCall(ConcurrTaskDto dto) {
 		this.dto = dto;

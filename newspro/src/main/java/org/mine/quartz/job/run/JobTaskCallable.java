@@ -447,6 +447,8 @@ public class JobTaskCallable implements Runnable, InitializingBean{
 										return GitContext.getBean(BatchTimingTaskLogRegisterDao.class).updateOne1R(t);
 									}
 								}, register);
+								//更新完毕,增加task.
+								JobQueueLogic.queueMonitor.add(null);
 							}
 						} catch (InterruptedException e) {
 							logger.error("Failed to get the return value from the thread of execution(MONITOR_THREAD)!!!!!!");

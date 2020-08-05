@@ -1,6 +1,8 @@
 package org.mine.aplt.support.bean;
 
+import java.math.BigDecimal;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -53,10 +55,19 @@ public class GitContext implements ApplicationContextAware{
 	}
 	
 	/**
+	 * 继承原有事务处理.
 	 * @return the transActionTemplate
 	 */
 	public static TransactionTemplate getTransActionTemplate() {
 		return (TransactionTemplate)applicationContext.getBean("transActionTemplate");
+	}
+	
+	/**
+	 * 独立事务下的处理. 当启用该方法时会直接另起一个事务进行处理.
+	 * @return the independentTransActionTemplate
+	 */
+	public static TransactionTemplate getIndependentTransActionTemplate() {
+		return (TransactionTemplate)applicationContext.getBean("independentTransActionTemplate");
 	}
 	
 	public static Object put(String key, Object value){
@@ -100,6 +111,7 @@ public class GitContext implements ApplicationContextAware{
 		return t;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public static <T> T getBean(String beanName){
 		T t = null;
 		try{
@@ -124,7 +136,7 @@ public class GitContext implements ApplicationContextAware{
 	 * 环境内容初始化
 	 * @param dataMap
 	 */
-	public static void init(Map dataMap){
+	public static void init(@SuppressWarnings("rawtypes") Map dataMap){
 		String transName = dataMap.get("transName") + "";
 		loadMDC(transName);
 	}
@@ -159,12 +171,36 @@ public class GitContext implements ApplicationContextAware{
 	}
 	
 	/**
-	 * 独立事务处理
+	 * 创建事务点
+	 * @param savepointName
+	 */
+	public static void createSavepoint(String savepointName) {
+		getExecutionEnv().createSavepoint(savepointName);
+	}
+	
+	/**
+	 * 回滚事务点
+	 * @param savepointName
+	 */
+	public static void rollbackSavepoint(String savepointName) {
+		getExecutionEnv().rollbackSavepoint(savepointName);
+	}
+	
+	/**
+	 * 释放事务点
+	 * @param savepointName
+	 */
+	public static void releaseSavepoint(String savepointName) {
+		getExecutionEnv().releaseSavepoint(savepointName);
+	}
+	
+	/**
+	 * 继承原有事务处理
 	 * @param operator
 	 * @param map
 	 */
 	@SuppressWarnings("unchecked")
-	public static <R, I> R doIndependentTransActionControl(final BatchOperator<R, I> operator, final I input){
+	public static <R, I> R doTransActionControl(final BatchOperator<R, I> operator, final I input) {
 		return (R)getTransActionTemplate().execute(new TransactionCallback<Object>() {
 
 			@Override
@@ -190,5 +226,130 @@ public class GitContext implements ApplicationContextAware{
 				}
 			}
 		});
+	}
+	
+	/**
+	 * 独立事务处理
+	 * @param operator
+	 * @param map
+	 */
+	@SuppressWarnings("unchecked")
+	public static <R, I> R doIndependentTransActionControl(final BatchOperator<R, I> operator, final I input) {
+		return (R)getIndependentTransActionTemplate().execute(new TransactionCallback<Object>() {
+
+			@Override
+			public R doInTransaction(TransactionStatus status) {
+				if(logger.isTraceEnabled()){
+					logger.trace("IndependentTransAction input : BatchOperator : {}, clazz : {}"
+							, operator.getClass(), input.getClass());
+				}
+				R r = null;
+				try{
+					logger.trace("IndependentTransAction begin");
+					getExecutionEnv().setStatus(status);
+					r = operator.call(input);
+					logger.trace("IndependentTransAction call() end");
+					return r;
+				} catch(Exception e){
+					logger.trace("IndependentTransAction call() exception");
+					status.setRollbackOnly();
+					throw e;
+				} finally{
+					logger.trace("IndependentTransAction call() finally");
+					getExecutionEnv().releaseTransactionStatus();
+				}
+			}
+		});
+	}
+	
+	/**数据库操作**/
+	/**
+	 * 直接调用Spring提供的jdbstemplate方法. 查询出的结果为List<Map>类型. key-字段名, value-字段对应值.
+	 * @param sql 需执行的sql语句
+	 * @param args 参数值
+	 * @return
+	 */
+	public static List<Map<String, Object>> queryForListMap(String sql, Object[] args) {
+		return getExecutionEnv().queryForList(sql, args);
+	}
+	
+	/**
+	 * 查询出的结果为List类型.
+	 * @param sql 需执行的sql语句
+	 * @param args 参数值
+	 * @param returnType 返回对象类型
+	 * @return
+	 */
+	public static <T> List<T> queryForList(String sql, Object[] args, Class<T> returnType) {
+		return getExecutionEnv().queryForList(sql, args, returnType);
+	}
+	
+	/**
+	 * 查询出的结果为Map类型. key-字段名, value-字段对应值.
+	 * @param sql
+	 * @param args
+	 * @return
+	 */
+	public static Map<String, Object> queryForMap(String sql, Object[] args) {
+		return getExecutionEnv().queryForMap(sql, args);
+	}
+	
+	/**
+	 * 根据指定字段查询出Map结果集合.
+	 * <p>
+	 * 		sql : select key, value from system. 
+	 * 	<code>
+	 * 		queryForMap(sql,null,"key","value");
+	 * </code>
+	 * 		result : Map:{key=value}
+	 * </p>
+	 * @param sql
+	 * @param args
+	 * @param key key字段值
+	 * @param value value字段值
+	 * @return
+	 */
+	public static Map<String, Object> queryForMap(String sql, Object[] args, String key, String value) {
+		return getExecutionEnv().queryForMap(sql, args, key, value);
+	}
+	
+	/**
+	 * 查询出指定对象值
+	 * @param sql
+	 * @param args
+	 * @param clz
+	 * @return
+	 */
+	public <T> T queryForObject(String sql, Object[] args, Class<T> clz) {
+		return getExecutionEnv().queryForObject(sql, args, clz);
+	}
+	
+	public static String queryForString(String sql) {
+		return getExecutionEnv().queryForObject(sql, String.class);
+	}
+	public static Long queryForLong(String sql) {
+		return getExecutionEnv().queryForObject(sql, Long.class);
+	}
+	public static Integer queryForInteger(String sql) {
+		return getExecutionEnv().queryForObject(sql, Integer.class);
+	}
+	public static BigDecimal queryForBigDecimal(String sql) {
+		return getExecutionEnv().queryForObject(sql, BigDecimal.class);
+	}
+	
+	public static int update(String sql) {
+		return getExecutionEnv().update(sql);
+	}
+	
+	public static int update(String sql, Object[] args) {
+		return getExecutionEnv().update(sql, args);
+	}
+	
+	public static int[] batchUpdate(String sql) {
+		return getExecutionEnv().batchUpdate(sql);
+	}
+	
+	public static int [] batchUpdate(String sql, List<Object[]> batchArgs) {
+		return getExecutionEnv().batchUpdate(sql, batchArgs);
 	}
 }
