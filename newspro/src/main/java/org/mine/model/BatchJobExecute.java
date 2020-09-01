@@ -4,14 +4,14 @@ package org.mine.model;
  * batch_job_execute--批量作业执行表(并发)
  * @filename BatchJobExecute.java
  * @author wzaUsers
- * @date 2020-06-08 10:06:21
+ * @date 2020-08-20 11:08:19
  * @version v1.0
 */
 public class BatchJobExecute {
 	/**
 	 * 执行作业ID
 	 */
-	private Long executeJobId;
+	private String executeJobId;
 	/**
 	 * 执行作业名称
 	 */
@@ -19,7 +19,7 @@ public class BatchJobExecute {
 	/**
 	 * 关联步骤ID
 	 */
-	private Long executeStepId;
+	private String executeStepId;
 	/**
 	 * 步骤执行序号
 	 */
@@ -42,9 +42,9 @@ public class BatchJobExecute {
 	private String remark;
 
 	public BatchJobExecute() {
-		this.executeJobId = 0L;
+		this.executeJobId = "";
 		this.executeJobName = "";
-		this.executeStepId = 0L;
+		this.executeStepId = "";
 		this.executeStepNum = 0;
 		this.executeStrongDepen = 0;
 		this.createDate = "";
@@ -54,21 +54,21 @@ public class BatchJobExecute {
 
 	/**
 	 * 执行作业ID
-	 * @return theexecuteJobId
+	 * @return the executeJobId
 	 */
-	public Long getExecuteJobId() {
+	public String getExecuteJobId() {
 		return executeJobId;
 	}
 	/**
 	 * 执行作业ID
 	 * @param executeJobId the executeJobId to set
 	 */
-	public void setExecuteJobId(Long executeJobId) {
+	public void setExecuteJobId(String executeJobId) {
 		this.executeJobId = executeJobId;
 	}
 	/**
 	 * 执行作业名称
-	 * @return theexecuteJobName
+	 * @return the executeJobName
 	 */
 	public String getExecuteJobName() {
 		return executeJobName;
@@ -82,21 +82,21 @@ public class BatchJobExecute {
 	}
 	/**
 	 * 关联步骤ID
-	 * @return theexecuteStepId
+	 * @return the executeStepId
 	 */
-	public Long getExecuteStepId() {
+	public String getExecuteStepId() {
 		return executeStepId;
 	}
 	/**
 	 * 关联步骤ID
 	 * @param executeStepId the executeStepId to set
 	 */
-	public void setExecuteStepId(Long executeStepId) {
+	public void setExecuteStepId(String executeStepId) {
 		this.executeStepId = executeStepId;
 	}
 	/**
 	 * 步骤执行序号
-	 * @return theexecuteStepNum
+	 * @return the executeStepNum
 	 */
 	public Integer getExecuteStepNum() {
 		return executeStepNum;
@@ -110,7 +110,7 @@ public class BatchJobExecute {
 	}
 	/**
 	 * 是否强依赖上一步
-	 * @return theexecuteStrongDepen
+	 * @return the executeStrongDepen
 	 */
 	public Integer getExecuteStrongDepen() {
 		return executeStrongDepen;
@@ -124,7 +124,7 @@ public class BatchJobExecute {
 	}
 	/**
 	 * 创建时间
-	 * @return thecreateDate
+	 * @return the createDate
 	 */
 	public String getCreateDate() {
 		return createDate;
@@ -138,7 +138,7 @@ public class BatchJobExecute {
 	}
 	/**
 	 * 有效状态. 0-是, 1-否, D-已废弃
-	 * @return thevalidStatus
+	 * @return the validStatus
 	 */
 	public String getValidStatus() {
 		return validStatus;
@@ -152,7 +152,7 @@ public class BatchJobExecute {
 	}
 	/**
 	 * 备注
-	 * @return theremark
+	 * @return the remark
 	 */
 	public String getRemark() {
 		return remark;

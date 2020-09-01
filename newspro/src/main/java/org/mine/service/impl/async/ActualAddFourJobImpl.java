@@ -1,19 +1,19 @@
 package org.mine.service.impl.async;
 
+import org.mine.aplt.exception.MineException;
+import org.mine.aplt.support.BaseServiceTaskletExecutor;
+import org.mine.aplt.util.CommonUtils;
+import org.springframework.stereotype.Service;
+
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.mine.aplt.exception.MineException;
-import org.mine.aplt.support.BaseServiceTasketExcutor;
-import org.mine.aplt.util.CommonUtils;
-import org.springframework.stereotype.Service;
-
 @Service(value = "actualAddFourJob")
-public class ActualAddFourJobImpl extends BaseServiceTasketExcutor {
+public class ActualAddFourJobImpl extends BaseServiceTaskletExecutor {
 
 	@Override
-	public Map<String, Object> excutor(Map<String, Object> map) {
+	public Map<String, Object> executor(Map<String, Object> map) {
 		logger.debug("ActualAddFourJobImpl >>>> begin>>>>>");
 		try{
 			logger.debug("coming...... sleping.....");

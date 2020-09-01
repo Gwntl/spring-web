@@ -162,7 +162,7 @@
 		where history_step_execution_id = #{historyStepExecutionId} for update
 	</update>
 
-	<update id="batchUpdateXML1" parameterType="org.mine.model.BatchTimingStepLogHistory">
+	<update id="batchUpdate1" parameterType="org.mine.model.BatchTimingStepLogHistory">
 		update batch_timing_step_log_history
 		<trim prefix="set" suffixOverrides=",">
 			<if test="historyStepJobId != null">history_step_job_id = #{historyStepJobId},</if>
@@ -179,63 +179,82 @@
 		where history_step_execution_id = #{historyStepExecutionId}
 	</update>
 
-	<update id="batchUpdate" parameterType="org.mine.model.BatchTimingStepLogHistory">
-		update batch_timing_step_log_history
-		<trim prefix="set" suffixOverrides=",">
-			<if test="historyStepJobId != null">history_step_job_id = #{historyStepJobId},</if>
-			<if test="historyStepJobName != null">history_step_job_name = #{historyStepJobName},</if>
-			<if test="historyStepStartTime != null">history_step_start_time = #{historyStepStartTime},</if>
-			<if test="historyStepEndTime != null">history_step_end_time = #{historyStepEndTime},</if>
-			<if test="historyStepJobStatus != null">history_step_job_status = #{historyStepJobStatus},</if>
-			<if test="historyStepJobErrmsg != null">history_step_job_errmsg = #{historyStepJobErrmsg},</if>
-			<if test="historyStepAssociateJobId != null">history_step_associate_job_id = #{historyStepAssociateJobId},</if>
-			<if test="createDate != null">create_date = #{createDate},</if>
-			<if test="validStatus != null">valid_status = #{validStatus},</if>
-			<if test="remark != null">remark = #{remark},</if>
+	<update id="batchUpdateXML" parameterType="java.util.List">
+		update batch_timing_step_log_history set
+		<trim prefix="history_step_job_id=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyStepJobId != null">
+					when history_step_execution_id = #{item.historyStepExecutionId} then #{item.historyStepJobId}
+				</if>
+			</foreach>
 		</trim>
-		where history_step_execution_id = #{historyStepExecutionId}
+		<trim prefix="history_step_job_name=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyStepJobName != null">
+					when history_step_execution_id = #{item.historyStepExecutionId} then #{item.historyStepJobName}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="history_step_start_time=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyStepStartTime != null">
+					when history_step_execution_id = #{item.historyStepExecutionId} then #{item.historyStepStartTime}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="history_step_end_time=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyStepEndTime != null">
+					when history_step_execution_id = #{item.historyStepExecutionId} then #{item.historyStepEndTime}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="history_step_job_status=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyStepJobStatus != null">
+					when history_step_execution_id = #{item.historyStepExecutionId} then #{item.historyStepJobStatus}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="history_step_job_errmsg=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyStepJobErrmsg != null">
+					when history_step_execution_id = #{item.historyStepExecutionId} then #{item.historyStepJobErrmsg}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="history_step_associate_job_id=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.historyStepAssociateJobId != null">
+					when history_step_execution_id = #{item.historyStepExecutionId} then #{item.historyStepAssociateJobId}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="create_date=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.createDate != null">
+					when history_step_execution_id = #{item.historyStepExecutionId} then #{item.createDate}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="valid_status=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.validStatus != null">
+					when history_step_execution_id = #{item.historyStepExecutionId} then #{item.validStatus}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="remark=case" suffix="end">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.remark != null">
+					when history_step_execution_id = #{item.historyStepExecutionId} then #{item.remark}
+				</if>
+			</foreach>
+		</trim>
+		where
+		history_step_execution_id in
+		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+			#{item.historyStepExecutionId}
+		</foreach>
 	</update>
-
-	<select id="selectAll1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTimingStepLogHistory.Base_Select_List"/>
-		from batch_timing_step_log_history
-		where null = #{taskAssociateQueueId}
-	</select>
-
-	<select id="selectAll1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTimingStepLogHistory.Base_Select_List"/>
-		from batch_timing_step_log_history
-		where null = #{taskAssociateQueueId} and valid_status = '0'
-	</select>
-
-	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTimingStepLogHistory.Base_Select_List"/>
-		from batch_timing_step_log_history
-		where null = #{taskAssociateQueueId} for update
-	</select>
-
-	<select id="selectAll2" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTimingStepLogHistory.Base_Select_List"/>
-		from batch_timing_step_log_history
-		where null = #{taskAutoFlag}
-	</select>
-
-	<select id="selectAll2R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTimingStepLogHistory.Base_Select_List"/>
-		from batch_timing_step_log_history
-		where null = #{taskAutoFlag} and valid_status = '0'
-	</select>
-
-	<select id="selectAll2L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTimingStepLogHistory.Base_Select_List"/>
-		from batch_timing_step_log_history
-		where null = #{taskAutoFlag} for update
-	</select>
-
 </mapper>

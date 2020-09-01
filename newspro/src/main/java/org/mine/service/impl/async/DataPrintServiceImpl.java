@@ -5,19 +5,20 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.mine.aplt.exception.MineException;
-import org.mine.aplt.support.BaseServiceTasketExcutor;
+import org.mine.aplt.support.BaseServiceTaskletExecutor;
 import org.mine.aplt.util.CommonUtils;
 import org.springframework.stereotype.Service;
 
 @Service(value = "dataPrintServiceImpl")
-public class DataPrintServiceImpl extends BaseServiceTasketExcutor{
+public class DataPrintServiceImpl extends BaseServiceTaskletExecutor {
 	
 	@Override
-	public Map<String, Object> excutor(Map<String, Object> map) {
+	public Map<String, Object> executor(Map<String, Object> map) {
 		logger.debug("DataPrintServiceImpl >>>> begin>>>>>");
 		try{
-			TimeUnit.SECONDS.sleep(14);
-			System.out.println(CommonUtils.dateToString(new Date(), "yyyy-MM-dd HH:mm:ss") + " >>second job , three step>>> dataPrintServiceImpl>>>>>>");
+			logger.debug("second operator : {}", map.get("operator"));
+			TimeUnit.SECONDS.sleep(3);
+			System.out.println(CommonUtils.dateToString(new Date(), "yyyy-MM-dd HH:mm:ss") + " dataPrintServiceImpl>>second job , second step>>> dataPrintServiceImpl>>>>>>");
 		} catch (InterruptedException e){
 			logger.error("error message : {}", MineException.getStackTrace(e));
 		}

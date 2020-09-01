@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="BatchConfCustom">
-	<select id="getMaxQueueId" resultType="java.lang.Long">
-		select IFNULL(max(queue_id) + 1,1) from batch_queue_conf
+	<select id="getMaxNumByQueueDefin" resultType="java.lang.Integer">
+		select IFNULL(max(queue_execution_num) + 1, 1) from batch_queue_definition
 	</select>
-	
-	<select id="getTriggerConfMaxId" resultType="java.lang.Long">
-		select IFNULL(max(trigger_id) + 1,1) from batch_trigger_conf
-	</select>
-	
-	<select id="getJobGroupConfMaxId" resultType="java.lang.Long">
-		select IFNULL(max(job_group_id) + 1,1) from batch_job_group_conf
-	</select>
-	
-	<select id="getJobDetailConfMaxId" resultType="java.lang.Long">
-		select IFNULL(count(jobdetail_id) + 1,1) from batch_job_detail_conf where jobdetail_id like '${id}00%'
-	</select>
-	
+
 	<select id="getMaxNumByGroupDefin" resultType="java.lang.Integer">
 		select IFNULL(max(group_execution_num) + 1, 1) from batch_group_definition
 	</select>
-	
+
+	<select id="getMaxNumByTaskExecute" resultType="java.lang.Integer">
+		select IFNULL(max(execute_job_num) + 1, 1) from batch_task_execute where execute_task_id = #{taskID}
+	</select>
+
+	<select id="getMaxNumByJobExecute" resultType="java.lang.Integer">
+		select IFNULL(max(execute_step_num) + 1, 1) from batch_job_execute where execute_job_id = #{jobID}
+	</select>
+
+	<select id="getMaxNumByQueueExecute" resultType="java.lang.Integer">
+		select IFNULL(max(execute_num) + 1, 1) from batch_queue_execute where execute_queue_id = #{queueID}
+	</select>
+
 	<select id="getBatchSequence" resultType="java.lang.Long">
 		select nextVal(#{seqName})
 	</select>
@@ -34,9 +34,9 @@
 			IFNULL(MAX(trigger_id) + 1, 1) from batch_trigger_definition
 		</if>
 	</select>
-	
-	<update id="updateStepLogExecuStatus" parameterType="java.util.Map">
-		update batch_timing_step_log_register set step_job_status = #{stepJobStatus}, step_job_errmsg= #{stepJobErrmsg} where step_execution_id = #{stepExecutionId}
+
+	<update id="updateStepLogInUnknownFailed" parameterType="java.util.Map">
+		update batch_step_log set step_status = #{stepStatus}, step_errmsg= #{stepErrorMsg}, time_stamp = #{timeStamp}
+		where execution_instance = #{executionInstance} and step_status = 'NEW' and valid_status = '0'
 	</update>
-	
 </mapper>

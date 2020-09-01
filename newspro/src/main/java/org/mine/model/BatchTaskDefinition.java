@@ -4,14 +4,14 @@ package org.mine.model;
  * batch_task_definition--批量任务定义表
  * @filename BatchTaskDefinition.java
  * @author wzaUsers
- * @date 2020-06-08 10:06:39
+ * @date 2020-08-20 11:08:58
  * @version v1.0
 */
 public class BatchTaskDefinition {
 	/**
 	 * 任务ID
 	 */
-	private Long taskId;
+	private String taskId;
 	/**
 	 * 任务名称
 	 */
@@ -21,9 +21,13 @@ public class BatchTaskDefinition {
 	 */
 	private Integer taskAutoFlag;
 	/**
-	 * 关联队列ID
+	 * 关联定时器ID
 	 */
-	private Long taskAssociateQueueId;
+	private String taskAssociateTriggerId;
+	/**
+	 * 任务执行器
+	 */
+	private String taskExecutor;
 	/**
 	 * 可跳过标志. 0-是, 1-否
 	 */
@@ -33,9 +37,9 @@ public class BatchTaskDefinition {
 	 */
 	private String taskInitValue;
 	/**
-	 * 任务执行序号
+	 * 任务并发数
 	 */
-	private Integer taskExecutionNum;
+	private Integer taskConcurrencyNum;
 	/**
 	 * 创建时间
 	 */
@@ -50,13 +54,14 @@ public class BatchTaskDefinition {
 	private String remark;
 
 	public BatchTaskDefinition() {
-		this.taskId = 0L;
+		this.taskId = "";
 		this.taskName = "";
 		this.taskAutoFlag = 1;
-		this.taskAssociateQueueId = 0L;
+		this.taskAssociateTriggerId = "";
+		this.taskExecutor = "";
 		this.taskSkipFlag = 1;
 		this.taskInitValue = "";
-		this.taskExecutionNum = 0;
+		this.taskConcurrencyNum = 0;
 		this.createDate = "";
 		this.validStatus = "0";
 		this.remark = "";
@@ -64,21 +69,21 @@ public class BatchTaskDefinition {
 
 	/**
 	 * 任务ID
-	 * @return thetaskId
+	 * @return the taskId
 	 */
-	public Long getTaskId() {
+	public String getTaskId() {
 		return taskId;
 	}
 	/**
 	 * 任务ID
 	 * @param taskId the taskId to set
 	 */
-	public void setTaskId(Long taskId) {
+	public void setTaskId(String taskId) {
 		this.taskId = taskId;
 	}
 	/**
 	 * 任务名称
-	 * @return thetaskName
+	 * @return the taskName
 	 */
 	public String getTaskName() {
 		return taskName;
@@ -92,7 +97,7 @@ public class BatchTaskDefinition {
 	}
 	/**
 	 * 是否自动执行. 0-是, 1-否
-	 * @return thetaskAutoFlag
+	 * @return the taskAutoFlag
 	 */
 	public Integer getTaskAutoFlag() {
 		return taskAutoFlag;
@@ -105,22 +110,36 @@ public class BatchTaskDefinition {
 		this.taskAutoFlag = taskAutoFlag;
 	}
 	/**
-	 * 关联队列ID
-	 * @return thetaskAssociateQueueId
+	 * 关联定时器ID
+	 * @return the taskAssociateTriggerId
 	 */
-	public Long getTaskAssociateQueueId() {
-		return taskAssociateQueueId;
+	public String getTaskAssociateTriggerId() {
+		return taskAssociateTriggerId;
 	}
 	/**
-	 * 关联队列ID
-	 * @param taskAssociateQueueId the taskAssociateQueueId to set
+	 * 关联定时器ID
+	 * @param taskAssociateTriggerId the taskAssociateTriggerId to set
 	 */
-	public void setTaskAssociateQueueId(Long taskAssociateQueueId) {
-		this.taskAssociateQueueId = taskAssociateQueueId;
+	public void setTaskAssociateTriggerId(String taskAssociateTriggerId) {
+		this.taskAssociateTriggerId = taskAssociateTriggerId;
+	}
+	/**
+	 * 任务执行器
+	 * @return the taskExecutor
+	 */
+	public String getTaskExecutor() {
+		return taskExecutor;
+	}
+	/**
+	 * 任务执行器
+	 * @param taskExecutor the taskExecutor to set
+	 */
+	public void setTaskExecutor(String taskExecutor) {
+		this.taskExecutor = taskExecutor;
 	}
 	/**
 	 * 可跳过标志. 0-是, 1-否
-	 * @return thetaskSkipFlag
+	 * @return the taskSkipFlag
 	 */
 	public Integer getTaskSkipFlag() {
 		return taskSkipFlag;
@@ -134,7 +153,7 @@ public class BatchTaskDefinition {
 	}
 	/**
 	 * 任务初始值
-	 * @return thetaskInitValue
+	 * @return the taskInitValue
 	 */
 	public String getTaskInitValue() {
 		return taskInitValue;
@@ -147,22 +166,22 @@ public class BatchTaskDefinition {
 		this.taskInitValue = taskInitValue;
 	}
 	/**
-	 * 任务执行序号
-	 * @return thetaskExecutionNum
+	 * 任务并发数
+	 * @return the taskConcurrencyNum
 	 */
-	public Integer getTaskExecutionNum() {
-		return taskExecutionNum;
+	public Integer getTaskConcurrencyNum() {
+		return taskConcurrencyNum;
 	}
 	/**
-	 * 任务执行序号
-	 * @param taskExecutionNum the taskExecutionNum to set
+	 * 任务并发数
+	 * @param taskConcurrencyNum the taskConcurrencyNum to set
 	 */
-	public void setTaskExecutionNum(Integer taskExecutionNum) {
-		this.taskExecutionNum = taskExecutionNum;
+	public void setTaskConcurrencyNum(Integer taskConcurrencyNum) {
+		this.taskConcurrencyNum = taskConcurrencyNum;
 	}
 	/**
 	 * 创建时间
-	 * @return thecreateDate
+	 * @return the createDate
 	 */
 	public String getCreateDate() {
 		return createDate;
@@ -176,7 +195,7 @@ public class BatchTaskDefinition {
 	}
 	/**
 	 * 有效状态. 0-是, 1-否, D-已废弃
-	 * @return thevalidStatus
+	 * @return the validStatus
 	 */
 	public String getValidStatus() {
 		return validStatus;
@@ -190,7 +209,7 @@ public class BatchTaskDefinition {
 	}
 	/**
 	 * 备注
-	 * @return theremark
+	 * @return the remark
 	 */
 	public String getRemark() {
 		return remark;
@@ -209,9 +228,9 @@ public class BatchTaskDefinition {
 	@Override
 	public String toString() {
 		return "BatchTaskDefinition[" + 
-		"taskId=" + taskId + ", taskName=" + taskName + ", taskAutoFlag=" + taskAutoFlag + ", taskAssociateQueueId=" + taskAssociateQueueId + 
-		", taskSkipFlag=" + taskSkipFlag + ", taskInitValue=" + taskInitValue + ", taskExecutionNum=" + taskExecutionNum + 
-		", createDate=" + createDate + ", validStatus=" + validStatus + ", remark=" + remark + 
-		"]";
+		"taskId=" + taskId + ", taskName=" + taskName + ", taskAutoFlag=" + taskAutoFlag + ", taskAssociateTriggerId=" + taskAssociateTriggerId + 
+		", taskExecutor=" + taskExecutor + ", taskSkipFlag=" + taskSkipFlag + ", taskInitValue=" + taskInitValue + 
+		", taskConcurrencyNum=" + taskConcurrencyNum + ", createDate=" + createDate + ", validStatus=" + validStatus + 
+		", remark=" + remark + "]";
 	}
 }

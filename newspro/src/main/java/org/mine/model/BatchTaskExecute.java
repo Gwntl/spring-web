@@ -4,14 +4,14 @@ package org.mine.model;
  * batch_task_execute--批量任务运行表
  * @filename BatchTaskExecute.java
  * @author wzaUsers
- * @date 2020-06-08 10:06:21
+ * @date 2020-08-26 10:08:58
  * @version v1.0
 */
 public class BatchTaskExecute {
 	/**
 	 * 执行任务ID
 	 */
-	private Long executeTaskId;
+	private String executeTaskId;
 	/**
 	 * 执行任务名称
 	 */
@@ -19,7 +19,7 @@ public class BatchTaskExecute {
 	/**
 	 * 执行作业ID
 	 */
-	private Long executeJobId;
+	private String executeJobId;
 	/**
 	 * 作业执行序号
 	 */
@@ -28,6 +28,10 @@ public class BatchTaskExecute {
 	 * 是否一次性作业. 0-是, 1-否
 	 */
 	private Integer executeJobOneTime;
+	/**
+	 * 依赖作业
+	 */
+	private String executeJobDepends;
 	/**
 	 * 创建时间
 	 */
@@ -42,11 +46,12 @@ public class BatchTaskExecute {
 	private String remark;
 
 	public BatchTaskExecute() {
-		this.executeTaskId = 0L;
+		this.executeTaskId = "";
 		this.executeTaskName = "";
-		this.executeJobId = 0L;
+		this.executeJobId = "";
 		this.executeJobNum = 0;
 		this.executeJobOneTime = 1;
+		this.executeJobDepends = "";
 		this.createDate = "";
 		this.validStatus = "0";
 		this.remark = "";
@@ -54,21 +59,21 @@ public class BatchTaskExecute {
 
 	/**
 	 * 执行任务ID
-	 * @return theexecuteTaskId
+	 * @return the executeTaskId
 	 */
-	public Long getExecuteTaskId() {
+	public String getExecuteTaskId() {
 		return executeTaskId;
 	}
 	/**
 	 * 执行任务ID
 	 * @param executeTaskId the executeTaskId to set
 	 */
-	public void setExecuteTaskId(Long executeTaskId) {
+	public void setExecuteTaskId(String executeTaskId) {
 		this.executeTaskId = executeTaskId;
 	}
 	/**
 	 * 执行任务名称
-	 * @return theexecuteTaskName
+	 * @return the executeTaskName
 	 */
 	public String getExecuteTaskName() {
 		return executeTaskName;
@@ -82,21 +87,21 @@ public class BatchTaskExecute {
 	}
 	/**
 	 * 执行作业ID
-	 * @return theexecuteJobId
+	 * @return the executeJobId
 	 */
-	public Long getExecuteJobId() {
+	public String getExecuteJobId() {
 		return executeJobId;
 	}
 	/**
 	 * 执行作业ID
 	 * @param executeJobId the executeJobId to set
 	 */
-	public void setExecuteJobId(Long executeJobId) {
+	public void setExecuteJobId(String executeJobId) {
 		this.executeJobId = executeJobId;
 	}
 	/**
 	 * 作业执行序号
-	 * @return theexecuteJobNum
+	 * @return the executeJobNum
 	 */
 	public Integer getExecuteJobNum() {
 		return executeJobNum;
@@ -110,7 +115,7 @@ public class BatchTaskExecute {
 	}
 	/**
 	 * 是否一次性作业. 0-是, 1-否
-	 * @return theexecuteJobOneTime
+	 * @return the executeJobOneTime
 	 */
 	public Integer getExecuteJobOneTime() {
 		return executeJobOneTime;
@@ -123,8 +128,22 @@ public class BatchTaskExecute {
 		this.executeJobOneTime = executeJobOneTime;
 	}
 	/**
+	 * 依赖作业
+	 * @return the executeJobDepends
+	 */
+	public String getExecuteJobDepends() {
+		return executeJobDepends;
+	}
+	/**
+	 * 依赖作业
+	 * @param executeJobDepends the executeJobDepends to set
+	 */
+	public void setExecuteJobDepends(String executeJobDepends) {
+		this.executeJobDepends = executeJobDepends;
+	}
+	/**
 	 * 创建时间
-	 * @return thecreateDate
+	 * @return the createDate
 	 */
 	public String getCreateDate() {
 		return createDate;
@@ -138,7 +157,7 @@ public class BatchTaskExecute {
 	}
 	/**
 	 * 有效状态. 0-是, 1-否, D-已废弃
-	 * @return thevalidStatus
+	 * @return the validStatus
 	 */
 	public String getValidStatus() {
 		return validStatus;
@@ -152,7 +171,7 @@ public class BatchTaskExecute {
 	}
 	/**
 	 * 备注
-	 * @return theremark
+	 * @return the remark
 	 */
 	public String getRemark() {
 		return remark;
@@ -172,7 +191,7 @@ public class BatchTaskExecute {
 	public String toString() {
 		return "BatchTaskExecute[" + 
 		"executeTaskId=" + executeTaskId + ", executeTaskName=" + executeTaskName + ", executeJobId=" + executeJobId + ", executeJobNum=" + executeJobNum + 
-		", executeJobOneTime=" + executeJobOneTime + ", createDate=" + createDate + ", validStatus=" + validStatus + 
-		", remark=" + remark + "]";
+		", executeJobOneTime=" + executeJobOneTime + ", executeJobDepends=" + executeJobDepends + ", createDate=" + createDate + 
+		", validStatus=" + validStatus + ", remark=" + remark + "]";
 	}
 }

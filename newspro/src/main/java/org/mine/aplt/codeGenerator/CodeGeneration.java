@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.mine.aplt.constant.ApltContanst;
 import org.mine.aplt.exception.MineException;
@@ -28,31 +29,30 @@ public class CodeGeneration {
 	private static final String PROPERTIES_PATH = "config/code/template/InterfaceMethodTemplate.properties";
 	public static Map<String, String> interfaceMethodMap = new HashMap<String, String>();
 	public static final SimpleDateFormat FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:MM:ss");
-	private static ThreadLocal<List<String>> isOneIndex = new ThreadLocal<List<String>>(){
-		 protected List<String> initialValue() {
-			 return new ArrayList<String>();
+	private static ThreadLocal<List<String[]>> isOneIndex = new ThreadLocal<List<String[]>>(){
+		 protected List<String[]> initialValue() {
+			 return new ArrayList<String[]>();
 		 }
 	};
-	
-	public static void setIsOneIndex(){
-		isOneIndex.set(new ArrayList<String>());
-	}
+
 	/**
 	 * 增加对象来实现值去重
 	 * duplicateRemoval
 	 */
-	public static ThreadLocal<Set<String>> duplicateRemoval = new ThreadLocal<Set<String>>(){
-		 protected Set<String> initialValue() {
-			 return new HashSet<>();
+	public static ThreadLocal<Set<UniqueIndexDto>> duplicateRemoval = new ThreadLocal<Set<UniqueIndexDto>>(){
+		 protected Set<UniqueIndexDto> initialValue() {
+			 return new HashSet<UniqueIndexDto>();
 		 }
 	};
-	
+
 	public static ThreadLocal<Map<String, List<String>>> methodMaps = new ThreadLocal<Map<String, List<String>>>(){
 		 protected Map<String, List<String>> initialValue() {
 			 return new LinkedHashMap<>();
 		 }
 	};
-	
+
+	public static Map<String, String[]> mapU = new ConcurrentHashMap<>();
+
 	static{
 		Properties properties = new Properties();
 		try{
@@ -68,8 +68,15 @@ public class CodeGeneration {
 			Entry<Object, Object> entry = iterator.next();
 			interfaceMethodMap.put(entry.getKey().toString(), entry.getValue().toString());
 		}
-		
 	}
+
+	public static void clear(){
+		isOneIndex.set(new ArrayList<String[]>());
+		duplicateRemoval.set(new HashSet<UniqueIndexDto>());
+		methodMaps.set(new LinkedHashMap<>());
+		mapU.clear();
+	}
+
 	/**
 	 * 增加类注释
 	 * @param javaFile
@@ -160,7 +167,7 @@ public class CodeGeneration {
 		//getter
 		javaFile.append(ApltContanst.TABS).append("/**").append(ApltContanst.NEWLINE);
 		javaFile.append(ApltContanst.TABS).append(" * ").append(fieldComment).append(ApltContanst.NEWLINE);
-		javaFile.append(ApltContanst.TABS).append(" * ").append("@return the").append(field).append(ApltContanst.NEWLINE);
+		javaFile.append(ApltContanst.TABS).append(" * ").append("@return the ").append(field).append(ApltContanst.NEWLINE);
 		javaFile.append(ApltContanst.TABS).append(" */").append(ApltContanst.NEWLINE);
 		javaFile.append(ApltContanst.TABS).append("public ").append(fieldType).append(" get").append(column).append("() {").append(ApltContanst.NEWLINE);
 		javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append("return ").append(field).append(ApltContanst.LINE_SUFFIX);
@@ -297,18 +304,24 @@ public class CodeGeneration {
 				appendInterfaceMethod(javaFile, interfaceMethodMap.get(ApltContanst.UPDATEONE), ApltContanst.UPDATEONE + i, new String[]{javaFileName}, dto, javaFileName, false, daoImplFlag);
 				appendInterfaceMethod(javaFile, interfaceMethodMap.get(ApltContanst.UPDATEONER), ApltContanst.UPDATEONE + i + "R", new String[]{javaFileName}, dto, javaFileName, false, daoImplFlag);
 				appendInterfaceMethod(javaFile, interfaceMethodMap.get(ApltContanst.UPDATEONEL), ApltContanst.UPDATEONE + i + "L", new String[]{javaFileName}, dto, javaFileName, false, daoImplFlag);
+
+				UniqueIndexDto indexDto = new UniqueIndexDto();
+				indexDto.setColumns(columns);
 				//当Set集合中添加成功时,便代表当前值不重复
-				if(columns.length == 1 && duplicateRemoval.get().add(columns[0])){
-					isOneIndex.get().add(columns[0]);
+				if (duplicateRemoval.get().add(indexDto)) {
+					isOneIndex.get().add(columns);
+					mapU.put(ApltContanst.UPDATEONE + i, columns);
+					mapU.put(ApltContanst.UPDATEONE + i + "R", columns);
+					mapU.put(ApltContanst.UPDATEONE + i + "L", columns);
 				}
 			}
 			System.out.println(">>>>>zhujian>>>>>>>>> " + CommonUtils.toString(isOneIndex.get()));
 			//更新批量方法
 			for(int i = 0, size = isOneIndex.get().size(); i < size; i ++){
-				appendInterfaceMethod(javaFile, interfaceMethodMap.get(ApltContanst.BATCHUPDATEXML), ApltContanst.BATCHUPDATEXML + (i + 1), new String[]{javaFileName}, dto, javaFileName, false, daoImplFlag);
+				appendInterfaceMethod(javaFile, interfaceMethodMap.get(ApltContanst.BATCHUPDATE), ApltContanst.BATCHUPDATE + (i + 1), new String[]{javaFileName}, dto, javaFileName, false, daoImplFlag);
+				mapU.put(ApltContanst.BATCHUPDATE + (i + 1), isOneIndex.get().get(i));
 			}
-//			isOneIndex.set(new ArrayList<>());
-			appendInterfaceMethod(javaFile, interfaceMethodMap.get(ApltContanst.BATCHUPDATE), ApltContanst.BATCHUPDATE, new String[]{javaFileName}, dto, javaFileName, false, daoImplFlag);
+			appendInterfaceMethod(javaFile, interfaceMethodMap.get(ApltContanst.BATCHUPDATEXML), ApltContanst.BATCHUPDATEXML, new String[]{javaFileName}, dto, javaFileName, false, daoImplFlag);
 			appendInterfaceMethod(javaFile, interfaceMethodMap.get(ApltContanst.BATCHDELETE), ApltContanst.BATCHDELETE, new String[]{javaFileName}, dto, javaFileName, false, daoImplFlag);
 
 		}
@@ -346,7 +359,7 @@ public class CodeGeneration {
 		for(int i = 0, length = columns.length; i < length; i ++){
 			String column = columns[i];
 			String comment = remarks.get(column) != null ? remarks.get(column).toString() : "";
-			javaFile.append(ApltContanst.TABS).append(" * @param ").append(column).append(" ").append(comment)
+			javaFile.append(ApltContanst.TABS).append(" * @param ").append(methodName.startsWith("batch") ? "list" : CommonUtils.firstLetterLowerCase(column)).append(" ").append(comment)
 					.append(ApltContanst.NEWLINE);
 			Object type = types.get(column);
 			if(column.equalsIgnoreCase(javaFileName)){
@@ -357,7 +370,7 @@ public class CodeGeneration {
 				}
 			} else if(CommonUtils.isNotEmpty(type)){
 				buffer.append(type).append(" ").append(column).append(", ");
-				if(methodName.startsWith(ApltContanst.SELECTONE)){
+				if(methodName.startsWith(ApltContanst.SELECTONE) && (i == length - 1)){
 					buffer.append("boolean nullException").append(", ");
 				}
 			}
@@ -501,7 +514,9 @@ public class CodeGeneration {
 		appendResultMap(javaFile, dto, javaFileName);
 		for(Map.Entry<String, List<String>> entry : methodMaps.get().entrySet()){
 			String methodName = entry.getKey();
-			List<String> params = entry.getValue(); 
+			List<String> params = entry.getValue();
+			System.out.println(">>>>>>>> methodName : " + methodName);
+			System.out.println(">>>>>>>> params : " + CommonUtils.toString(params));
 			if(methodName.startsWith("select")){
 				appendSelectSql(javaFile, methodName, params, tableName, orginalColumns, javaFileName);
 			} else if(methodName.startsWith("insert")){
@@ -517,9 +532,13 @@ public class CodeGeneration {
 					appendInsertSql(javaFile, methodName, params, tableName, orginalColumns, javaFileName);
 				}
 			} else if(methodName.startsWith("batchUpdate")){
-				if(methodName.contains("batchUpdateXML") && isOneIndex.get().size() > 0){
-					for(String unqiue : isOneIndex.get()){
-						appendBatchUpdateSql(javaFile, methodName, dto, javaFileName, tableName, unqiue);
+				if(methodName.contains("batchUpdateXML")){
+					if (isOneIndex.get().size() > 0) {
+						for(String[] unqiue : isOneIndex.get()){
+							if(unqiue.length == 1){
+								appendBatchUpdateSql(javaFile, methodName, dto, javaFileName, tableName, unqiue[0]);
+							}
+						}
 					}
 				} else {
 					appendUpdateSql(javaFile, methodName, dto, params, tableName, javaFileName);
@@ -616,8 +635,8 @@ public class CodeGeneration {
 			String tableName, String javaFileName) {
 		List<String> fields = dto.getFields();
 		Map<String, String> orginalColumns = dto.getOrginalColumns();
-		List<StringBuffer> uniqueIndexs = dto.getUniqueIndexs();
-		for(StringBuffer unqiue : uniqueIndexs){
+//		List<StringBuffer> uniqueIndexs = dto.getUniqueIndexs();
+		/*for(StringBuffer unqiue : uniqueIndexs){
 			String[] strs = unqiue.toString().split("\\|");
 			List<String> fields_bak = fields;
 			fields_bak.removeAll(Arrays.asList(strs));
@@ -647,7 +666,37 @@ public class CodeGeneration {
 			javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append("</trim>").append(ApltContanst.NEWLINE);
 			javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append("where ").append(buffer).append(getSqlSuffix(methodName)).append(ApltContanst.NEWLINE);
 			javaFile.append(ApltContanst.TABS).append("</update>").append(ApltContanst.NEWLINE).append(ApltContanst.NEWLINE);
+		}*/
+		System.out.println("update methodName : " + methodName);
+		String[] strs = mapU.get(methodName);
+		List<String> fields_bak = fields;
+		fields_bak.removeAll(Arrays.asList(strs));
+		StringBuffer buffer = new StringBuffer();
+		javaFile.append(ApltContanst.TABS).append("<update id=\"").append(methodName).append("\" parameterType=\"")
+				.append(ApltContanst.PACKAGE_MODEL).append(".").append(javaFileName).append("\">").append(ApltContanst.NEWLINE);
+		javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append("update ").append(tableName).append(ApltContanst.NEWLINE);
+		javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append("<trim prefix=\"set\" suffixOverrides=\",\">").append(ApltContanst.NEWLINE);
+		for(int i = 0, size = fields_bak.size(); i < size; i ++){
+			String field = fields_bak.get(i);
+			javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append(ApltContanst.TABS).append("<if test=\"").append(field).append(" != null\">")
+					.append(orginalColumns.get(field)).append(" = #{").append(field).append("},</if>").append(ApltContanst.NEWLINE);
 		}
+
+		for(int i = 0, length = strs.length; i < length; i ++){
+			String s = strs[i];
+			if(i == 0){
+				buffer.append(orginalColumns.get(s)).append(" = #{").append(s).append("}");
+			} else {
+				buffer.append(ApltContanst.AND).append(orginalColumns.get(s)).append(" = #{").append(s).append("}");
+			}
+
+			if((i % 3 == 0) && i > 0  && i < (length - 1)){
+				buffer.append(ApltContanst.NEWLINE).append(ApltContanst.TABS).append(ApltContanst.TABS);
+			}
+		}
+		javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append("</trim>").append(ApltContanst.NEWLINE);
+		javaFile.append(ApltContanst.TABS).append(ApltContanst.TABS).append("where ").append(buffer).append(getSqlSuffix(methodName)).append(ApltContanst.NEWLINE);
+		javaFile.append(ApltContanst.TABS).append("</update>").append(ApltContanst.NEWLINE).append(ApltContanst.NEWLINE);
 	}
 	
 	public static void appendBatchInsertSql(StringBuffer javaFile, String methodName, CodeDto dto, String javaFileName,
@@ -770,6 +819,46 @@ public class CodeGeneration {
 			if(javaFile.charAt(i) == 10){
 				javaFile.insert(i + 1, tabs_info);
 			}
+		}
+	}
+
+	public static class UniqueIndexDto{
+		private String[] columns;
+
+		public String[] getColumns() {
+			return columns;
+		}
+
+		public void setColumns(String[] columns) {
+			this.columns = columns;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj == null) {
+				return false;
+			} else if (this.getClass() != obj.getClass()) {
+				return false;
+			} else if (obj instanceof UniqueIndexDto) {
+				UniqueIndexDto dto = (UniqueIndexDto) obj;
+				for(int i = 0; i < columns.length; i++){
+					if (CommonUtils.notEquals(this.columns[i], dto.getColumns()[i])) {
+						return false;
+					}
+				}
+				return true;
+			}
+			return super.equals(obj);
+		}
+
+		@Override
+		public int hashCode() {
+			int hash = 0;
+			for(int i = 0; i < columns.length; i++){
+				hash |= columns[i].hashCode() << 4;
+				hash |= hash << 8;
+			}
+			return hash;
 		}
 	}
 }

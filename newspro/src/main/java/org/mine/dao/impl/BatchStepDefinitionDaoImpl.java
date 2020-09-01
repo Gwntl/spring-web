@@ -15,14 +15,14 @@ import org.springframework.stereotype.Repository;
  * 
  * @filename BatchStepDefinitionDaoImpl.java
  * @author wzaUsers
- * @date 2020-06-08 10:06:39
+ * @date 2020-08-20 11:08:58
  * @version v1.0
 */
 @Repository
 public class BatchStepDefinitionDaoImpl extends BaseDaoSupport implements BatchStepDefinitionDao {
 	/**
 	 * 单笔插入
-	 * @param BatchStepDefinition 
+	 * @param batchStepDefinition 
 	 */
 	@Override
 	public int insertOne(BatchStepDefinition batchStepDefinition){
@@ -31,7 +31,7 @@ public class BatchStepDefinitionDaoImpl extends BaseDaoSupport implements BatchS
 
 	/**
 	 * 批量插入(直接调用Mybatis代码)
-	 * @param BatchStepDefinition 
+	 * @param list 
 	 */
 	@Override
 	public void batchInsert(List<BatchStepDefinition> list){
@@ -40,7 +40,7 @@ public class BatchStepDefinitionDaoImpl extends BaseDaoSupport implements BatchS
 
 	/**
 	 * 批量插入(使用XML中的foreach语句)
-	 * @param BatchStepDefinition 
+	 * @param list 
 	 */
 	@Override
 	public void batchInsertXML(List<BatchStepDefinition> list){
@@ -57,7 +57,7 @@ public class BatchStepDefinitionDaoImpl extends BaseDaoSupport implements BatchS
 	 * @param stepId 作业步骤ID
 	 */
 	@Override
-	public BatchStepDefinition selectOne1(Long stepId, boolean nullException){
+	public BatchStepDefinition selectOne1(String stepId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("stepId", stepId);
 		BatchStepDefinition batchStepDefinition = new BatchStepDefinition();
@@ -71,7 +71,7 @@ public class BatchStepDefinitionDaoImpl extends BaseDaoSupport implements BatchS
 	 * @param stepId 作业步骤ID
 	 */
 	@Override
-	public BatchStepDefinition selectOne1R(Long stepId, boolean nullException){
+	public BatchStepDefinition selectOne1R(String stepId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("stepId", stepId);
 		BatchStepDefinition batchStepDefinition = new BatchStepDefinition();
@@ -85,7 +85,7 @@ public class BatchStepDefinitionDaoImpl extends BaseDaoSupport implements BatchS
 	 * @param stepId 作业步骤ID
 	 */
 	@Override
-	public BatchStepDefinition selectOne1L(Long stepId, boolean nullException){
+	public BatchStepDefinition selectOne1L(String stepId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("stepId", stepId);
 		BatchStepDefinition batchStepDefinition = new BatchStepDefinition();
@@ -99,7 +99,7 @@ public class BatchStepDefinitionDaoImpl extends BaseDaoSupport implements BatchS
 	 * @param stepId 作业步骤ID
 	 */
 	@Override
-	public int deleteOne1(Long stepId){
+	public int deleteOne1(String stepId){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("stepId", stepId);
 		return getSqlSessionTemplate().delete("BatchStepDefinition.deleteOne1", map);
@@ -110,7 +110,7 @@ public class BatchStepDefinitionDaoImpl extends BaseDaoSupport implements BatchS
 	 * @param stepId 作业步骤ID
 	 */
 	@Override
-	public int deleteOne1L(Long stepId){
+	public int deleteOne1L(String stepId){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("stepId", stepId);
 		return getSqlSessionTemplate().delete("BatchStepDefinition.deleteOne1L", map);
@@ -118,7 +118,7 @@ public class BatchStepDefinitionDaoImpl extends BaseDaoSupport implements BatchS
 
 	/**
 	 * 单笔更新
-	 * @param BatchStepDefinition 
+	 * @param batchStepDefinition 
 	 */
 	@Override
 	public int updateOne1(BatchStepDefinition batchStepDefinition){
@@ -127,7 +127,7 @@ public class BatchStepDefinitionDaoImpl extends BaseDaoSupport implements BatchS
 
 	/**
 	 * 单笔更新(正常状态 valid_status = 0)
-	 * @param BatchStepDefinition 
+	 * @param batchStepDefinition 
 	 */
 	@Override
 	public int updateOne1R(BatchStepDefinition batchStepDefinition){
@@ -136,7 +136,7 @@ public class BatchStepDefinitionDaoImpl extends BaseDaoSupport implements BatchS
 
 	/**
 	 * 单笔更新(加锁  for update: 当使用索引时锁行, 其他锁表)
-	 * @param BatchStepDefinition 
+	 * @param batchStepDefinition 
 	 */
 	@Override
 	public int updateOne1L(BatchStepDefinition batchStepDefinition){
@@ -144,31 +144,31 @@ public class BatchStepDefinitionDaoImpl extends BaseDaoSupport implements BatchS
 	}
 
 	/**
-	 * 批量更新(使用XML中的foreach语句)
-	 * @param BatchStepDefinition 
+	 * 批量更新(直接调用Mybatis代码)
+	 * @param list 
 	 */
 	@Override
-	public void batchUpdateXML1(List<BatchStepDefinition> list){
+	public void batchUpdate1(List<BatchStepDefinition> list){
+		batchExcutor("BatchStepDefinition.batchUpdate1", list, "update", 20);
+	}
+
+	/**
+	 * 批量更新(使用XML中的foreach语句)
+	 * @param list 
+	 */
+	@Override
+	public void batchUpdateXML(List<BatchStepDefinition> list){
 		BatchInsertByXML(list, "list", 20, new BatchOperator<Integer, Map<String, Object>>() {
 			@Override
 			public Integer call(Map<String, Object> map) {
-				return getSqlSessionTemplate().update("BatchStepDefinition.batchUpdateXML1", map);
+				return getSqlSessionTemplate().update("BatchStepDefinition.batchUpdateXML", map);
 			};
 		});
 	}
 
 	/**
-	 * 批量更新(直接调用Mybatis代码)
-	 * @param BatchStepDefinition 
-	 */
-	@Override
-	public void batchUpdate(List<BatchStepDefinition> list){
-		batchExcutor("BatchStepDefinition.batchUpdate", list, "update", 20);
-	}
-
-	/**
 	 * 批量删除(直接调用Mybatis代码)
-	 * @param BatchStepDefinition 
+	 * @param list 
 	 */
 	@Override
 	public void batchDelete(List<BatchStepDefinition> list){

@@ -162,7 +162,24 @@
 		where task_execution_id = #{taskExecutionId} for update
 	</update>
 
-	<update id="batchUpdateXML1" parameterType="java.util.List">
+	<update id="batchUpdate1" parameterType="org.mine.model.BatchTaskExecutionLogRegister">
+		update batch_task_execution_log_register
+		<trim prefix="set" suffixOverrides=",">
+			<if test="taskJobId != null">task_job_id = #{taskJobId},</if>
+			<if test="taskJobName != null">task_job_name = #{taskJobName},</if>
+			<if test="taskJobAssociateId != null">task_job_associate_id = #{taskJobAssociateId},</if>
+			<if test="taskStartTime != null">task_start_time = #{taskStartTime},</if>
+			<if test="taskEndTime != null">task_end_time = #{taskEndTime},</if>
+			<if test="taskJobStatus != null">task_job_status = #{taskJobStatus},</if>
+			<if test="taskJobErrmsg != null">task_job_errmsg = #{taskJobErrmsg},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where task_execution_id = #{taskExecutionId}
+	</update>
+
+	<update id="batchUpdateXML" parameterType="java.util.List">
 		update batch_task_execution_log_register set
 		<trim prefix="task_job_id=case" suffix="end,">
 			<foreach collection="list" item="item" index="index">
@@ -240,63 +257,4 @@
 			#{item.taskExecutionId}
 		</foreach>
 	</update>
-	<update id="batchUpdate" parameterType="org.mine.model.BatchTaskExecutionLogRegister">
-		update batch_task_execution_log_register
-		<trim prefix="set" suffixOverrides=",">
-			<if test="taskJobId != null">task_job_id = #{taskJobId},</if>
-			<if test="taskJobName != null">task_job_name = #{taskJobName},</if>
-			<if test="taskJobAssociateId != null">task_job_associate_id = #{taskJobAssociateId},</if>
-			<if test="taskStartTime != null">task_start_time = #{taskStartTime},</if>
-			<if test="taskEndTime != null">task_end_time = #{taskEndTime},</if>
-			<if test="taskJobStatus != null">task_job_status = #{taskJobStatus},</if>
-			<if test="taskJobErrmsg != null">task_job_errmsg = #{taskJobErrmsg},</if>
-			<if test="createDate != null">create_date = #{createDate},</if>
-			<if test="validStatus != null">valid_status = #{validStatus},</if>
-			<if test="remark != null">remark = #{remark},</if>
-		</trim>
-		where task_execution_id = #{taskExecutionId}
-	</update>
-
-	<select id="selectAll1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTaskExecutionLogRegister.Base_Select_List"/>
-		from batch_task_execution_log_register
-		where null = #{taskAssociateQueueId}
-	</select>
-
-	<select id="selectAll1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTaskExecutionLogRegister.Base_Select_List"/>
-		from batch_task_execution_log_register
-		where null = #{taskAssociateQueueId} and valid_status = '0'
-	</select>
-
-	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTaskExecutionLogRegister.Base_Select_List"/>
-		from batch_task_execution_log_register
-		where null = #{taskAssociateQueueId} for update
-	</select>
-
-	<select id="selectAll2" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTaskExecutionLogRegister.Base_Select_List"/>
-		from batch_task_execution_log_register
-		where null = #{taskAutoFlag}
-	</select>
-
-	<select id="selectAll2R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTaskExecutionLogRegister.Base_Select_List"/>
-		from batch_task_execution_log_register
-		where null = #{taskAutoFlag} and valid_status = '0'
-	</select>
-
-	<select id="selectAll2L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTaskExecutionLogRegister.Base_Select_List"/>
-		from batch_task_execution_log_register
-		where null = #{taskAutoFlag} for update
-	</select>
-
 </mapper>

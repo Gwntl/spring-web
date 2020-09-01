@@ -5,37 +5,37 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.mine.aplt.exception.MineException;
-import org.mine.aplt.support.BaseServiceTasketExcutor;
+import org.mine.aplt.support.BaseServiceTaskletExecutor;
 import org.mine.aplt.util.CommonUtils;
 import org.mine.dao.BatchQueueDefinitionDao;
-import org.mine.model.BatchQueueDefinition;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service(value = "actualThreeAddJob")
-public class ActualThreeAddJobImpl extends BaseServiceTasketExcutor{
+public class ActualThreeAddJobImpl extends BaseServiceTaskletExecutor {
 
 	@Autowired
 	private BatchQueueDefinitionDao queueDao;
 	
 	@Override
-	public Map<String, Object> excutor(Map<String, Object> map) {
+	public Map<String, Object> executor(Map<String, Object> map) {
 		logger.debug("ActualThreeAddJobImpl >>>> begin>>>>>");
 		try{
+			logger.debug("three operator : {}", map.get("operator"));
 			System.out.println("!!!!!!!: "+ map.get("actualAddMultiJob"));
 			logger.debug("insert begin.....");
-			BatchQueueDefinition queueDefinition = new BatchQueueDefinition();
-			queueDefinition.setQueueId(6L);
-			queueDefinition.setQueueName("INSERT_TEST_6L");
-			queueDefinition.setQueueExecutionNum(1);
-			queueDefinition.setRemark("R");
-			queueDefinition.setValidStatus("R");
-			queueDefinition.setCreateDate("20200529");
-			queueDao.insertOne(queueDefinition);
+//			BatchQueueDefinition queueDefinition = new BatchQueueDefinition();
+//			queueDefinition.setQueueId(6 + "");
+//			queueDefinition.setQueueName("INSERT_TEST_6L");
+//			queueDefinition.setQueueExecutionNum(1);
+//			queueDefinition.setRemark("R");
+//			queueDefinition.setValidStatus("R");
+//			queueDefinition.setCreateDate("20200529");
+//			queueDao.insertOne(queueDefinition);
 			logger.debug("insert end.....");
 			
-			TimeUnit.SECONDS.sleep(20);
-			System.out.println(CommonUtils.dateToString(new Date(), "yyyy-MM-dd HH:mm:ss") + " >>second job , second step>>> actualThreeAddJob>>>>>>");
+			TimeUnit.SECONDS.sleep(3);
+			System.out.println(CommonUtils.dateToString(new Date(), "yyyy-MM-dd HH:mm:ss") + " actualThreeAddJob>>>> three step>>> actualThreeAddJob>>>>>>");
 //			if(map.containsKey("failed")){
 //				throw GitWebException.GIT1001("手动置错!!!!!!");
 //			}

@@ -4,18 +4,18 @@ package org.mine.model;
  * batch_timing_step_log_history--定时批量步骤执行日志历史表
  * @filename BatchTimingStepLogHistory.java
  * @author wzaUsers
- * @date 2020-06-08 10:06:39
+ * @date 2020-08-14 16:08:07
  * @version v1.0
 */
 public class BatchTimingStepLogHistory {
 	/**
 	 * 任务执行ID
 	 */
-	private Long historyStepExecutionId;
+	private String historyStepExecutionId;
 	/**
 	 * 执行步骤ID
 	 */
-	private Long historyStepJobId;
+	private String historyStepJobId;
 	/**
 	 * 执行步骤名称
 	 */
@@ -54,8 +54,8 @@ public class BatchTimingStepLogHistory {
 	private String remark;
 
 	public BatchTimingStepLogHistory() {
-		this.historyStepExecutionId = 0L;
-		this.historyStepJobId = 0L;
+		this.historyStepExecutionId = "";
+		this.historyStepJobId = "";
 		this.historyStepJobName = "";
 		this.historyStepStartTime = null;
 		this.historyStepEndTime = null;
@@ -69,35 +69,35 @@ public class BatchTimingStepLogHistory {
 
 	/**
 	 * 任务执行ID
-	 * @return thehistoryStepExecutionId
+	 * @return the historyStepExecutionId
 	 */
-	public Long getHistoryStepExecutionId() {
+	public String getHistoryStepExecutionId() {
 		return historyStepExecutionId;
 	}
 	/**
 	 * 任务执行ID
 	 * @param historyStepExecutionId the historyStepExecutionId to set
 	 */
-	public void setHistoryStepExecutionId(Long historyStepExecutionId) {
+	public void setHistoryStepExecutionId(String historyStepExecutionId) {
 		this.historyStepExecutionId = historyStepExecutionId;
 	}
 	/**
 	 * 执行步骤ID
-	 * @return thehistoryStepJobId
+	 * @return the historyStepJobId
 	 */
-	public Long getHistoryStepJobId() {
+	public String getHistoryStepJobId() {
 		return historyStepJobId;
 	}
 	/**
 	 * 执行步骤ID
 	 * @param historyStepJobId the historyStepJobId to set
 	 */
-	public void setHistoryStepJobId(Long historyStepJobId) {
+	public void setHistoryStepJobId(String historyStepJobId) {
 		this.historyStepJobId = historyStepJobId;
 	}
 	/**
 	 * 执行步骤名称
-	 * @return thehistoryStepJobName
+	 * @return the historyStepJobName
 	 */
 	public String getHistoryStepJobName() {
 		return historyStepJobName;
@@ -111,7 +111,7 @@ public class BatchTimingStepLogHistory {
 	}
 	/**
 	 * 开始时间
-	 * @return thehistoryStepStartTime
+	 * @return the historyStepStartTime
 	 */
 	public String getHistoryStepStartTime() {
 		return historyStepStartTime;
@@ -125,7 +125,7 @@ public class BatchTimingStepLogHistory {
 	}
 	/**
 	 * 结束时间
-	 * @return thehistoryStepEndTime
+	 * @return the historyStepEndTime
 	 */
 	public String getHistoryStepEndTime() {
 		return historyStepEndTime;
@@ -139,7 +139,7 @@ public class BatchTimingStepLogHistory {
 	}
 	/**
 	 * 步骤状态,COMPLETED-处理中, SUCCSS-成功, FAILED-失败,UNKOWN-非正常状态
-	 * @return thehistoryStepJobStatus
+	 * @return the historyStepJobStatus
 	 */
 	public String getHistoryStepJobStatus() {
 		return historyStepJobStatus;
@@ -153,7 +153,7 @@ public class BatchTimingStepLogHistory {
 	}
 	/**
 	 * 步骤错误信息
-	 * @return thehistoryStepJobErrmsg
+	 * @return the historyStepJobErrmsg
 	 */
 	public String getHistoryStepJobErrmsg() {
 		return historyStepJobErrmsg;
@@ -167,7 +167,7 @@ public class BatchTimingStepLogHistory {
 	}
 	/**
 	 * 关联作业ID
-	 * @return thehistoryStepAssociateJobId
+	 * @return the historyStepAssociateJobId
 	 */
 	public Long getHistoryStepAssociateJobId() {
 		return historyStepAssociateJobId;
@@ -181,7 +181,7 @@ public class BatchTimingStepLogHistory {
 	}
 	/**
 	 * 创建时间
-	 * @return thecreateDate
+	 * @return the createDate
 	 */
 	public String getCreateDate() {
 		return createDate;
@@ -195,7 +195,7 @@ public class BatchTimingStepLogHistory {
 	}
 	/**
 	 * 有效状态. 0-是, 1-否
-	 * @return thevalidStatus
+	 * @return the validStatus
 	 */
 	public String getValidStatus() {
 		return validStatus;
@@ -209,7 +209,7 @@ public class BatchTimingStepLogHistory {
 	}
 	/**
 	 * 备注
-	 * @return theremark
+	 * @return the remark
 	 */
 	public String getRemark() {
 		return remark;

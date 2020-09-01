@@ -1,12 +1,5 @@
 package org.mine.aplt.support.bean;
 
-import java.math.BigDecimal;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-
 import org.mine.aplt.exception.GitWebException;
 import org.mine.aplt.support.dao.BatchOperator;
 import org.mine.aplt.util.CommonUtils;
@@ -24,6 +17,13 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.math.BigDecimal;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 @Repository
 public class GitContext implements ApplicationContextAware{
 	private static final Logger logger = LoggerFactory.getLogger(GitContext.class);
@@ -39,7 +39,7 @@ public class GitContext implements ApplicationContextAware{
 			CurrThreadExecutionEnv env = new CurrThreadExecutionEnv();
 			env.setJdbcTemplate(jdbcTemplate);
 	        return env;
-	    }
+}
 	};
 	
 	/**
@@ -197,7 +197,7 @@ public class GitContext implements ApplicationContextAware{
 	/**
 	 * 继承原有事务处理
 	 * @param operator
-	 * @param map
+	 * @param input
 	 */
 	@SuppressWarnings("unchecked")
 	public static <R, I> R doTransActionControl(final BatchOperator<R, I> operator, final I input) {
@@ -231,7 +231,7 @@ public class GitContext implements ApplicationContextAware{
 	/**
 	 * 独立事务处理
 	 * @param operator
-	 * @param map
+	 * @param input
 	 */
 	@SuppressWarnings("unchecked")
 	public static <R, I> R doIndependentTransActionControl(final BatchOperator<R, I> operator, final I input) {
@@ -272,6 +272,19 @@ public class GitContext implements ApplicationContextAware{
 	public static List<Map<String, Object>> queryForListMap(String sql, Object[] args) {
 		return getExecutionEnv().queryForList(sql, args);
 	}
+
+	/**
+	* 查询单个字段结果为List
+	* @param sql
+	* @param args
+	* @param type
+	* @return: java.util.List<T>
+	* @Author: wntl
+	* @Date: 2020/8/14
+	*/
+	public static <T> List<T> queryForSingleFieldList(String sql, Object[] args, Class<T> type) {
+		return getExecutionEnv().queryForSingleFieldList(sql, args, type);
+	}
 	
 	/**
 	 * 查询出的结果为List类型.
@@ -297,7 +310,7 @@ public class GitContext implements ApplicationContextAware{
 	/**
 	 * 根据指定字段查询出Map结果集合.
 	 * <p>
-	 * 		sql : select key, value from system. 
+	 * 		sql : select key, value from system.
 	 * 	<code>
 	 * 		queryForMap(sql,null,"key","value");
 	 * </code>
@@ -320,22 +333,117 @@ public class GitContext implements ApplicationContextAware{
 	 * @param clz
 	 * @return
 	 */
-	public <T> T queryForObject(String sql, Object[] args, Class<T> clz) {
+	public static <T> T queryForObject(String sql, Object[] args, Class<T> clz) {
 		return getExecutionEnv().queryForObject(sql, args, clz);
 	}
-	
+
+	/**
+	* 查询String值
+	* @param sql
+	* @return: java.lang.String
+	* @Author: wntl
+	* @Date: 2020/8/17
+	*/
 	public static String queryForString(String sql) {
 		return getExecutionEnv().queryForObject(sql, String.class);
 	}
+
+	/**
+	* 根据条件查询String值
+	* @param sql
+	* @param args
+	* @return: java.lang.String
+	* @Author: wntl
+	* @Date: 2020/8/17
+	*/
+	public static String queryForString(String sql, Object[] args){
+		return getExecutionEnv().queryForObject(sql, args, String.class);
+	}
+
+	/**
+	* 查询Long值
+	* @param sql
+	* @return: java.lang.Long
+	* @Author: wntl
+	* @Date: 2020/8/17
+	*/
 	public static Long queryForLong(String sql) {
 		return getExecutionEnv().queryForObject(sql, Long.class);
 	}
+
+	/**
+	* 根据条件查询处Long值
+	* @param sql
+	* @param args
+	* @return: java.lang.Long
+	* @Author: wntl
+	* @Date: 2020/8/17
+	*/
+	public static Long queryForLong(String sql, Object[] args){
+		return getExecutionEnv().queryForObject(sql, args, Long.class);
+	}
+
+	/**
+	*
+	* @param sql
+	* @return: java.lang.Integer
+	* @Author: wntl
+	* @Date: 2020/8/17
+	*/
 	public static Integer queryForInteger(String sql) {
 		return getExecutionEnv().queryForObject(sql, Integer.class);
 	}
+
+	/**
+	*
+	* @param sql
+	* @param args
+	* @return: java.lang.Integer
+	* @Author: wntl
+	* @Date: 2020/8/17
+	*/
+	public static Integer queryForInteger(String sql, Object[] args){
+		return getExecutionEnv().queryForObject(sql, args, Integer.class);
+	}
+
+	/**
+	*
+	* @param sql
+	* @return: java.math.BigDecimal
+	* @Author: wntl
+	* @Date: 2020/8/17
+	*/
 	public static BigDecimal queryForBigDecimal(String sql) {
 		return getExecutionEnv().queryForObject(sql, BigDecimal.class);
 	}
+
+	public static Object[] queryForArrayByExtractor(String sql, Object[] args) {
+		return getExecutionEnv().queryForArrayByExtractor(sql, args);
+	}
+
+	/**
+	* 查询数组
+	* @param sql
+	* @param args
+	* @return: java.util.List<java.lang.Object[]>
+	* @Author: wntl
+	* @Date: 2020/8/25
+	*/
+	public static List<Object[]> queryForArraysByExtractor(String sql, Object[] args){
+		return getExecutionEnv().queryForArraysByExtractor(sql, args);
+	}
+	/**
+	* 查询数组
+	* @param sql
+	* @param args
+	* @return: java.util.List<java.lang.Object[]>
+	* @Author: wntl
+	* @Date: 2020/8/25
+	*/
+	public static List<Object[]> queryForArraysByRowMapper(String sql, Object[] args){
+		return getExecutionEnv().queryForArraysByRowMapper(sql, args);
+	}
+
 	
 	public static int update(String sql) {
 		return getExecutionEnv().update(sql);

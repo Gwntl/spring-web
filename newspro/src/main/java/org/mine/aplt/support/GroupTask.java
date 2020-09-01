@@ -6,5 +6,5 @@ import java.util.Map;
 import org.mine.quartz.dto.GroupInputDto;
 
 public interface GroupTask{
-	List<Map<String, Object>> doGrouping(GroupInputDto input);
+	List<Map<String, Object>> doGrouping(Map<String, Object> input);
 }

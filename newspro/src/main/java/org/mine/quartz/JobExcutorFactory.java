@@ -88,11 +88,11 @@ public class JobExcutorFactory{
 		}
 	}
 	
-	public static void call(Runnable runnable, int logFalg) {
-		if (logFalg == 0)
+	public static void call(Runnable runnable, int logFlag) {
+		if (logFlag == 0)
 			getNewInstance().execute(runnable);
 
-		if (logFalg == 1)
+		if (logFlag == 1)
 			getNoLogInstance().execute(runnable);
 	}
 }

@@ -4,14 +4,14 @@ package org.mine.model;
  * batch_trigger_definition--定时任务触发器定义表
  * @filename BatchTriggerDefinition.java
  * @author wzaUsers
- * @date 2020-06-08 10:06:39
+ * @date 2020-08-20 11:08:58
  * @version v1.0
 */
 public class BatchTriggerDefinition {
 	/**
 	 * 触发器ID
 	 */
-	private Long triggerId;
+	private String triggerId;
 	/**
 	 * 触发器名
 	 */
@@ -42,7 +42,7 @@ public class BatchTriggerDefinition {
 	private String triggerRemark;
 
 	public BatchTriggerDefinition() {
-		this.triggerId = 0L;
+		this.triggerId = "";
 		this.triggerName = "";
 		this.triggerStartTime = null;
 		this.triggerEndTime = null;
@@ -54,21 +54,21 @@ public class BatchTriggerDefinition {
 
 	/**
 	 * 触发器ID
-	 * @return thetriggerId
+	 * @return the triggerId
 	 */
-	public Long getTriggerId() {
+	public String getTriggerId() {
 		return triggerId;
 	}
 	/**
 	 * 触发器ID
 	 * @param triggerId the triggerId to set
 	 */
-	public void setTriggerId(Long triggerId) {
+	public void setTriggerId(String triggerId) {
 		this.triggerId = triggerId;
 	}
 	/**
 	 * 触发器名
-	 * @return thetriggerName
+	 * @return the triggerName
 	 */
 	public String getTriggerName() {
 		return triggerName;
@@ -82,7 +82,7 @@ public class BatchTriggerDefinition {
 	}
 	/**
 	 * 触发器开始时间
-	 * @return thetriggerStartTime
+	 * @return the triggerStartTime
 	 */
 	public String getTriggerStartTime() {
 		return triggerStartTime;
@@ -96,7 +96,7 @@ public class BatchTriggerDefinition {
 	}
 	/**
 	 * 触发器结束时间
-	 * @return thetriggerEndTime
+	 * @return the triggerEndTime
 	 */
 	public String getTriggerEndTime() {
 		return triggerEndTime;
@@ -110,7 +110,7 @@ public class BatchTriggerDefinition {
 	}
 	/**
 	 * 触发器设置
-	 * @return thetriggerCrontrigger
+	 * @return the triggerCrontrigger
 	 */
 	public String getTriggerCrontrigger() {
 		return triggerCrontrigger;
@@ -124,7 +124,7 @@ public class BatchTriggerDefinition {
 	}
 	/**
 	 * 创建时间
-	 * @return thecreateDate
+	 * @return the createDate
 	 */
 	public String getCreateDate() {
 		return createDate;
@@ -138,7 +138,7 @@ public class BatchTriggerDefinition {
 	}
 	/**
 	 * 有效状态
-	 * @return thevalidStatus
+	 * @return the validStatus
 	 */
 	public String getValidStatus() {
 		return validStatus;
@@ -152,7 +152,7 @@ public class BatchTriggerDefinition {
 	}
 	/**
 	 * 备注
-	 * @return thetriggerRemark
+	 * @return the triggerRemark
 	 */
 	public String getTriggerRemark() {
 		return triggerRemark;

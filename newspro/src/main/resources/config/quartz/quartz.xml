@@ -15,8 +15,8 @@
 		<property name="quartzProperties">
 			<props>
 			<!-- quartz中的scsheduler以实例名作为每个实例之间的区别, 如果需要多个实例的话,组名信息不可一致 -->
-<!-- 				<prop key="org.quartz.scheduler.instanceName">DynamicScheduler</prop> -->
-<!-- 				<prop key="org.quartz.scheduler.instanceId">DynamicScheduler</prop> -->
+<!-- 				<prop key="org.batch.scheduler.instanceName">DynamicScheduler</prop> -->
+<!-- 				<prop key="org.batch.scheduler.instanceId">DynamicScheduler</prop> -->
 				<prop key="org.quartz.threadPool.threadCount">20</prop>
 			</props>
 		</property>
@@ -33,7 +33,7 @@
 		</property>
 	</bean>
 	
-<!-- 	<bean id="baseExcutor" class="org.mine.quartz.ExcutorBase"></bean> -->
+<!-- 	<bean id="baseExcutor" class="org.mine.batch.ExcutorBase"></bean> -->
 	
 	<bean id="defaultExcutor" class="org.mine.quartz.trigger.ExcutorTrigger">
 		<property name="isPauseFlag" value="1"></property>

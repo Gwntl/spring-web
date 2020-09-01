@@ -7,79 +7,79 @@ import org.mine.model.BatchQueueDefinition;
  * 
  * @filename BatchQueueDefinitionDao.java
  * @author wzaUsers
- * @date 2020-06-09 10:06:03
+ * @date 2020-08-20 11:08:58
  * @version v1.0
 */
 
 public interface BatchQueueDefinitionDao {
 	/**
 	 * 单笔插入
-	 * @param BatchQueueDefinition 
+	 * @param batchQueueDefinition 
 	 */
 	int insertOne(BatchQueueDefinition batchQueueDefinition);
 	/**
 	 * 批量插入(直接调用Mybatis代码)
-	 * @param BatchQueueDefinition 
+	 * @param list 
 	 */
 	void batchInsert(List<BatchQueueDefinition> list);
 	/**
 	 * 批量插入(使用XML中的foreach语句)
-	 * @param BatchQueueDefinition 
+	 * @param list 
 	 */
 	void batchInsertXML(List<BatchQueueDefinition> list);
 	/**
 	 * 单笔查询
 	 * @param queueId 队列ID
 	 */
-	BatchQueueDefinition selectOne1(Long queueId, boolean nullException);
+	BatchQueueDefinition selectOne1(String queueId, boolean nullException);
 	/**
 	 * 单笔查询(正常状态 valid_status = 0)
 	 * @param queueId 队列ID
 	 */
-	BatchQueueDefinition selectOne1R(Long queueId, boolean nullException);
+	BatchQueueDefinition selectOne1R(String queueId, boolean nullException);
 	/**
 	 * 单笔查询(加锁  for update: 当使用索引时锁行, 其他锁表)
 	 * @param queueId 队列ID
 	 */
-	BatchQueueDefinition selectOne1L(Long queueId, boolean nullException);
+	BatchQueueDefinition selectOne1L(String queueId, boolean nullException);
 	/**
 	 * 单笔删除
 	 * @param queueId 队列ID
 	 */
-	int deleteOne1(Long queueId);
+	int deleteOne1(String queueId);
 	/**
 	 * 单笔删除(加锁  for update: 当使用索引时锁行, 其他锁表)
 	 * @param queueId 队列ID
 	 */
-	int deleteOne1L(Long queueId);
+	int deleteOne1L(String queueId);
 	/**
 	 * 单笔更新
-	 * @param BatchQueueDefinition 
+	 * @param batchQueueDefinition 
 	 */
 	int updateOne1(BatchQueueDefinition batchQueueDefinition);
 	/**
 	 * 单笔更新(正常状态 valid_status = 0)
-	 * @param BatchQueueDefinition 
+	 * @param batchQueueDefinition 
 	 */
 	int updateOne1R(BatchQueueDefinition batchQueueDefinition);
 	/**
 	 * 单笔更新(加锁  for update: 当使用索引时锁行, 其他锁表)
-	 * @param BatchQueueDefinition 
+	 * @param batchQueueDefinition 
 	 */
 	int updateOne1L(BatchQueueDefinition batchQueueDefinition);
 	/**
-	 * 批量更新(使用XML中的foreach语句)
-	 * @param BatchQueueDefinition 
-	 */
-	void batchUpdateXML1(List<BatchQueueDefinition> list);
-	/**
 	 * 批量更新(直接调用Mybatis代码)
-	 * @param BatchQueueDefinition 
+	 * @param list 
 	 */
-	void batchUpdate(List<BatchQueueDefinition> list);
+	void batchUpdate1(List<BatchQueueDefinition> list);
+	/**
+	 * 批量更新(使用XML中的foreach语句)
+	 * @param list 
+	 */
+	void batchUpdateXML(List<BatchQueueDefinition> list);
 	/**
 	 * 批量删除(直接调用Mybatis代码)
-	 * @param BatchQueueDefinition 
+	 * @param list 
 	 */
 	void batchDelete(List<BatchQueueDefinition> list);
 	/**

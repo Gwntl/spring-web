@@ -15,14 +15,14 @@ import org.springframework.stereotype.Repository;
  * 
  * @filename BatchTriggerDefinitionDaoImpl.java
  * @author wzaUsers
- * @date 2020-06-08 10:06:39
+ * @date 2020-08-20 11:08:58
  * @version v1.0
 */
 @Repository
 public class BatchTriggerDefinitionDaoImpl extends BaseDaoSupport implements BatchTriggerDefinitionDao {
 	/**
 	 * 单笔插入
-	 * @param BatchTriggerDefinition 
+	 * @param batchTriggerDefinition 
 	 */
 	@Override
 	public int insertOne(BatchTriggerDefinition batchTriggerDefinition){
@@ -31,7 +31,7 @@ public class BatchTriggerDefinitionDaoImpl extends BaseDaoSupport implements Bat
 
 	/**
 	 * 批量插入(直接调用Mybatis代码)
-	 * @param BatchTriggerDefinition 
+	 * @param list 
 	 */
 	@Override
 	public void batchInsert(List<BatchTriggerDefinition> list){
@@ -40,7 +40,7 @@ public class BatchTriggerDefinitionDaoImpl extends BaseDaoSupport implements Bat
 
 	/**
 	 * 批量插入(使用XML中的foreach语句)
-	 * @param BatchTriggerDefinition 
+	 * @param list 
 	 */
 	@Override
 	public void batchInsertXML(List<BatchTriggerDefinition> list){
@@ -57,7 +57,7 @@ public class BatchTriggerDefinitionDaoImpl extends BaseDaoSupport implements Bat
 	 * @param triggerId 触发器ID
 	 */
 	@Override
-	public BatchTriggerDefinition selectOne1(Long triggerId, boolean nullException){
+	public BatchTriggerDefinition selectOne1(String triggerId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("triggerId", triggerId);
 		BatchTriggerDefinition batchTriggerDefinition = new BatchTriggerDefinition();
@@ -71,7 +71,7 @@ public class BatchTriggerDefinitionDaoImpl extends BaseDaoSupport implements Bat
 	 * @param triggerId 触发器ID
 	 */
 	@Override
-	public BatchTriggerDefinition selectOne1R(Long triggerId, boolean nullException){
+	public BatchTriggerDefinition selectOne1R(String triggerId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("triggerId", triggerId);
 		BatchTriggerDefinition batchTriggerDefinition = new BatchTriggerDefinition();
@@ -85,7 +85,7 @@ public class BatchTriggerDefinitionDaoImpl extends BaseDaoSupport implements Bat
 	 * @param triggerId 触发器ID
 	 */
 	@Override
-	public BatchTriggerDefinition selectOne1L(Long triggerId, boolean nullException){
+	public BatchTriggerDefinition selectOne1L(String triggerId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("triggerId", triggerId);
 		BatchTriggerDefinition batchTriggerDefinition = new BatchTriggerDefinition();
@@ -99,7 +99,7 @@ public class BatchTriggerDefinitionDaoImpl extends BaseDaoSupport implements Bat
 	 * @param triggerId 触发器ID
 	 */
 	@Override
-	public int deleteOne1(Long triggerId){
+	public int deleteOne1(String triggerId){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("triggerId", triggerId);
 		return getSqlSessionTemplate().delete("BatchTriggerDefinition.deleteOne1", map);
@@ -110,7 +110,7 @@ public class BatchTriggerDefinitionDaoImpl extends BaseDaoSupport implements Bat
 	 * @param triggerId 触发器ID
 	 */
 	@Override
-	public int deleteOne1L(Long triggerId){
+	public int deleteOne1L(String triggerId){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("triggerId", triggerId);
 		return getSqlSessionTemplate().delete("BatchTriggerDefinition.deleteOne1L", map);
@@ -118,7 +118,7 @@ public class BatchTriggerDefinitionDaoImpl extends BaseDaoSupport implements Bat
 
 	/**
 	 * 单笔更新
-	 * @param BatchTriggerDefinition 
+	 * @param batchTriggerDefinition 
 	 */
 	@Override
 	public int updateOne1(BatchTriggerDefinition batchTriggerDefinition){
@@ -127,7 +127,7 @@ public class BatchTriggerDefinitionDaoImpl extends BaseDaoSupport implements Bat
 
 	/**
 	 * 单笔更新(正常状态 valid_status = 0)
-	 * @param BatchTriggerDefinition 
+	 * @param batchTriggerDefinition 
 	 */
 	@Override
 	public int updateOne1R(BatchTriggerDefinition batchTriggerDefinition){
@@ -136,7 +136,7 @@ public class BatchTriggerDefinitionDaoImpl extends BaseDaoSupport implements Bat
 
 	/**
 	 * 单笔更新(加锁  for update: 当使用索引时锁行, 其他锁表)
-	 * @param BatchTriggerDefinition 
+	 * @param batchTriggerDefinition 
 	 */
 	@Override
 	public int updateOne1L(BatchTriggerDefinition batchTriggerDefinition){
@@ -144,31 +144,31 @@ public class BatchTriggerDefinitionDaoImpl extends BaseDaoSupport implements Bat
 	}
 
 	/**
-	 * 批量更新(使用XML中的foreach语句)
-	 * @param BatchTriggerDefinition 
+	 * 批量更新(直接调用Mybatis代码)
+	 * @param list 
 	 */
 	@Override
-	public void batchUpdateXML1(List<BatchTriggerDefinition> list){
+	public void batchUpdate1(List<BatchTriggerDefinition> list){
+		batchExcutor("BatchTriggerDefinition.batchUpdate1", list, "update", 20);
+	}
+
+	/**
+	 * 批量更新(使用XML中的foreach语句)
+	 * @param list 
+	 */
+	@Override
+	public void batchUpdateXML(List<BatchTriggerDefinition> list){
 		BatchInsertByXML(list, "list", 20, new BatchOperator<Integer, Map<String, Object>>() {
 			@Override
 			public Integer call(Map<String, Object> map) {
-				return getSqlSessionTemplate().update("BatchTriggerDefinition.batchUpdateXML1", map);
+				return getSqlSessionTemplate().update("BatchTriggerDefinition.batchUpdateXML", map);
 			};
 		});
 	}
 
 	/**
-	 * 批量更新(直接调用Mybatis代码)
-	 * @param BatchTriggerDefinition 
-	 */
-	@Override
-	public void batchUpdate(List<BatchTriggerDefinition> list){
-		batchExcutor("BatchTriggerDefinition.batchUpdate", list, "update", 20);
-	}
-
-	/**
 	 * 批量删除(直接调用Mybatis代码)
-	 * @param BatchTriggerDefinition 
+	 * @param list 
 	 */
 	@Override
 	public void batchDelete(List<BatchTriggerDefinition> list){

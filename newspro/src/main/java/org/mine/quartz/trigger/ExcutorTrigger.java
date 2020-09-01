@@ -1,42 +1,31 @@
 package org.mine.quartz.trigger;
 
-import java.text.ParseException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.mine.aplt.constant.ApltContanst;
 import org.mine.aplt.enumqz.JobExcutorEnum;
 import org.mine.aplt.exception.GitWebException;
 import org.mine.aplt.exception.MineBizException;
-import org.mine.aplt.support.BaseServiceTasketExcutor;
+import org.mine.aplt.support.BaseServiceTaskletExecutor;
 import org.mine.aplt.support.bean.GitContext;
 import org.mine.aplt.util.CommonUtils;
-import org.mine.dao.BatchJobDefinitionDao;
-import org.mine.dao.BatchQueueDefinitionDao;
-import org.mine.dao.BatchTaskDefinitionDao;
-import org.mine.dao.BatchTaskExecuteDao;
-import org.mine.dao.BatchTriggerDefinitionDao;
-import org.mine.model.BatchJobDefinition;
-import org.mine.model.BatchQueueDefinition;
-import org.mine.model.BatchTaskDefinition;
-import org.mine.model.BatchTaskExecute;
-import org.mine.model.BatchTriggerDefinition;
+import org.mine.dao.*;
+import org.mine.model.*;
 import org.mine.quartz.ExecutorBase;
-import org.mine.quartz.dto.ConcurrTaskDto;
-import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
-import org.quartz.JobKey;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
+import org.mine.quartz.PreProcessInfo;
+import org.mine.quartz.dto.ExecuteTaskDto;
+import org.quartz.*;
 import org.quartz.impl.JobDetailImpl;
 import org.quartz.impl.triggers.CronTriggerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
+
+import java.text.ParseException;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 	/**
@@ -75,16 +64,16 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 		this.isPauseFlag = isPauseFlag;
 	}
 
-	protected static Map<String, BaseServiceTasketExcutor> quartzStepCache = new ConcurrentHashMap<>(1 >> 5);
+	protected static Map<String, BaseServiceTaskletExecutor> quartzStepCache = new ConcurrentHashMap<>(1 >> 5);
 	
-	public static BaseServiceTasketExcutor getExecutor(String key) {
+	public static BaseServiceTaskletExecutor getExecutor(String key) {
 		if (quartzStepCache.containsKey(key)) {
 			return quartzStepCache.get(key);
 		} else {
 			Object obj = GitContext.getBean(key);
-			if(obj != null && obj instanceof BaseServiceTasketExcutor){
-				quartzStepCache.put(key, (BaseServiceTasketExcutor)obj);
-				return (BaseServiceTasketExcutor)obj;
+			if(obj != null && obj instanceof BaseServiceTaskletExecutor){
+				quartzStepCache.put(key, (BaseServiceTaskletExecutor)obj);
+				return (BaseServiceTaskletExecutor)obj;
 			}
 		}
 		return null;
@@ -99,51 +88,42 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		//初始化执行器缓存
-		quartzStepCache.putAll(context.getBeansOfType(BaseServiceTasketExcutor.class));
+		quartzStepCache.putAll(context.getBeansOfType(BaseServiceTaskletExecutor.class));
+//		loadTimingJobData();
 		loadTimingTaskData();
-		loadTimingQueueData();
+//		loadTimingQueueData();
 		logger.info("load timing data over....");
 	}
-	
-	public void loadTimingTaskData() {
-		logger.info("loadTimingTaskData begin>>>>>>>>>>>>>>>");
+
+	/**
+	* 加载定时JOB信息
+	* @return: void
+	* @Author: wntl
+	* @Date: 2020/8/13
+	*/
+	public void loadTimingJobData() {
+		logger.info("loadTimingJobData begin>>>>>>>>>>>>>>>");
 		try{
-			List<BatchTaskDefinition> taskDefinitions = taskDefinitionDao.selectAll2(JobExcutorEnum.TASK_AUTO_RUN);
-			int size = taskDefinitions.size();
-			if (size > 0) {
-				Map<String, Object> taskInitValue = null;
-				for (BatchTaskDefinition taskDefinition : taskDefinitions) {
-					Long taskID = taskDefinition.getTaskId();
-					CommonUtils.initMapValue(taskInitValue = new HashMap<>(), taskDefinition.getTaskInitValue());
-					List<BatchTaskExecute> taskExecutes = taskExecuteDao.selectAll1R(taskID);
-					if (CommonUtils.isEmpty(taskExecutes)) {
-						logger.error("No executable jobs exists on the current task[{}]", taskID);
+			List<BatchJobDefinition> jobDefinitions = jobDefinitionDao.selectAll1R(JobExcutorEnum.TASK_AUTO_RUN);
+			if (CommonUtils.isNotEmpty(jobDefinitions)) {
+				String jobID = "";
+				for (BatchJobDefinition jobDefinition : jobDefinitions) {
+					jobID = jobDefinition.getJobId();
+					if (jobDefinition.getJobPauseFlag() == this.isPauseFlag) {
+						//TODO 由于jobdatamap中保存的为对象的引用, 因此需要new对象.
+						ExecuteTaskDto dto = new ExecuteTaskDto();
+						//赋JOB值
+						dto.setJobId(jobID);
+						dto.setJobName(jobDefinition.getJobName());
+						dto.setJobLogFlag(jobDefinition.getJobLogFlag());
+						dto.setJobSkipFlag(jobDefinition.getJobSkipFlag());
+						dto.setJobRunMutiFlag(jobDefinition.getJobRunMutiFlag());
+						dto.setJobTimeDelayFlag(jobDefinition.getJobTimeDelayFlag());
+						dto.setJobTimeDelayValue(jobDefinition.getJobTimeDelayValue());
+						CommonUtils.initMapValue(dto.getJobInitValue(), jobDefinition.getJobInitValue());
+						registerQuartz(jobDefinition.getJobId(), jobDefinition.getJobExecutor(), jobDefinition.getJobAssociateTriggerId(), dto);
 					} else {
-						for (BatchTaskExecute taskExecute : taskExecutes) {
-							Long jobID = taskExecute.getExecuteJobId();
-							BatchJobDefinition jobDefinition = jobDefinitionDao.selectOne1R(jobID, false);
-							if (jobDefinition != null && (jobDefinition.getJobPauseFlag() == this.isPauseFlag)) {
-								//由于jobdatamap中保存的为对象的引用, 因此需要new对象.
-								ConcurrTaskDto dto = new ConcurrTaskDto();
-								//赋TASK值
-								dto.setTaskId(taskID);
-								dto.setTaskSkipFlag(taskDefinition.getTaskSkipFlag());
-								dto.setTaskInitValue(taskInitValue);
-								//赋JOB值
-								dto.setJobId(jobID);
-								dto.setJobName(jobDefinition.getJobName());
-								dto.setJobLogFlag(jobDefinition.getJobLogFlag());
-								dto.setJobSkipFlag(jobDefinition.getJobSkipFlag());
-								dto.setJobRunMutiFlag(jobDefinition.getJobRunMutiFlag());
-								dto.setJobTimeDelayFlag(jobDefinition.getJobTimeDelayFlag());
-								dto.setJobTimeDelayValue(jobDefinition.getJobTimeDelayValue());
-								dto.setJobOneTime(taskExecute.getExecuteJobOneTime());
-								CommonUtils.initMapValue(dto.getJobInitValue(), jobDefinition.getJobInitValue());
-								registerQuartz(jobDefinition.getJobId(), jobDefinition.getJobExecutor(), jobDefinition.getJobAssociateTriggerId(), dto);
-							} else {
-								logger.error("The current job[{}] does not exist", jobID);
-							}
-						}
+						logger.error("The current job[{}] does not exist", jobID);
 					}
 				}
 				logger.info("Loading timing job was successful!!!!!");
@@ -156,11 +136,54 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 			logger.error("加载Quartz信息失败: {}" + MineBizException.getStackTrace(e));
 			throw GitWebException.GIT_APPRUNEXC("加载Quartz信息失败");
 		}
+		logger.info("loadTimingJobData end>>>>>>>>>>>>>>>");
+	}
+
+	/**
+	* 加载定时任务信息
+	* @return: void
+	* @Author: wntl
+	* @Date: 2020/8/13
+	*/
+	public void loadTimingTaskData() {
+		logger.info("loadTimingTaskData begin>>>>>>>>>>>>>>>");
+		try{
+			List<BatchTaskDefinition> taskDefinitions = taskDefinitionDao.selectAll1(JobExcutorEnum.TASK_AUTO_RUN);
+			if (CommonUtils.isNotEmpty(taskDefinitions) && this.isPauseFlag == 1) {
+				for (BatchTaskDefinition taskDefinition : taskDefinitions) {
+					ExecuteTaskDto dto = new ExecuteTaskDto();
+					dto.setTaskId(taskDefinition.getTaskId());
+					dto.setTaskName(taskDefinition.getTaskName());
+					List<BatchTaskExecute> executes = GitContext.getBean(BatchTaskExecuteDao.class).selectAll1R(dto.getTaskId());
+					for (BatchTaskExecute execute : executes) {
+						if (CommonUtils.isNotEmpty(execute.getExecuteJobDepends())) {
+							if (PreProcessInfo.isDependent(execute.getExecuteJobId(), execute.getExecuteJobDepends())) {
+								throw new BeanCreationException(execute.getExecuteTaskId(), execute.getExecuteJobId(),
+										"Circular depends-on relationship between '" + execute.getExecuteJobId()
+												+ "' and '" + execute.getExecuteJobDepends() + "'");
+							}
+							PreProcessInfo.setDependJob(execute.getExecuteJobId(), execute.getExecuteJobDepends());
+						}
+					}
+
+					CommonUtils.initMapValue(dto.getTaskInitValue(), taskDefinition.getTaskInitValue());
+					registerQuartz(taskDefinition.getTaskId(), taskDefinition.getTaskExecutor(), taskDefinition.getTaskAssociateTriggerId(), dto);
+				}
+				logger.info("Loading timing task was successful!!!!!");
+			} else {
+				if (logger.isTraceEnabled()) {
+					logger.trace("There is no timing task in the current system!!!!!");
+				}
+			}
+		} catch (SchedulerException e) {
+			logger.error("加载Quartz信息失败: {}" + MineBizException.getStackTrace(e));
+			throw GitWebException.GIT_APPRUNEXC("加载Quartz信息失败");
+		}
 		logger.info("loadTimingTaskData end>>>>>>>>>>>>>>>");
 	}
 	
 	/**
-	 * 加载定时任务数据
+	 * 加载定时队列QUEUE数据
 	 * @return
 	 */
 	public Map<JobDetailImpl, ExcutorTrigger> loadTimingQueueData() {
@@ -170,7 +193,7 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 			List<BatchQueueDefinition> queueDefinitions = queueDefinitionDao.selectAll1R(JobExcutorEnum.QUEUE_AUTO);
 			if (queueDefinitions != null && queueDefinitions.size() > 0) {
 				for(BatchQueueDefinition queueDefinition : queueDefinitions){
-					ConcurrTaskDto dto = new ConcurrTaskDto();
+					ExecuteTaskDto dto = new ExecuteTaskDto();
 					dto.setQueueId(queueDefinition.getQueueId());
 					CommonUtils.initMapValue(dto.getQueueInitValue(), queueDefinition.getQueueInitValue());
 					registerQuartz(queueDefinition.getQueueId(), queueDefinition.getQueueExecutor(), queueDefinition.getQueueTriggerId(), dto);
@@ -178,7 +201,7 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 				logger.info("Loading timing queue was successful!!!!!");
 			} else {
 				if (logger.isTraceEnabled()) {
-					logger.trace("There is no timing job in the current system!!!!!");
+					logger.trace("There is no timing queue in the current system!!!!!");
 				}
 			}
 		} catch(SchedulerException e){
@@ -197,13 +220,17 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 	 * @param taskDto
 	 * @throws SchedulerException
 	 */
-	public void registerQuartz(Long id, String executor, String associTrgId, ConcurrTaskDto taskDto) throws SchedulerException {
+	public void registerQuartz(String id, String executor, String associTrgId, ExecuteTaskDto taskDto) throws SchedulerException {
 //		JobDetail detail = JobBuilder.newJob(ExecutorBase.getExcutorJob(executor)).withIdentity(ApltContanst.DEFAULT_JOB_NAME 
 //		+ id, ApltContanst.DEFAULT_JOB_GROUP).usingJobData(dataMap).build();
 		JobDetailImpl detailImpl = new JobDetailImpl();
 		detailImpl.setName(ApltContanst.DEFAULT_JOB_NAME + id);
 		detailImpl.setKey(new JobKey(detailImpl.getName(), ApltContanst.DEFAULT_JOB_GROUP));
-		detailImpl.setJobClass(ExecutorBase.getExcutorJob(executor));
+		if (CommonUtils.isNotEmpty(executor)) {
+			detailImpl.setJobClass(ExecutorBase.getExcutorJob(executor));
+		} else {
+			throw GitWebException.GIT1002("执行器");
+		}
 		JobDataMap dataMap = new JobDataMap();
 		dataMap.put("dto", taskDto);
 		detailImpl.setJobDataMap(dataMap);
@@ -221,8 +248,8 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 	 */
 	public void scheduleJobByTriggers(JobDetail detail, String associateTriggerID) throws SchedulerException {
 		List<String> triggerIds = CommonUtils.splitStrToList(associateTriggerID, ",", false);
-		if (triggerIds.size() <= 0) throw GitWebException.GIT1001(detail.getKey().toString() + ", 未设置触发器参数.");
-		ExcutorTrigger trigger = definationTrigger(Long.valueOf(triggerIds.get(0)));
+		if (triggerIds == null || triggerIds.size() <= 0) throw GitWebException.GIT1001(detail.getKey().toString() + ", 未设置触发器参数.");
+		ExcutorTrigger trigger = definationTrigger(triggerIds.get(0));
 		/*
 		 * Spring当使用bean配置触发器的形式的时候,将jobdetail放至trigger的dataMap中.
 		 * 当注册时若发现未配置Job信息, Spring会从Map中自动获取jobDetail的值,注册进Schedule中.
@@ -236,7 +263,7 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 		if (triggerIds.size() > 1) {
 			ExcutorTrigger extraTrigger = null;
 			for(String triggerId : triggerIds){
-				extraTrigger = definationTrigger(Long.valueOf(triggerId));
+				extraTrigger = definationTrigger(triggerId);
 				extraTrigger.setJobKey(detail.getKey());
 				scheduler.scheduleJob(extraTrigger);
 			}
@@ -248,7 +275,7 @@ public class ExcutorTrigger extends CronTriggerImpl implements InitializingBean{
 	 * @param triggerId
 	 * @return ExcutorTrigger
 	 */
-	public ExcutorTrigger definationTrigger(Long triggerId) {
+	public ExcutorTrigger definationTrigger(String triggerId) {
 		try{
 			BatchTriggerDefinition triggerDefinition = triggerDefinitionDao.selectOne1R(triggerId, false);
 			if (CommonUtils.isEmpty(triggerDefinition.getTriggerCrontrigger())) {

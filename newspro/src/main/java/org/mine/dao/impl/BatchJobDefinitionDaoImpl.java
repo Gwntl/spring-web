@@ -15,14 +15,14 @@ import org.springframework.stereotype.Repository;
  * 
  * @filename BatchJobDefinitionDaoImpl.java
  * @author wzaUsers
- * @date 2020-06-23 16:06:55
+ * @date 2020-08-20 11:08:58
  * @version v1.0
 */
 @Repository
 public class BatchJobDefinitionDaoImpl extends BaseDaoSupport implements BatchJobDefinitionDao {
 	/**
 	 * 单笔插入
-	 * @param BatchJobDefinition 
+	 * @param batchJobDefinition 
 	 */
 	@Override
 	public int insertOne(BatchJobDefinition batchJobDefinition){
@@ -31,7 +31,7 @@ public class BatchJobDefinitionDaoImpl extends BaseDaoSupport implements BatchJo
 
 	/**
 	 * 批量插入(直接调用Mybatis代码)
-	 * @param BatchJobDefinition 
+	 * @param list 
 	 */
 	@Override
 	public void batchInsert(List<BatchJobDefinition> list){
@@ -40,7 +40,7 @@ public class BatchJobDefinitionDaoImpl extends BaseDaoSupport implements BatchJo
 
 	/**
 	 * 批量插入(使用XML中的foreach语句)
-	 * @param BatchJobDefinition 
+	 * @param list 
 	 */
 	@Override
 	public void batchInsertXML(List<BatchJobDefinition> list){
@@ -57,7 +57,7 @@ public class BatchJobDefinitionDaoImpl extends BaseDaoSupport implements BatchJo
 	 * @param jobId 作业ID
 	 */
 	@Override
-	public BatchJobDefinition selectOne1(Long jobId, boolean nullException){
+	public BatchJobDefinition selectOne1(String jobId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("jobId", jobId);
 		BatchJobDefinition batchJobDefinition = new BatchJobDefinition();
@@ -71,7 +71,7 @@ public class BatchJobDefinitionDaoImpl extends BaseDaoSupport implements BatchJo
 	 * @param jobId 作业ID
 	 */
 	@Override
-	public BatchJobDefinition selectOne1R(Long jobId, boolean nullException){
+	public BatchJobDefinition selectOne1R(String jobId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("jobId", jobId);
 		BatchJobDefinition batchJobDefinition = new BatchJobDefinition();
@@ -85,7 +85,7 @@ public class BatchJobDefinitionDaoImpl extends BaseDaoSupport implements BatchJo
 	 * @param jobId 作业ID
 	 */
 	@Override
-	public BatchJobDefinition selectOne1L(Long jobId, boolean nullException){
+	public BatchJobDefinition selectOne1L(String jobId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("jobId", jobId);
 		BatchJobDefinition batchJobDefinition = new BatchJobDefinition();
@@ -99,7 +99,7 @@ public class BatchJobDefinitionDaoImpl extends BaseDaoSupport implements BatchJo
 	 * @param jobId 作业ID
 	 */
 	@Override
-	public int deleteOne1(Long jobId){
+	public int deleteOne1(String jobId){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("jobId", jobId);
 		return getSqlSessionTemplate().delete("BatchJobDefinition.deleteOne1", map);
@@ -110,7 +110,7 @@ public class BatchJobDefinitionDaoImpl extends BaseDaoSupport implements BatchJo
 	 * @param jobId 作业ID
 	 */
 	@Override
-	public int deleteOne1L(Long jobId){
+	public int deleteOne1L(String jobId){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("jobId", jobId);
 		return getSqlSessionTemplate().delete("BatchJobDefinition.deleteOne1L", map);
@@ -118,7 +118,7 @@ public class BatchJobDefinitionDaoImpl extends BaseDaoSupport implements BatchJo
 
 	/**
 	 * 单笔更新
-	 * @param BatchJobDefinition 
+	 * @param batchJobDefinition 
 	 */
 	@Override
 	public int updateOne1(BatchJobDefinition batchJobDefinition){
@@ -127,7 +127,7 @@ public class BatchJobDefinitionDaoImpl extends BaseDaoSupport implements BatchJo
 
 	/**
 	 * 单笔更新(正常状态 valid_status = 0)
-	 * @param BatchJobDefinition 
+	 * @param batchJobDefinition 
 	 */
 	@Override
 	public int updateOne1R(BatchJobDefinition batchJobDefinition){
@@ -136,7 +136,7 @@ public class BatchJobDefinitionDaoImpl extends BaseDaoSupport implements BatchJo
 
 	/**
 	 * 单笔更新(加锁  for update: 当使用索引时锁行, 其他锁表)
-	 * @param BatchJobDefinition 
+	 * @param batchJobDefinition 
 	 */
 	@Override
 	public int updateOne1L(BatchJobDefinition batchJobDefinition){
@@ -144,35 +144,68 @@ public class BatchJobDefinitionDaoImpl extends BaseDaoSupport implements BatchJo
 	}
 
 	/**
-	 * 批量更新(使用XML中的foreach语句)
-	 * @param BatchJobDefinition 
+	 * 批量更新(直接调用Mybatis代码)
+	 * @param list 
 	 */
 	@Override
-	public void batchUpdateXML1(List<BatchJobDefinition> list){
+	public void batchUpdate1(List<BatchJobDefinition> list){
+		batchExcutor("BatchJobDefinition.batchUpdate1", list, "update", 20);
+	}
+
+	/**
+	 * 批量更新(使用XML中的foreach语句)
+	 * @param list 
+	 */
+	@Override
+	public void batchUpdateXML(List<BatchJobDefinition> list){
 		BatchInsertByXML(list, "list", 20, new BatchOperator<Integer, Map<String, Object>>() {
 			@Override
 			public Integer call(Map<String, Object> map) {
-				return getSqlSessionTemplate().update("BatchJobDefinition.batchUpdateXML1", map);
+				return getSqlSessionTemplate().update("BatchJobDefinition.batchUpdateXML", map);
 			};
 		});
 	}
 
 	/**
-	 * 批量更新(直接调用Mybatis代码)
-	 * @param BatchJobDefinition 
-	 */
-	@Override
-	public void batchUpdate(List<BatchJobDefinition> list){
-		batchExcutor("BatchJobDefinition.batchUpdate", list, "update", 20);
-	}
-
-	/**
 	 * 批量删除(直接调用Mybatis代码)
-	 * @param BatchJobDefinition 
+	 * @param list 
 	 */
 	@Override
 	public void batchDelete(List<BatchJobDefinition> list){
 		batchExcutor("BatchJobDefinition.deleteOne1", list, "delete", 20);
+	}
+
+	/**
+	 * 查询多笔数据
+	 * @param jobAutoFlag 是否自动执行. 0-是, 1-否
+	 */
+	@Override
+	public List<BatchJobDefinition> selectAll1(Integer jobAutoFlag){
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("jobAutoFlag", jobAutoFlag);
+		return getSqlSessionTemplate().selectList("BatchJobDefinition.selectAll1", map);
+	}
+
+	/**
+	 * 查询多笔数据(正常状态 valid_status = 0)
+	 * @param jobAutoFlag 是否自动执行. 0-是, 1-否
+	 */
+	@Override
+	public List<BatchJobDefinition> selectAll1R(Integer jobAutoFlag){
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("jobAutoFlag", jobAutoFlag);
+		return getSqlSessionTemplate().selectList("BatchJobDefinition.selectAll1R", map);
+	}
+
+	/**
+	 * 查询多笔数据(加锁  for update: 当使用索引时锁行, 其他锁表)
+	 * @param jobAutoFlag 是否自动执行. 0-是, 1-否
+	 */
+	@Override
+	public List<BatchJobDefinition> selectAll1L(Integer jobAutoFlag){
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("jobAutoFlag", jobAutoFlag);
+		return getSqlSessionTemplate().selectList("BatchJobDefinition.selectAll1L", map);
 	}
 
 }

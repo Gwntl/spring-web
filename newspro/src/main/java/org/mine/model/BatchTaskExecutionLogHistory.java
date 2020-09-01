@@ -4,18 +4,18 @@ package org.mine.model;
  * batch_task_execution_log_history--批量任务执行日志历史表
  * @filename BatchTaskExecutionLogHistory.java
  * @author wzaUsers
- * @date 2020-06-08 10:06:39
+ * @date 2020-08-20 11:08:58
  * @version v1.0
 */
 public class BatchTaskExecutionLogHistory {
 	/**
 	 * 任务执行ID
 	 */
-	private Long historyTaskExecutionId;
+	private String historyTaskExecutionId;
 	/**
 	 * 执行作业ID
 	 */
-	private Long historyTaskJobId;
+	private String historyTaskJobId;
 	/**
 	 * 执行作业名称
 	 */
@@ -50,8 +50,8 @@ public class BatchTaskExecutionLogHistory {
 	private String remark;
 
 	public BatchTaskExecutionLogHistory() {
-		this.historyTaskExecutionId = 0L;
-		this.historyTaskJobId = 0L;
+		this.historyTaskExecutionId = "";
+		this.historyTaskJobId = "";
 		this.historyTaskJobName = "";
 		this.historyTaskStartTime = null;
 		this.historyTaskEndTime = null;
@@ -64,35 +64,35 @@ public class BatchTaskExecutionLogHistory {
 
 	/**
 	 * 任务执行ID
-	 * @return thehistoryTaskExecutionId
+	 * @return the historyTaskExecutionId
 	 */
-	public Long getHistoryTaskExecutionId() {
+	public String getHistoryTaskExecutionId() {
 		return historyTaskExecutionId;
 	}
 	/**
 	 * 任务执行ID
 	 * @param historyTaskExecutionId the historyTaskExecutionId to set
 	 */
-	public void setHistoryTaskExecutionId(Long historyTaskExecutionId) {
+	public void setHistoryTaskExecutionId(String historyTaskExecutionId) {
 		this.historyTaskExecutionId = historyTaskExecutionId;
 	}
 	/**
 	 * 执行作业ID
-	 * @return thehistoryTaskJobId
+	 * @return the historyTaskJobId
 	 */
-	public Long getHistoryTaskJobId() {
+	public String getHistoryTaskJobId() {
 		return historyTaskJobId;
 	}
 	/**
 	 * 执行作业ID
 	 * @param historyTaskJobId the historyTaskJobId to set
 	 */
-	public void setHistoryTaskJobId(Long historyTaskJobId) {
+	public void setHistoryTaskJobId(String historyTaskJobId) {
 		this.historyTaskJobId = historyTaskJobId;
 	}
 	/**
 	 * 执行作业名称
-	 * @return thehistoryTaskJobName
+	 * @return the historyTaskJobName
 	 */
 	public String getHistoryTaskJobName() {
 		return historyTaskJobName;
@@ -106,7 +106,7 @@ public class BatchTaskExecutionLogHistory {
 	}
 	/**
 	 * 开始时间
-	 * @return thehistoryTaskStartTime
+	 * @return the historyTaskStartTime
 	 */
 	public String getHistoryTaskStartTime() {
 		return historyTaskStartTime;
@@ -120,7 +120,7 @@ public class BatchTaskExecutionLogHistory {
 	}
 	/**
 	 * 结束时间
-	 * @return thehistoryTaskEndTime
+	 * @return the historyTaskEndTime
 	 */
 	public String getHistoryTaskEndTime() {
 		return historyTaskEndTime;
@@ -134,7 +134,7 @@ public class BatchTaskExecutionLogHistory {
 	}
 	/**
 	 * 任务状态,COMPLETED-处理中, SUCCSS-成功, FAILED-失败,UNKOWN-非正常状态
-	 * @return thehistoryTaskJobStatus
+	 * @return the historyTaskJobStatus
 	 */
 	public String getHistoryTaskJobStatus() {
 		return historyTaskJobStatus;
@@ -148,7 +148,7 @@ public class BatchTaskExecutionLogHistory {
 	}
 	/**
 	 * 任务错误信息
-	 * @return thehistoryTaskJobErrmsg
+	 * @return the historyTaskJobErrmsg
 	 */
 	public String getHistoryTaskJobErrmsg() {
 		return historyTaskJobErrmsg;
@@ -162,7 +162,7 @@ public class BatchTaskExecutionLogHistory {
 	}
 	/**
 	 * 创建时间
-	 * @return thecreateDate
+	 * @return the createDate
 	 */
 	public String getCreateDate() {
 		return createDate;
@@ -176,7 +176,7 @@ public class BatchTaskExecutionLogHistory {
 	}
 	/**
 	 * 有效状态. 0-是, 1-否
-	 * @return thevalidStatus
+	 * @return the validStatus
 	 */
 	public String getValidStatus() {
 		return validStatus;
@@ -190,7 +190,7 @@ public class BatchTaskExecutionLogHistory {
 	}
 	/**
 	 * 备注
-	 * @return theremark
+	 * @return the remark
 	 */
 	public String getRemark() {
 		return remark;

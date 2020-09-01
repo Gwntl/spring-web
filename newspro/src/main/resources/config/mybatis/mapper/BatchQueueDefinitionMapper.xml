@@ -156,7 +156,23 @@
 		where queue_id = #{queueId} for update
 	</update>
 
-	<update id="batchUpdateXML1" parameterType="java.util.List">
+	<update id="batchUpdate1" parameterType="org.mine.model.BatchQueueDefinition">
+		update batch_queue_definition
+		<trim prefix="set" suffixOverrides=",">
+			<if test="queueName != null">queue_name = #{queueName},</if>
+			<if test="queueExcFlag != null">queue_exc_flag = #{queueExcFlag},</if>
+			<if test="queueTriggerId != null">queue_trigger_id = #{queueTriggerId},</if>
+			<if test="queueExecutor != null">queue_executor = #{queueExecutor},</if>
+			<if test="queueInitValue != null">queue_init_value = #{queueInitValue},</if>
+			<if test="queueExecutionNum != null">queue_execution_num = #{queueExecutionNum},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where queue_id = #{queueId}
+	</update>
+
+	<update id="batchUpdateXML" parameterType="java.util.List">
 		update batch_queue_definition set
 		<trim prefix="queue_name=case" suffix="end,">
 			<foreach collection="list" item="item" index="index">
@@ -227,22 +243,6 @@
 			#{item.queueId}
 		</foreach>
 	</update>
-	<update id="batchUpdate" parameterType="org.mine.model.BatchQueueDefinition">
-		update batch_queue_definition
-		<trim prefix="set" suffixOverrides=",">
-			<if test="queueName != null">queue_name = #{queueName},</if>
-			<if test="queueExcFlag != null">queue_exc_flag = #{queueExcFlag},</if>
-			<if test="queueTriggerId != null">queue_trigger_id = #{queueTriggerId},</if>
-			<if test="queueExecutor != null">queue_executor = #{queueExecutor},</if>
-			<if test="queueInitValue != null">queue_init_value = #{queueInitValue},</if>
-			<if test="queueExecutionNum != null">queue_execution_num = #{queueExecutionNum},</if>
-			<if test="createDate != null">create_date = #{createDate},</if>
-			<if test="validStatus != null">valid_status = #{validStatus},</if>
-			<if test="remark != null">remark = #{remark},</if>
-		</trim>
-		where queue_id = #{queueId}
-	</update>
-
 	<select id="selectAll1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
 		select
 		<include refid="BatchQueueDefinition.Base_Select_List"/>

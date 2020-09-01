@@ -1,10 +1,10 @@
 package org.mine.quartz.dto;
 
+import org.mine.aplt.util.CommonUtils;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.mine.aplt.util.CommonUtils;
 
 public class GroupInputDto implements Serializable{
 	/**
@@ -18,9 +18,9 @@ public class GroupInputDto implements Serializable{
 	
 	private Map<String, Object> taskInitValue;
 	
-	private Long jobId;
+	private String jobId;
 	
-	private Long stepId;
+	private String stepId;
 	
 	private String stepActuator;
 	
@@ -29,8 +29,8 @@ public class GroupInputDto implements Serializable{
 		this.stepInitValue = new HashMap<>();
 		this.jobInitValue = new HashMap<>();
 		this.taskInitValue = new HashMap<>();
-		this.jobId = 0L;
-		this.stepId = 0L;
+		this.jobId = "";
+		this.stepId = "";
 		this.stepActuator = "";
 	}
 
@@ -79,28 +79,28 @@ public class GroupInputDto implements Serializable{
 	/**
 	 * @return the jobId
 	 */
-	public Long getJobId() {
+	public String getJobId() {
 		return jobId;
 	}
 
 	/**
 	 * @param jobId the jobId to set
 	 */
-	public void setJobId(Long jobId) {
+	public void setJobId(String jobId) {
 		this.jobId = jobId;
 	}
 
 	/**
 	 * @return the stepId
 	 */
-	public Long getStepId() {
+	public String getStepId() {
 		return stepId;
 	}
 
 	/**
 	 * @param stepId the stepId to set
 	 */
-	public void setStepId(Long stepId) {
+	public void setStepId(String stepId) {
 		this.stepId = stepId;
 	}
 

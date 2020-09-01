@@ -162,7 +162,24 @@
 		where step_execution_id = #{stepExecutionId} for update
 	</update>
 
-	<update id="batchUpdateXML1" parameterType="java.util.List">
+	<update id="batchUpdate1" parameterType="org.mine.model.BatchStepExecutionLogRegister">
+		update batch_step_execution_log_register
+		<trim prefix="set" suffixOverrides=",">
+			<if test="stepJobId != null">step_job_id = #{stepJobId},</if>
+			<if test="stepJobName != null">step_job_name = #{stepJobName},</if>
+			<if test="stepStartTime != null">step_start_time = #{stepStartTime},</if>
+			<if test="stepEndTime != null">step_end_time = #{stepEndTime},</if>
+			<if test="stepJobStatus != null">step_job_status = #{stepJobStatus},</if>
+			<if test="stepJobErrmsg != null">step_job_errmsg = #{stepJobErrmsg},</if>
+			<if test="stepAssociateJobId != null">step_associate_job_id = #{stepAssociateJobId},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where step_execution_id = #{stepExecutionId}
+	</update>
+
+	<update id="batchUpdateXML" parameterType="java.util.List">
 		update batch_step_execution_log_register set
 		<trim prefix="step_job_id=case" suffix="end,">
 			<foreach collection="list" item="item" index="index">
@@ -240,63 +257,4 @@
 			#{item.stepExecutionId}
 		</foreach>
 	</update>
-	<update id="batchUpdate" parameterType="org.mine.model.BatchStepExecutionLogRegister">
-		update batch_step_execution_log_register
-		<trim prefix="set" suffixOverrides=",">
-			<if test="stepJobId != null">step_job_id = #{stepJobId},</if>
-			<if test="stepJobName != null">step_job_name = #{stepJobName},</if>
-			<if test="stepStartTime != null">step_start_time = #{stepStartTime},</if>
-			<if test="stepEndTime != null">step_end_time = #{stepEndTime},</if>
-			<if test="stepJobStatus != null">step_job_status = #{stepJobStatus},</if>
-			<if test="stepJobErrmsg != null">step_job_errmsg = #{stepJobErrmsg},</if>
-			<if test="stepAssociateJobId != null">step_associate_job_id = #{stepAssociateJobId},</if>
-			<if test="createDate != null">create_date = #{createDate},</if>
-			<if test="validStatus != null">valid_status = #{validStatus},</if>
-			<if test="remark != null">remark = #{remark},</if>
-		</trim>
-		where step_execution_id = #{stepExecutionId}
-	</update>
-
-	<select id="selectAll1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchStepExecutionLogRegister.Base_Select_List"/>
-		from batch_step_execution_log_register
-		where null = #{taskAssociateQueueId}
-	</select>
-
-	<select id="selectAll1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchStepExecutionLogRegister.Base_Select_List"/>
-		from batch_step_execution_log_register
-		where null = #{taskAssociateQueueId} and valid_status = '0'
-	</select>
-
-	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchStepExecutionLogRegister.Base_Select_List"/>
-		from batch_step_execution_log_register
-		where null = #{taskAssociateQueueId} for update
-	</select>
-
-	<select id="selectAll2" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchStepExecutionLogRegister.Base_Select_List"/>
-		from batch_step_execution_log_register
-		where null = #{taskAutoFlag}
-	</select>
-
-	<select id="selectAll2R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchStepExecutionLogRegister.Base_Select_List"/>
-		from batch_step_execution_log_register
-		where null = #{taskAutoFlag} and valid_status = '0'
-	</select>
-
-	<select id="selectAll2L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchStepExecutionLogRegister.Base_Select_List"/>
-		from batch_step_execution_log_register
-		where null = #{taskAutoFlag} for update
-	</select>
-
 </mapper>

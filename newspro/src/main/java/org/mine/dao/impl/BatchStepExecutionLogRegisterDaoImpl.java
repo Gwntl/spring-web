@@ -15,14 +15,14 @@ import org.springframework.stereotype.Repository;
  * 
  * @filename BatchStepExecutionLogRegisterDaoImpl.java
  * @author wzaUsers
- * @date 2020-06-08 10:06:39
+ * @date 2020-08-20 11:08:58
  * @version v1.0
 */
 @Repository
 public class BatchStepExecutionLogRegisterDaoImpl extends BaseDaoSupport implements BatchStepExecutionLogRegisterDao {
 	/**
 	 * 单笔插入
-	 * @param BatchStepExecutionLogRegister 
+	 * @param batchStepExecutionLogRegister 
 	 */
 	@Override
 	public int insertOne(BatchStepExecutionLogRegister batchStepExecutionLogRegister){
@@ -31,7 +31,7 @@ public class BatchStepExecutionLogRegisterDaoImpl extends BaseDaoSupport impleme
 
 	/**
 	 * 批量插入(直接调用Mybatis代码)
-	 * @param BatchStepExecutionLogRegister 
+	 * @param list 
 	 */
 	@Override
 	public void batchInsert(List<BatchStepExecutionLogRegister> list){
@@ -40,7 +40,7 @@ public class BatchStepExecutionLogRegisterDaoImpl extends BaseDaoSupport impleme
 
 	/**
 	 * 批量插入(使用XML中的foreach语句)
-	 * @param BatchStepExecutionLogRegister 
+	 * @param list 
 	 */
 	@Override
 	public void batchInsertXML(List<BatchStepExecutionLogRegister> list){
@@ -57,7 +57,7 @@ public class BatchStepExecutionLogRegisterDaoImpl extends BaseDaoSupport impleme
 	 * @param stepExecutionId 任务执行ID
 	 */
 	@Override
-	public BatchStepExecutionLogRegister selectOne1(Long stepExecutionId, boolean nullException){
+	public BatchStepExecutionLogRegister selectOne1(String stepExecutionId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("stepExecutionId", stepExecutionId);
 		BatchStepExecutionLogRegister batchStepExecutionLogRegister = new BatchStepExecutionLogRegister();
@@ -71,7 +71,7 @@ public class BatchStepExecutionLogRegisterDaoImpl extends BaseDaoSupport impleme
 	 * @param stepExecutionId 任务执行ID
 	 */
 	@Override
-	public BatchStepExecutionLogRegister selectOne1R(Long stepExecutionId, boolean nullException){
+	public BatchStepExecutionLogRegister selectOne1R(String stepExecutionId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("stepExecutionId", stepExecutionId);
 		BatchStepExecutionLogRegister batchStepExecutionLogRegister = new BatchStepExecutionLogRegister();
@@ -85,7 +85,7 @@ public class BatchStepExecutionLogRegisterDaoImpl extends BaseDaoSupport impleme
 	 * @param stepExecutionId 任务执行ID
 	 */
 	@Override
-	public BatchStepExecutionLogRegister selectOne1L(Long stepExecutionId, boolean nullException){
+	public BatchStepExecutionLogRegister selectOne1L(String stepExecutionId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("stepExecutionId", stepExecutionId);
 		BatchStepExecutionLogRegister batchStepExecutionLogRegister = new BatchStepExecutionLogRegister();
@@ -99,7 +99,7 @@ public class BatchStepExecutionLogRegisterDaoImpl extends BaseDaoSupport impleme
 	 * @param stepExecutionId 任务执行ID
 	 */
 	@Override
-	public int deleteOne1(Long stepExecutionId){
+	public int deleteOne1(String stepExecutionId){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("stepExecutionId", stepExecutionId);
 		return getSqlSessionTemplate().delete("BatchStepExecutionLogRegister.deleteOne1", map);
@@ -110,7 +110,7 @@ public class BatchStepExecutionLogRegisterDaoImpl extends BaseDaoSupport impleme
 	 * @param stepExecutionId 任务执行ID
 	 */
 	@Override
-	public int deleteOne1L(Long stepExecutionId){
+	public int deleteOne1L(String stepExecutionId){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("stepExecutionId", stepExecutionId);
 		return getSqlSessionTemplate().delete("BatchStepExecutionLogRegister.deleteOne1L", map);
@@ -118,7 +118,7 @@ public class BatchStepExecutionLogRegisterDaoImpl extends BaseDaoSupport impleme
 
 	/**
 	 * 单笔更新
-	 * @param BatchStepExecutionLogRegister 
+	 * @param batchStepExecutionLogRegister 
 	 */
 	@Override
 	public int updateOne1(BatchStepExecutionLogRegister batchStepExecutionLogRegister){
@@ -127,7 +127,7 @@ public class BatchStepExecutionLogRegisterDaoImpl extends BaseDaoSupport impleme
 
 	/**
 	 * 单笔更新(正常状态 valid_status = 0)
-	 * @param BatchStepExecutionLogRegister 
+	 * @param batchStepExecutionLogRegister 
 	 */
 	@Override
 	public int updateOne1R(BatchStepExecutionLogRegister batchStepExecutionLogRegister){
@@ -136,7 +136,7 @@ public class BatchStepExecutionLogRegisterDaoImpl extends BaseDaoSupport impleme
 
 	/**
 	 * 单笔更新(加锁  for update: 当使用索引时锁行, 其他锁表)
-	 * @param BatchStepExecutionLogRegister 
+	 * @param batchStepExecutionLogRegister 
 	 */
 	@Override
 	public int updateOne1L(BatchStepExecutionLogRegister batchStepExecutionLogRegister){
@@ -144,31 +144,31 @@ public class BatchStepExecutionLogRegisterDaoImpl extends BaseDaoSupport impleme
 	}
 
 	/**
-	 * 批量更新(使用XML中的foreach语句)
-	 * @param BatchStepExecutionLogRegister 
+	 * 批量更新(直接调用Mybatis代码)
+	 * @param list 
 	 */
 	@Override
-	public void batchUpdateXML1(List<BatchStepExecutionLogRegister> list){
+	public void batchUpdate1(List<BatchStepExecutionLogRegister> list){
+		batchExcutor("BatchStepExecutionLogRegister.batchUpdate1", list, "update", 20);
+	}
+
+	/**
+	 * 批量更新(使用XML中的foreach语句)
+	 * @param list 
+	 */
+	@Override
+	public void batchUpdateXML(List<BatchStepExecutionLogRegister> list){
 		BatchInsertByXML(list, "list", 20, new BatchOperator<Integer, Map<String, Object>>() {
 			@Override
 			public Integer call(Map<String, Object> map) {
-				return getSqlSessionTemplate().update("BatchStepExecutionLogRegister.batchUpdateXML1", map);
+				return getSqlSessionTemplate().update("BatchStepExecutionLogRegister.batchUpdateXML", map);
 			};
 		});
 	}
 
 	/**
-	 * 批量更新(直接调用Mybatis代码)
-	 * @param BatchStepExecutionLogRegister 
-	 */
-	@Override
-	public void batchUpdate(List<BatchStepExecutionLogRegister> list){
-		batchExcutor("BatchStepExecutionLogRegister.batchUpdate", list, "update", 20);
-	}
-
-	/**
 	 * 批量删除(直接调用Mybatis代码)
-	 * @param BatchStepExecutionLogRegister 
+	 * @param list 
 	 */
 	@Override
 	public void batchDelete(List<BatchStepExecutionLogRegister> list){

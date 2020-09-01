@@ -142,7 +142,21 @@
 		where trigger_id = #{triggerId} for update
 	</update>
 
-	<update id="batchUpdateXML1" parameterType="java.util.List">
+	<update id="batchUpdate1" parameterType="org.mine.model.BatchTriggerDefinition">
+		update batch_trigger_definition
+		<trim prefix="set" suffixOverrides=",">
+			<if test="triggerName != null">trigger_name = #{triggerName},</if>
+			<if test="triggerStartTime != null">trigger_start_time = #{triggerStartTime},</if>
+			<if test="triggerEndTime != null">trigger_end_time = #{triggerEndTime},</if>
+			<if test="triggerCrontrigger != null">trigger_crontrigger = #{triggerCrontrigger},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="triggerRemark != null">trigger_remark = #{triggerRemark},</if>
+		</trim>
+		where trigger_id = #{triggerId}
+	</update>
+
+	<update id="batchUpdateXML" parameterType="java.util.List">
 		update batch_trigger_definition set
 		<trim prefix="trigger_name=case" suffix="end,">
 			<foreach collection="list" item="item" index="index">
@@ -199,60 +213,4 @@
 			#{item.triggerId}
 		</foreach>
 	</update>
-	<update id="batchUpdate" parameterType="org.mine.model.BatchTriggerDefinition">
-		update batch_trigger_definition
-		<trim prefix="set" suffixOverrides=",">
-			<if test="triggerName != null">trigger_name = #{triggerName},</if>
-			<if test="triggerStartTime != null">trigger_start_time = #{triggerStartTime},</if>
-			<if test="triggerEndTime != null">trigger_end_time = #{triggerEndTime},</if>
-			<if test="triggerCrontrigger != null">trigger_crontrigger = #{triggerCrontrigger},</if>
-			<if test="createDate != null">create_date = #{createDate},</if>
-			<if test="validStatus != null">valid_status = #{validStatus},</if>
-			<if test="triggerRemark != null">trigger_remark = #{triggerRemark},</if>
-		</trim>
-		where trigger_id = #{triggerId}
-	</update>
-
-	<select id="selectAll1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTriggerDefinition.Base_Select_List"/>
-		from batch_trigger_definition
-		where null = #{taskAssociateQueueId}
-	</select>
-
-	<select id="selectAll1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTriggerDefinition.Base_Select_List"/>
-		from batch_trigger_definition
-		where null = #{taskAssociateQueueId} and valid_status = '0'
-	</select>
-
-	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTriggerDefinition.Base_Select_List"/>
-		from batch_trigger_definition
-		where null = #{taskAssociateQueueId} for update
-	</select>
-
-	<select id="selectAll2" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTriggerDefinition.Base_Select_List"/>
-		from batch_trigger_definition
-		where null = #{taskAutoFlag}
-	</select>
-
-	<select id="selectAll2R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTriggerDefinition.Base_Select_List"/>
-		from batch_trigger_definition
-		where null = #{taskAutoFlag} and valid_status = '0'
-	</select>
-
-	<select id="selectAll2L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTriggerDefinition.Base_Select_List"/>
-		from batch_trigger_definition
-		where null = #{taskAutoFlag} for update
-	</select>
-
 </mapper>

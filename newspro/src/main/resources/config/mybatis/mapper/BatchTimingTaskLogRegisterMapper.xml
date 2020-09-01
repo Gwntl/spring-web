@@ -3,7 +3,7 @@
 <mapper namespace="BatchTimingTaskLogRegister">
 	<resultMap type="org.mine.model.BatchTimingTaskLogRegister" id="BaseResultMap">
 		<result column="timing_execution_id" property="timingExecutionId"/>
-		<result column="timing_job_id" property="timingJobId"/>
+		<result column="timing_task_id" property="timingTaskId"/>
 		<result column="timing_job_name" property="timingJobName"/>
 		<result column="timing_associate_task_id" property="timingAssociateTaskId"/>
 		<result column="timing_start_time" property="timingStartTime"/>
@@ -16,14 +16,14 @@
 	</resultMap>
 
 	<sql id="Base_Select_List">
-		timing_execution_id,timing_job_id,timing_job_name,timing_associate_task_id,timing_start_time,timing_end_time,
+		timing_execution_id,timing_task_id,timing_job_name,timing_associate_task_id,timing_start_time,timing_end_time,
 		timing_job_status,timing_job_errmsg,create_date,valid_status,remark
 	</sql>
 
 	<sql id="Base_Insert_Column">
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="timingExecutionId != null">timing_execution_id,</if>
-			<if test="timingJobId != null">timing_job_id,</if>
+			<if test="timingTaskId != null">timing_task_id,</if>
 			<if test="timingJobName != null">timing_job_name,</if>
 			<if test="timingAssociateTaskId != null">timing_associate_task_id,</if>
 			<if test="timingStartTime != null">timing_start_time,</if>
@@ -39,7 +39,7 @@
 	<sql id="Base_Insert_Values">
 		<trim prefix="(" suffix=")" suffixOverrides=",">
 			<if test="timingExecutionId != null">#{timingExecutionId},</if>
-			<if test="timingJobId != null">#{timingJobId},</if>
+			<if test="timingTaskId != null">#{timingTaskId},</if>
 			<if test="timingJobName != null">#{timingJobName},</if>
 			<if test="timingAssociateTaskId != null">#{timingAssociateTaskId},</if>
 			<if test="timingStartTime != null">#{timingStartTime},</if>
@@ -68,12 +68,12 @@
 
 	<insert id="batchInsertXML" parameterType="java.util.List">
 		insert into batch_timing_task_log_register
-		(timing_execution_id,timing_job_id,timing_job_name,timing_associate_task_id,timing_start_time
+		(timing_execution_id,timing_task_id,timing_job_name,timing_associate_task_id,timing_start_time
 			,timing_end_time,timing_job_status,timing_job_errmsg,create_date
 			,valid_status,remark)
 		values
 		<foreach collection="list" item="item" index="index" separator=",">
-			(#{item.timingExecutionId},#{item.timingJobId},#{item.timingJobName},#{item.timingAssociateTaskId},#{item.timingStartTime}
+			(#{item.timingExecutionId},#{item.timingTaskId},#{item.timingJobName},#{item.timingAssociateTaskId},#{item.timingStartTime}
 				,#{item.timingEndTime},#{item.timingJobStatus},#{item.timingJobErrmsg},#{item.createDate}
 				,#{item.validStatus},#{item.remark})
 		</foreach>
@@ -114,7 +114,7 @@
 	<update id="updateOne1" parameterType="org.mine.model.BatchTimingTaskLogRegister">
 		update batch_timing_task_log_register
 		<trim prefix="set" suffixOverrides=",">
-			<if test="timingJobId != null">timing_job_id = #{timingJobId},</if>
+			<if test="timingTaskId != null">timing_task_id = #{timingTaskId},</if>
 			<if test="timingJobName != null">timing_job_name = #{timingJobName},</if>
 			<if test="timingAssociateTaskId != null">timing_associate_task_id = #{timingAssociateTaskId},</if>
 			<if test="timingStartTime != null">timing_start_time = #{timingStartTime},</if>
@@ -131,7 +131,7 @@
 	<update id="updateOne1R" parameterType="org.mine.model.BatchTimingTaskLogRegister">
 		update batch_timing_task_log_register
 		<trim prefix="set" suffixOverrides=",">
-			<if test="timingJobId != null">timing_job_id = #{timingJobId},</if>
+			<if test="timingTaskId != null">timing_task_id = #{timingTaskId},</if>
 			<if test="timingJobName != null">timing_job_name = #{timingJobName},</if>
 			<if test="timingAssociateTaskId != null">timing_associate_task_id = #{timingAssociateTaskId},</if>
 			<if test="timingStartTime != null">timing_start_time = #{timingStartTime},</if>
@@ -148,7 +148,7 @@
 	<update id="updateOne1L" parameterType="org.mine.model.BatchTimingTaskLogRegister">
 		update batch_timing_task_log_register
 		<trim prefix="set" suffixOverrides=",">
-			<if test="timingJobId != null">timing_job_id = #{timingJobId},</if>
+			<if test="timingTaskId != null">timing_task_id = #{timingTaskId},</if>
 			<if test="timingJobName != null">timing_job_name = #{timingJobName},</if>
 			<if test="timingAssociateTaskId != null">timing_associate_task_id = #{timingAssociateTaskId},</if>
 			<if test="timingStartTime != null">timing_start_time = #{timingStartTime},</if>
@@ -162,12 +162,29 @@
 		where timing_execution_id = #{timingExecutionId} for update
 	</update>
 
-	<update id="batchUpdateXML1" parameterType="java.util.List">
+	<update id="batchUpdate1" parameterType="org.mine.model.BatchTimingTaskLogRegister">
+		update batch_timing_task_log_register
+		<trim prefix="set" suffixOverrides=",">
+			<if test="timingTaskId != null">timing_task_id = #{timingTaskId},</if>
+			<if test="timingJobName != null">timing_job_name = #{timingJobName},</if>
+			<if test="timingAssociateTaskId != null">timing_associate_task_id = #{timingAssociateTaskId},</if>
+			<if test="timingStartTime != null">timing_start_time = #{timingStartTime},</if>
+			<if test="timingEndTime != null">timing_end_time = #{timingEndTime},</if>
+			<if test="timingJobStatus != null">timing_job_status = #{timingJobStatus},</if>
+			<if test="timingJobErrmsg != null">timing_job_errmsg = #{timingJobErrmsg},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where timing_execution_id = #{timingExecutionId}
+	</update>
+
+	<update id="batchUpdateXML" parameterType="java.util.List">
 		update batch_timing_task_log_register set
-		<trim prefix="timing_job_id=case" suffix="end,">
+		<trim prefix="timing_task_id=case" suffix="end,">
 			<foreach collection="list" item="item" index="index">
-				<if test="item.timingJobId != null">
-					when timing_execution_id = #{item.timingExecutionId} then #{item.timingJobId}
+				<if test="item.timingTaskId != null">
+					when timing_execution_id = #{item.timingExecutionId} then #{item.timingTaskId}
 				</if>
 			</foreach>
 		</trim>
@@ -240,63 +257,4 @@
 			#{item.timingExecutionId}
 		</foreach>
 	</update>
-	<update id="batchUpdate" parameterType="org.mine.model.BatchTimingTaskLogRegister">
-		update batch_timing_task_log_register
-		<trim prefix="set" suffixOverrides=",">
-			<if test="timingJobId != null">timing_job_id = #{timingJobId},</if>
-			<if test="timingJobName != null">timing_job_name = #{timingJobName},</if>
-			<if test="timingAssociateTaskId != null">timing_associate_task_id = #{timingAssociateTaskId},</if>
-			<if test="timingStartTime != null">timing_start_time = #{timingStartTime},</if>
-			<if test="timingEndTime != null">timing_end_time = #{timingEndTime},</if>
-			<if test="timingJobStatus != null">timing_job_status = #{timingJobStatus},</if>
-			<if test="timingJobErrmsg != null">timing_job_errmsg = #{timingJobErrmsg},</if>
-			<if test="createDate != null">create_date = #{createDate},</if>
-			<if test="validStatus != null">valid_status = #{validStatus},</if>
-			<if test="remark != null">remark = #{remark},</if>
-		</trim>
-		where timing_execution_id = #{timingExecutionId}
-	</update>
-
-	<select id="selectAll1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTimingTaskLogRegister.Base_Select_List"/>
-		from batch_timing_task_log_register
-		where null = #{taskAssociateQueueId}
-	</select>
-
-	<select id="selectAll1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTimingTaskLogRegister.Base_Select_List"/>
-		from batch_timing_task_log_register
-		where null = #{taskAssociateQueueId} and valid_status = '0'
-	</select>
-
-	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTimingTaskLogRegister.Base_Select_List"/>
-		from batch_timing_task_log_register
-		where null = #{taskAssociateQueueId} for update
-	</select>
-
-	<select id="selectAll2" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTimingTaskLogRegister.Base_Select_List"/>
-		from batch_timing_task_log_register
-		where null = #{taskAutoFlag}
-	</select>
-
-	<select id="selectAll2R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTimingTaskLogRegister.Base_Select_List"/>
-		from batch_timing_task_log_register
-		where null = #{taskAutoFlag} and valid_status = '0'
-	</select>
-
-	<select id="selectAll2L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTimingTaskLogRegister.Base_Select_List"/>
-		from batch_timing_task_log_register
-		where null = #{taskAutoFlag} for update
-	</select>
-
 </mapper>

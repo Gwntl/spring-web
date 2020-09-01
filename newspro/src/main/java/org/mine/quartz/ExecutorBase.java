@@ -12,7 +12,7 @@ import org.springframework.stereotype.Repository;
  * 定时任务执行基类
  * @Description:
  * @Title:  ExcutorBase.java   
- * @Package org.mine.quartz   
+ * @Package org.mine.batch
  * @author: wntl    
  * @date:   2019年12月2日 下午10:55:20   
  * @version V1.0 

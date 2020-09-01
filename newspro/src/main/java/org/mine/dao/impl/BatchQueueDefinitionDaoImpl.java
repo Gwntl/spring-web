@@ -15,14 +15,14 @@ import org.springframework.stereotype.Repository;
  * 
  * @filename BatchQueueDefinitionDaoImpl.java
  * @author wzaUsers
- * @date 2020-06-09 10:06:03
+ * @date 2020-08-20 11:08:58
  * @version v1.0
 */
 @Repository
 public class BatchQueueDefinitionDaoImpl extends BaseDaoSupport implements BatchQueueDefinitionDao {
 	/**
 	 * 单笔插入
-	 * @param BatchQueueDefinition 
+	 * @param batchQueueDefinition 
 	 */
 	@Override
 	public int insertOne(BatchQueueDefinition batchQueueDefinition){
@@ -31,7 +31,7 @@ public class BatchQueueDefinitionDaoImpl extends BaseDaoSupport implements Batch
 
 	/**
 	 * 批量插入(直接调用Mybatis代码)
-	 * @param BatchQueueDefinition 
+	 * @param list 
 	 */
 	@Override
 	public void batchInsert(List<BatchQueueDefinition> list){
@@ -40,7 +40,7 @@ public class BatchQueueDefinitionDaoImpl extends BaseDaoSupport implements Batch
 
 	/**
 	 * 批量插入(使用XML中的foreach语句)
-	 * @param BatchQueueDefinition 
+	 * @param list 
 	 */
 	@Override
 	public void batchInsertXML(List<BatchQueueDefinition> list){
@@ -57,7 +57,7 @@ public class BatchQueueDefinitionDaoImpl extends BaseDaoSupport implements Batch
 	 * @param queueId 队列ID
 	 */
 	@Override
-	public BatchQueueDefinition selectOne1(Long queueId, boolean nullException){
+	public BatchQueueDefinition selectOne1(String queueId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("queueId", queueId);
 		BatchQueueDefinition batchQueueDefinition = new BatchQueueDefinition();
@@ -71,7 +71,7 @@ public class BatchQueueDefinitionDaoImpl extends BaseDaoSupport implements Batch
 	 * @param queueId 队列ID
 	 */
 	@Override
-	public BatchQueueDefinition selectOne1R(Long queueId, boolean nullException){
+	public BatchQueueDefinition selectOne1R(String queueId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("queueId", queueId);
 		BatchQueueDefinition batchQueueDefinition = new BatchQueueDefinition();
@@ -85,7 +85,7 @@ public class BatchQueueDefinitionDaoImpl extends BaseDaoSupport implements Batch
 	 * @param queueId 队列ID
 	 */
 	@Override
-	public BatchQueueDefinition selectOne1L(Long queueId, boolean nullException){
+	public BatchQueueDefinition selectOne1L(String queueId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("queueId", queueId);
 		BatchQueueDefinition batchQueueDefinition = new BatchQueueDefinition();
@@ -99,7 +99,7 @@ public class BatchQueueDefinitionDaoImpl extends BaseDaoSupport implements Batch
 	 * @param queueId 队列ID
 	 */
 	@Override
-	public int deleteOne1(Long queueId){
+	public int deleteOne1(String queueId){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("queueId", queueId);
 		return getSqlSessionTemplate().delete("BatchQueueDefinition.deleteOne1", map);
@@ -110,7 +110,7 @@ public class BatchQueueDefinitionDaoImpl extends BaseDaoSupport implements Batch
 	 * @param queueId 队列ID
 	 */
 	@Override
-	public int deleteOne1L(Long queueId){
+	public int deleteOne1L(String queueId){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("queueId", queueId);
 		return getSqlSessionTemplate().delete("BatchQueueDefinition.deleteOne1L", map);
@@ -118,7 +118,7 @@ public class BatchQueueDefinitionDaoImpl extends BaseDaoSupport implements Batch
 
 	/**
 	 * 单笔更新
-	 * @param BatchQueueDefinition 
+	 * @param batchQueueDefinition 
 	 */
 	@Override
 	public int updateOne1(BatchQueueDefinition batchQueueDefinition){
@@ -127,7 +127,7 @@ public class BatchQueueDefinitionDaoImpl extends BaseDaoSupport implements Batch
 
 	/**
 	 * 单笔更新(正常状态 valid_status = 0)
-	 * @param BatchQueueDefinition 
+	 * @param batchQueueDefinition 
 	 */
 	@Override
 	public int updateOne1R(BatchQueueDefinition batchQueueDefinition){
@@ -136,7 +136,7 @@ public class BatchQueueDefinitionDaoImpl extends BaseDaoSupport implements Batch
 
 	/**
 	 * 单笔更新(加锁  for update: 当使用索引时锁行, 其他锁表)
-	 * @param BatchQueueDefinition 
+	 * @param batchQueueDefinition 
 	 */
 	@Override
 	public int updateOne1L(BatchQueueDefinition batchQueueDefinition){
@@ -144,31 +144,31 @@ public class BatchQueueDefinitionDaoImpl extends BaseDaoSupport implements Batch
 	}
 
 	/**
-	 * 批量更新(使用XML中的foreach语句)
-	 * @param BatchQueueDefinition 
+	 * 批量更新(直接调用Mybatis代码)
+	 * @param list 
 	 */
 	@Override
-	public void batchUpdateXML1(List<BatchQueueDefinition> list){
+	public void batchUpdate1(List<BatchQueueDefinition> list){
+		batchExcutor("BatchQueueDefinition.batchUpdate1", list, "update", 20);
+	}
+
+	/**
+	 * 批量更新(使用XML中的foreach语句)
+	 * @param list 
+	 */
+	@Override
+	public void batchUpdateXML(List<BatchQueueDefinition> list){
 		BatchInsertByXML(list, "list", 20, new BatchOperator<Integer, Map<String, Object>>() {
 			@Override
 			public Integer call(Map<String, Object> map) {
-				return getSqlSessionTemplate().update("BatchQueueDefinition.batchUpdateXML1", map);
+				return getSqlSessionTemplate().update("BatchQueueDefinition.batchUpdateXML", map);
 			};
 		});
 	}
 
 	/**
-	 * 批量更新(直接调用Mybatis代码)
-	 * @param BatchQueueDefinition 
-	 */
-	@Override
-	public void batchUpdate(List<BatchQueueDefinition> list){
-		batchExcutor("BatchQueueDefinition.batchUpdate", list, "update", 20);
-	}
-
-	/**
 	 * 批量删除(直接调用Mybatis代码)
-	 * @param BatchQueueDefinition 
+	 * @param list 
 	 */
 	@Override
 	public void batchDelete(List<BatchQueueDefinition> list){

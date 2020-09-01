@@ -15,14 +15,14 @@ import org.springframework.stereotype.Repository;
  * 
  * @filename BatchTimingStepLogHistoryDaoImpl.java
  * @author wzaUsers
- * @date 2020-06-08 10:06:39
+ * @date 2020-08-14 16:08:07
  * @version v1.0
 */
 @Repository
 public class BatchTimingStepLogHistoryDaoImpl extends BaseDaoSupport implements BatchTimingStepLogHistoryDao {
 	/**
 	 * 单笔插入
-	 * @param BatchTimingStepLogHistory 
+	 * @param batchTimingStepLogHistory 
 	 */
 	@Override
 	public int insertOne(BatchTimingStepLogHistory batchTimingStepLogHistory){
@@ -31,7 +31,7 @@ public class BatchTimingStepLogHistoryDaoImpl extends BaseDaoSupport implements 
 
 	/**
 	 * 批量插入(直接调用Mybatis代码)
-	 * @param BatchTimingStepLogHistory 
+	 * @param list 
 	 */
 	@Override
 	public void batchInsert(List<BatchTimingStepLogHistory> list){
@@ -40,7 +40,7 @@ public class BatchTimingStepLogHistoryDaoImpl extends BaseDaoSupport implements 
 
 	/**
 	 * 批量插入(使用XML中的foreach语句)
-	 * @param BatchTimingStepLogHistory 
+	 * @param list 
 	 */
 	@Override
 	public void batchInsertXML(List<BatchTimingStepLogHistory> list){
@@ -57,7 +57,7 @@ public class BatchTimingStepLogHistoryDaoImpl extends BaseDaoSupport implements 
 	 * @param historyStepExecutionId 任务执行ID
 	 */
 	@Override
-	public BatchTimingStepLogHistory selectOne1(Long historyStepExecutionId, boolean nullException){
+	public BatchTimingStepLogHistory selectOne1(String historyStepExecutionId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("historyStepExecutionId", historyStepExecutionId);
 		BatchTimingStepLogHistory batchTimingStepLogHistory = new BatchTimingStepLogHistory();
@@ -71,7 +71,7 @@ public class BatchTimingStepLogHistoryDaoImpl extends BaseDaoSupport implements 
 	 * @param historyStepExecutionId 任务执行ID
 	 */
 	@Override
-	public BatchTimingStepLogHistory selectOne1R(Long historyStepExecutionId, boolean nullException){
+	public BatchTimingStepLogHistory selectOne1R(String historyStepExecutionId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("historyStepExecutionId", historyStepExecutionId);
 		BatchTimingStepLogHistory batchTimingStepLogHistory = new BatchTimingStepLogHistory();
@@ -85,7 +85,7 @@ public class BatchTimingStepLogHistoryDaoImpl extends BaseDaoSupport implements 
 	 * @param historyStepExecutionId 任务执行ID
 	 */
 	@Override
-	public BatchTimingStepLogHistory selectOne1L(Long historyStepExecutionId, boolean nullException){
+	public BatchTimingStepLogHistory selectOne1L(String historyStepExecutionId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("historyStepExecutionId", historyStepExecutionId);
 		BatchTimingStepLogHistory batchTimingStepLogHistory = new BatchTimingStepLogHistory();
@@ -99,7 +99,7 @@ public class BatchTimingStepLogHistoryDaoImpl extends BaseDaoSupport implements 
 	 * @param historyStepExecutionId 任务执行ID
 	 */
 	@Override
-	public int deleteOne1(Long historyStepExecutionId){
+	public int deleteOne1(String historyStepExecutionId){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("historyStepExecutionId", historyStepExecutionId);
 		return getSqlSessionTemplate().delete("BatchTimingStepLogHistory.deleteOne1", map);
@@ -110,7 +110,7 @@ public class BatchTimingStepLogHistoryDaoImpl extends BaseDaoSupport implements 
 	 * @param historyStepExecutionId 任务执行ID
 	 */
 	@Override
-	public int deleteOne1L(Long historyStepExecutionId){
+	public int deleteOne1L(String historyStepExecutionId){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("historyStepExecutionId", historyStepExecutionId);
 		return getSqlSessionTemplate().delete("BatchTimingStepLogHistory.deleteOne1L", map);
@@ -118,7 +118,7 @@ public class BatchTimingStepLogHistoryDaoImpl extends BaseDaoSupport implements 
 
 	/**
 	 * 单笔更新
-	 * @param BatchTimingStepLogHistory 
+	 * @param batchTimingStepLogHistory 
 	 */
 	@Override
 	public int updateOne1(BatchTimingStepLogHistory batchTimingStepLogHistory){
@@ -127,7 +127,7 @@ public class BatchTimingStepLogHistoryDaoImpl extends BaseDaoSupport implements 
 
 	/**
 	 * 单笔更新(正常状态 valid_status = 0)
-	 * @param BatchTimingStepLogHistory 
+	 * @param batchTimingStepLogHistory 
 	 */
 	@Override
 	public int updateOne1R(BatchTimingStepLogHistory batchTimingStepLogHistory){
@@ -136,7 +136,7 @@ public class BatchTimingStepLogHistoryDaoImpl extends BaseDaoSupport implements 
 
 	/**
 	 * 单笔更新(加锁  for update: 当使用索引时锁行, 其他锁表)
-	 * @param BatchTimingStepLogHistory 
+	 * @param batchTimingStepLogHistory 
 	 */
 	@Override
 	public int updateOne1L(BatchTimingStepLogHistory batchTimingStepLogHistory){
@@ -145,16 +145,30 @@ public class BatchTimingStepLogHistoryDaoImpl extends BaseDaoSupport implements 
 
 	/**
 	 * 批量更新(直接调用Mybatis代码)
-	 * @param BatchTimingStepLogHistory 
+	 * @param list 
 	 */
 	@Override
-	public void batchUpdate(List<BatchTimingStepLogHistory> list){
-		batchExcutor("BatchTimingStepLogHistory.batchUpdate", list, "update", 20);
+	public void batchUpdate1(List<BatchTimingStepLogHistory> list){
+		batchExcutor("BatchTimingStepLogHistory.batchUpdate1", list, "update", 20);
+	}
+
+	/**
+	 * 批量更新(使用XML中的foreach语句)
+	 * @param list 
+	 */
+	@Override
+	public void batchUpdateXML(List<BatchTimingStepLogHistory> list){
+		BatchInsertByXML(list, "list", 20, new BatchOperator<Integer, Map<String, Object>>() {
+			@Override
+			public Integer call(Map<String, Object> map) {
+				return getSqlSessionTemplate().update("BatchTimingStepLogHistory.batchUpdateXML", map);
+			};
+		});
 	}
 
 	/**
 	 * 批量删除(直接调用Mybatis代码)
-	 * @param BatchTimingStepLogHistory 
+	 * @param list 
 	 */
 	@Override
 	public void batchDelete(List<BatchTimingStepLogHistory> list){

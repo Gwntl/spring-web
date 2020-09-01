@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BatchJobLogHistory">
+	<resultMap type="org.mine.model.BatchJobLogHistory" id="BaseResultMap">
+		<result column="execution_instance" property="executionInstance"/>
+		<result column="job_id" property="jobId"/>
+		<result column="job_name" property="jobName"/>
+		<result column="start_time" property="startTime"/>
+		<result column="end_time" property="endTime"/>
+		<result column="job_status" property="jobStatus"/>
+		<result column="job_errmsg" property="jobErrmsg"/>
+		<result column="concurrency_num" property="concurrencyNum"/>
+		<result column="associate_task_id" property="associateTaskId"/>
+		<result column="associate_task_instance" property="associateTaskInstance"/>
+		<result column="create_date" property="createDate"/>
+		<result column="time_stamp" property="timeStamp"/>
+		<result column="valid_status" property="validStatus"/>
+		<result column="remark" property="remark"/>
+	</resultMap>
+
+	<sql id="Base_Select_List">
+		execution_instance,job_id,job_name,start_time,end_time,job_status,
+		job_errmsg,concurrency_num,associate_task_id,associate_task_instance,create_date,
+		time_stamp,valid_status,remark
+	</sql>
+
+	<sql id="Base_Insert_Column">
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="executionInstance != null">execution_instance,</if>
+			<if test="jobId != null">job_id,</if>
+			<if test="jobName != null">job_name,</if>
+			<if test="startTime != null">start_time,</if>
+			<if test="endTime != null">end_time,</if>
+			<if test="jobStatus != null">job_status,</if>
+			<if test="jobErrmsg != null">job_errmsg,</if>
+			<if test="concurrencyNum != null">concurrency_num,</if>
+			<if test="associateTaskId != null">associate_task_id,</if>
+			<if test="associateTaskInstance != null">associate_task_instance,</if>
+			<if test="createDate != null">create_date,</if>
+			<if test="timeStamp != null">time_stamp,</if>
+			<if test="validStatus != null">valid_status,</if>
+			<if test="remark != null">remark,</if>
+		</trim>
+	</sql>
+
+	<sql id="Base_Insert_Values">
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="executionInstance != null">#{executionInstance},</if>
+			<if test="jobId != null">#{jobId},</if>
+			<if test="jobName != null">#{jobName},</if>
+			<if test="startTime != null">#{startTime},</if>
+			<if test="endTime != null">#{endTime},</if>
+			<if test="jobStatus != null">#{jobStatus},</if>
+			<if test="jobErrmsg != null">#{jobErrmsg},</if>
+			<if test="concurrencyNum != null">#{concurrencyNum},</if>
+			<if test="associateTaskId != null">#{associateTaskId},</if>
+			<if test="associateTaskInstance != null">#{associateTaskInstance},</if>
+			<if test="createDate != null">#{createDate},</if>
+			<if test="timeStamp != null">#{timeStamp},</if>
+			<if test="validStatus != null">#{validStatus},</if>
+			<if test="remark != null">#{remark},</if>
+		</trim>
+	</sql>
+
+	<insert id="insertOne" parameterType="org.mine.model.BatchJobLogHistory">
+		insert into batch_job_log_history
+		<include refid="BatchJobLogHistory.Base_Insert_Column"/>
+		values 
+		<include refid="BatchJobLogHistory.Base_Insert_Values"/>
+	</insert>
+
+	<insert id="batchInsert" parameterType="org.mine.model.BatchJobLogHistory">
+		insert into batch_job_log_history
+		<include refid="BatchJobLogHistory.Base_Insert_Column"/>
+		values 
+		<include refid="BatchJobLogHistory.Base_Insert_Values"/>
+	</insert>
+
+	<insert id="batchInsertXML" parameterType="java.util.List">
+		insert into batch_job_log_history
+		(execution_instance,job_id,job_name,start_time,end_time
+			,job_status,job_errmsg,concurrency_num,associate_task_id
+			,associate_task_instance,create_date,time_stamp,valid_status
+			,remark)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.executionInstance},#{item.jobId},#{item.jobName},#{item.startTime},#{item.endTime}
+				,#{item.jobStatus},#{item.jobErrmsg},#{item.concurrencyNum},#{item.associateTaskId}
+				,#{item.associateTaskInstance},#{item.createDate},#{item.timeStamp},#{item.validStatus}
+				,#{item.remark})
+		</foreach>
+	</insert>
+	<select id="selectOne1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchJobLogHistory.Base_Select_List"/>
+		from batch_job_log_history
+		where execution_instance = #{executionInstance}
+	</select>
+
+	<select id="selectOne1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchJobLogHistory.Base_Select_List"/>
+		from batch_job_log_history
+		where execution_instance = #{executionInstance} and valid_status = '0'
+	</select>
+
+	<select id="selectOne1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchJobLogHistory.Base_Select_List"/>
+		from batch_job_log_history
+		where execution_instance = #{executionInstance} for update
+	</select>
+
+	<delete id="deleteOne1" parameterType="org.mine.model.BatchJobLogHistory">
+		delete from batch_job_log_history
+		where
+		execution_instance = #{executionInstance}
+	</delete>
+
+	<delete id="deleteOne1L" parameterType="org.mine.model.BatchJobLogHistory">
+		delete from batch_job_log_history
+		where
+		execution_instance = #{executionInstance} for update
+	</delete>
+
+	<update id="updateOne1" parameterType="org.mine.model.BatchJobLogHistory">
+		update batch_job_log_history
+		<trim prefix="set" suffixOverrides=",">
+			<if test="jobId != null">job_id = #{jobId},</if>
+			<if test="jobName != null">job_name = #{jobName},</if>
+			<if test="startTime != null">start_time = #{startTime},</if>
+			<if test="endTime != null">end_time = #{endTime},</if>
+			<if test="jobStatus != null">job_status = #{jobStatus},</if>
+			<if test="jobErrmsg != null">job_errmsg = #{jobErrmsg},</if>
+			<if test="concurrencyNum != null">concurrency_num = #{concurrencyNum},</if>
+			<if test="associateTaskId != null">associate_task_id = #{associateTaskId},</if>
+			<if test="associateTaskInstance != null">associate_task_instance = #{associateTaskInstance},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="timeStamp != null">time_stamp = #{timeStamp},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where execution_instance = #{executionInstance}
+	</update>
+
+	<update id="updateOne1R" parameterType="org.mine.model.BatchJobLogHistory">
+		update batch_job_log_history
+		<trim prefix="set" suffixOverrides=",">
+			<if test="jobId != null">job_id = #{jobId},</if>
+			<if test="jobName != null">job_name = #{jobName},</if>
+			<if test="startTime != null">start_time = #{startTime},</if>
+			<if test="endTime != null">end_time = #{endTime},</if>
+			<if test="jobStatus != null">job_status = #{jobStatus},</if>
+			<if test="jobErrmsg != null">job_errmsg = #{jobErrmsg},</if>
+			<if test="concurrencyNum != null">concurrency_num = #{concurrencyNum},</if>
+			<if test="associateTaskId != null">associate_task_id = #{associateTaskId},</if>
+			<if test="associateTaskInstance != null">associate_task_instance = #{associateTaskInstance},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="timeStamp != null">time_stamp = #{timeStamp},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where execution_instance = #{executionInstance} and valid_status = '0'
+	</update>
+
+	<update id="updateOne1L" parameterType="org.mine.model.BatchJobLogHistory">
+		update batch_job_log_history
+		<trim prefix="set" suffixOverrides=",">
+			<if test="jobId != null">job_id = #{jobId},</if>
+			<if test="jobName != null">job_name = #{jobName},</if>
+			<if test="startTime != null">start_time = #{startTime},</if>
+			<if test="endTime != null">end_time = #{endTime},</if>
+			<if test="jobStatus != null">job_status = #{jobStatus},</if>
+			<if test="jobErrmsg != null">job_errmsg = #{jobErrmsg},</if>
+			<if test="concurrencyNum != null">concurrency_num = #{concurrencyNum},</if>
+			<if test="associateTaskId != null">associate_task_id = #{associateTaskId},</if>
+			<if test="associateTaskInstance != null">associate_task_instance = #{associateTaskInstance},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="timeStamp != null">time_stamp = #{timeStamp},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where execution_instance = #{executionInstance} for update
+	</update>
+
+	<update id="batchUpdate1" parameterType="org.mine.model.BatchJobLogHistory">
+		update batch_job_log_history
+		<trim prefix="set" suffixOverrides=",">
+			<if test="jobId != null">job_id = #{jobId},</if>
+			<if test="jobName != null">job_name = #{jobName},</if>
+			<if test="startTime != null">start_time = #{startTime},</if>
+			<if test="endTime != null">end_time = #{endTime},</if>
+			<if test="jobStatus != null">job_status = #{jobStatus},</if>
+			<if test="jobErrmsg != null">job_errmsg = #{jobErrmsg},</if>
+			<if test="concurrencyNum != null">concurrency_num = #{concurrencyNum},</if>
+			<if test="associateTaskId != null">associate_task_id = #{associateTaskId},</if>
+			<if test="associateTaskInstance != null">associate_task_instance = #{associateTaskInstance},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="timeStamp != null">time_stamp = #{timeStamp},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where execution_instance = #{executionInstance}
+	</update>
+
+	<update id="batchUpdateXML" parameterType="java.util.List">
+		update batch_job_log_history set
+		<trim prefix="job_id=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.jobId != null">
+					when execution_instance = #{item.executionInstance} then #{item.jobId}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="job_name=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.jobName != null">
+					when execution_instance = #{item.executionInstance} then #{item.jobName}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="start_time=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.startTime != null">
+					when execution_instance = #{item.executionInstance} then #{item.startTime}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="end_time=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.endTime != null">
+					when execution_instance = #{item.executionInstance} then #{item.endTime}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="job_status=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.jobStatus != null">
+					when execution_instance = #{item.executionInstance} then #{item.jobStatus}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="job_errmsg=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.jobErrmsg != null">
+					when execution_instance = #{item.executionInstance} then #{item.jobErrmsg}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="concurrency_num=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.concurrencyNum != null">
+					when execution_instance = #{item.executionInstance} then #{item.concurrencyNum}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="associate_task_id=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.associateTaskId != null">
+					when execution_instance = #{item.executionInstance} then #{item.associateTaskId}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="associate_task_instance=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.associateTaskInstance != null">
+					when execution_instance = #{item.executionInstance} then #{item.associateTaskInstance}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="create_date=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.createDate != null">
+					when execution_instance = #{item.executionInstance} then #{item.createDate}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="time_stamp=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.timeStamp != null">
+					when execution_instance = #{item.executionInstance} then #{item.timeStamp}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="valid_status=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.validStatus != null">
+					when execution_instance = #{item.executionInstance} then #{item.validStatus}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="remark=case" suffix="end">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.remark != null">
+					when execution_instance = #{item.executionInstance} then #{item.remark}
+				</if>
+			</foreach>
+		</trim>
+		where
+		execution_instance in
+		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+			#{item.executionInstance}
+		</foreach>
+	</update>
+</mapper>

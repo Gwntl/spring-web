@@ -1,15 +1,6 @@
 package org.mine.aplt.support.bean;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.sql.Savepoint;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.mine.aplt.exception.GitWebException;
 import org.mine.aplt.util.CommonUtils;
 import org.slf4j.Logger;
@@ -17,11 +8,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.datasource.JdbcTransactionObjectSupport;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.util.LinkedCaseInsensitiveMap;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CurrThreadExecutionEnv {
 	private static final Logger logger = LoggerFactory.getLogger(CurrThreadExecutionEnv.class);
@@ -46,11 +44,14 @@ public class CurrThreadExecutionEnv {
 	 * 事务点缓存对象
 	 */
 	private Map<String, InnerSavepoint> savepointMap;
+
+	private Map<String, Object> systemParams;
 	
 	public CurrThreadExecutionEnv() {
 		status = null;
 		savepointMap = new HashMap<>();
 		statusList = new ArrayList<>();
+		systemParams = new HashMap<>();
 	}
 	
 	/**
@@ -197,7 +198,67 @@ public class CurrThreadExecutionEnv {
 					+ savepoint + "]";
 		}
 	}
-	
+
+	public <T> List<T> queryForSingleFieldList(String sql, Object[] args, Class<T> elementType){
+		return jdbcTemplate.queryForList(sql, args, elementType);
+	}
+
+	public Object[] queryForArrayByExtractor(final String sql, Object[] args) {
+		return this.jdbcTemplate.query(sql, new ResultSetExtractor<Object[]>() {
+			@Override
+			public Object[] extractData(ResultSet rs) throws SQLException, DataAccessException {
+				int count = 0;
+				Object[] obj = null;
+				while (rs.next()) {
+					if (count > 0) {
+						throw new TooManyResultsException(sql);
+					}
+					ResultSetMetaData metaData = rs.getMetaData();
+					int columnCount = metaData.getColumnCount();
+					obj = new Object[columnCount];
+					for (int index = 1; index <= columnCount; index++) {
+						obj[index - 1] = JdbcUtils.getResultSetValue(rs, index);
+					}
+					count ++;
+				}
+				return obj;
+			}
+		}, args);
+	}
+
+	public List<Object[]> queryForArraysByExtractor(String sql, Object[] args) {
+		return this.jdbcTemplate.query(sql, new ResultSetExtractor<List<Object[]>>() {
+			@Override
+			public List<Object[]> extractData(ResultSet rs) throws SQLException, DataAccessException {
+				List<Object[]> objects = new ArrayList<>();
+				while(rs.next()) {
+					ResultSetMetaData metaData = rs.getMetaData();
+					int columnCount = metaData.getColumnCount();
+					Object[] obj = new Object[columnCount];
+					for (int index = 1; index <= columnCount; index++) {
+						obj[index - 1] = JdbcUtils.getResultSetValue(rs, index);
+					}
+					objects.add(obj);
+				}
+				return objects;
+			}
+		}, args);
+	}
+
+	public List<Object[]> queryForArraysByRowMapper(String sql, Object[] args) {
+		return this.jdbcTemplate.query(sql, args, new RowMapper<Object[]>() {
+			@Override
+			public Object[] mapRow(ResultSet rs, int rowNum) throws SQLException {
+				int count = rs.getMetaData().getColumnCount();
+				Object[] object = new Object[count];
+				for (int index = 1; index <= count; index++) {
+					object[index - 1] = JdbcUtils.getResultSetValue(rs, index);
+				}
+				return object;
+			}
+		});
+	}
+
 	public List<Map<String, Object>> queryForList(String sql, Object[] args) {
 		return jdbcTemplate.queryForList(sql, args);
 	}
@@ -236,11 +297,27 @@ public class CurrThreadExecutionEnv {
 			}
 		}, args);
 	}
-	
+	/**
+	* 根据条件查询单个指定对象
+	* @param sql
+	* @param args
+	* @param clz
+	* @return: T
+	* @Author: wntl
+	* @Date: 2020/8/17
+	*/
 	public <T> T queryForObject(String sql, Object[] args, Class<T> clz) {
-		return (T) this.jdbcTemplate.queryForObject(sql, args, new CustomRowMapper<T>(clz));
+		return (T) this.jdbcTemplate.queryForObject(sql, args, new CustomRowMapper<>(clz));
 	}
-	
+
+	/**
+	* 根据指定sql查询单个对象
+	* @param sql
+	* @param clz
+	* @return: T
+	* @Author: wntl
+	* @Date: 2020/8/17
+	*/
 	public <T> T queryForObject(String sql, Class<T> clz) {
 		return this.jdbcTemplate.queryForObject(sql, clz);
 	}

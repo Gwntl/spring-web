@@ -162,7 +162,7 @@
 		where step_execution_id = #{stepExecutionId} for update
 	</update>
 
-	<update id="batchUpdateXML1" parameterType="org.mine.model.BatchTimingStepLogRegister">
+	<update id="batchUpdate1" parameterType="org.mine.model.BatchTimingStepLogRegister">
 		update batch_timing_step_log_register
 		<trim prefix="set" suffixOverrides=",">
 			<if test="stepJobId != null">step_job_id = #{stepJobId},</if>
@@ -179,63 +179,82 @@
 		where step_execution_id = #{stepExecutionId}
 	</update>
 
-	<update id="batchUpdate" parameterType="org.mine.model.BatchTimingStepLogRegister">
-		update batch_timing_step_log_register
-		<trim prefix="set" suffixOverrides=",">
-			<if test="stepJobId != null">step_job_id = #{stepJobId},</if>
-			<if test="stepJobName != null">step_job_name = #{stepJobName},</if>
-			<if test="stepStartTime != null">step_start_time = #{stepStartTime},</if>
-			<if test="stepEndTime != null">step_end_time = #{stepEndTime},</if>
-			<if test="stepJobStatus != null">step_job_status = #{stepJobStatus},</if>
-			<if test="stepJobErrmsg != null">step_job_errmsg = #{stepJobErrmsg},</if>
-			<if test="stepAssociateJobId != null">step_associate_job_id = #{stepAssociateJobId},</if>
-			<if test="createDate != null">create_date = #{createDate},</if>
-			<if test="validStatus != null">valid_status = #{validStatus},</if>
-			<if test="remark != null">remark = #{remark},</if>
+	<update id="batchUpdateXML" parameterType="java.util.List">
+		update batch_timing_step_log_register set
+		<trim prefix="step_job_id=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.stepJobId != null">
+					when step_execution_id = #{item.stepExecutionId} then #{item.stepJobId}
+				</if>
+			</foreach>
 		</trim>
-		where step_execution_id = #{stepExecutionId}
+		<trim prefix="step_job_name=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.stepJobName != null">
+					when step_execution_id = #{item.stepExecutionId} then #{item.stepJobName}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="step_start_time=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.stepStartTime != null">
+					when step_execution_id = #{item.stepExecutionId} then #{item.stepStartTime}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="step_end_time=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.stepEndTime != null">
+					when step_execution_id = #{item.stepExecutionId} then #{item.stepEndTime}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="step_job_status=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.stepJobStatus != null">
+					when step_execution_id = #{item.stepExecutionId} then #{item.stepJobStatus}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="step_job_errmsg=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.stepJobErrmsg != null">
+					when step_execution_id = #{item.stepExecutionId} then #{item.stepJobErrmsg}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="step_associate_job_id=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.stepAssociateJobId != null">
+					when step_execution_id = #{item.stepExecutionId} then #{item.stepAssociateJobId}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="create_date=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.createDate != null">
+					when step_execution_id = #{item.stepExecutionId} then #{item.createDate}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="valid_status=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.validStatus != null">
+					when step_execution_id = #{item.stepExecutionId} then #{item.validStatus}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="remark=case" suffix="end">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.remark != null">
+					when step_execution_id = #{item.stepExecutionId} then #{item.remark}
+				</if>
+			</foreach>
+		</trim>
+		where
+		step_execution_id in
+		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+			#{item.stepExecutionId}
+		</foreach>
 	</update>
-
-	<select id="selectAll1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTimingStepLogRegister.Base_Select_List"/>
-		from batch_timing_step_log_register
-		where null = #{taskAssociateQueueId}
-	</select>
-
-	<select id="selectAll1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTimingStepLogRegister.Base_Select_List"/>
-		from batch_timing_step_log_register
-		where null = #{taskAssociateQueueId} and valid_status = '0'
-	</select>
-
-	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTimingStepLogRegister.Base_Select_List"/>
-		from batch_timing_step_log_register
-		where null = #{taskAssociateQueueId} for update
-	</select>
-
-	<select id="selectAll2" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTimingStepLogRegister.Base_Select_List"/>
-		from batch_timing_step_log_register
-		where null = #{taskAutoFlag}
-	</select>
-
-	<select id="selectAll2R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTimingStepLogRegister.Base_Select_List"/>
-		from batch_timing_step_log_register
-		where null = #{taskAutoFlag} and valid_status = '0'
-	</select>
-
-	<select id="selectAll2L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTimingStepLogRegister.Base_Select_List"/>
-		from batch_timing_step_log_register
-		where null = #{taskAutoFlag} for update
-	</select>
-
 </mapper>

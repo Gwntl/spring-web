@@ -162,7 +162,24 @@
 		where history_timing_execution_id = #{historyTimingExecutionId} for update
 	</update>
 
-	<update id="batchUpdateXML1" parameterType="java.util.List">
+	<update id="batchUpdate1" parameterType="org.mine.model.BatchTimingTaskLogHistory">
+		update batch_timing_task_log_history
+		<trim prefix="set" suffixOverrides=",">
+			<if test="historyTimingJobId != null">history_timing_job_id = #{historyTimingJobId},</if>
+			<if test="historyTimingJobName != null">history_timing_job_name = #{historyTimingJobName},</if>
+			<if test="historyTimingAssociateTaskId != null">history_timing_associate_task_id = #{historyTimingAssociateTaskId},</if>
+			<if test="historyTimingStartTime != null">history_timing_start_time = #{historyTimingStartTime},</if>
+			<if test="historyTimingEndTime != null">history_timing_end_time = #{historyTimingEndTime},</if>
+			<if test="historyTimingJobStatus != null">history_timing_job_status = #{historyTimingJobStatus},</if>
+			<if test="historyTimingJobErrmsg != null">history_timing_job_errmsg = #{historyTimingJobErrmsg},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where history_timing_execution_id = #{historyTimingExecutionId}
+	</update>
+
+	<update id="batchUpdateXML" parameterType="java.util.List">
 		update batch_timing_task_log_history set
 		<trim prefix="history_timing_job_id=case" suffix="end,">
 			<foreach collection="list" item="item" index="index">
@@ -240,63 +257,4 @@
 			#{item.historyTimingExecutionId}
 		</foreach>
 	</update>
-	<update id="batchUpdate" parameterType="org.mine.model.BatchTimingTaskLogHistory">
-		update batch_timing_task_log_history
-		<trim prefix="set" suffixOverrides=",">
-			<if test="historyTimingJobId != null">history_timing_job_id = #{historyTimingJobId},</if>
-			<if test="historyTimingJobName != null">history_timing_job_name = #{historyTimingJobName},</if>
-			<if test="historyTimingAssociateTaskId != null">history_timing_associate_task_id = #{historyTimingAssociateTaskId},</if>
-			<if test="historyTimingStartTime != null">history_timing_start_time = #{historyTimingStartTime},</if>
-			<if test="historyTimingEndTime != null">history_timing_end_time = #{historyTimingEndTime},</if>
-			<if test="historyTimingJobStatus != null">history_timing_job_status = #{historyTimingJobStatus},</if>
-			<if test="historyTimingJobErrmsg != null">history_timing_job_errmsg = #{historyTimingJobErrmsg},</if>
-			<if test="createDate != null">create_date = #{createDate},</if>
-			<if test="validStatus != null">valid_status = #{validStatus},</if>
-			<if test="remark != null">remark = #{remark},</if>
-		</trim>
-		where history_timing_execution_id = #{historyTimingExecutionId}
-	</update>
-
-	<select id="selectAll1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTimingTaskLogHistory.Base_Select_List"/>
-		from batch_timing_task_log_history
-		where null = #{taskAssociateQueueId}
-	</select>
-
-	<select id="selectAll1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTimingTaskLogHistory.Base_Select_List"/>
-		from batch_timing_task_log_history
-		where null = #{taskAssociateQueueId} and valid_status = '0'
-	</select>
-
-	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTimingTaskLogHistory.Base_Select_List"/>
-		from batch_timing_task_log_history
-		where null = #{taskAssociateQueueId} for update
-	</select>
-
-	<select id="selectAll2" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTimingTaskLogHistory.Base_Select_List"/>
-		from batch_timing_task_log_history
-		where null = #{taskAutoFlag}
-	</select>
-
-	<select id="selectAll2R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTimingTaskLogHistory.Base_Select_List"/>
-		from batch_timing_task_log_history
-		where null = #{taskAutoFlag} and valid_status = '0'
-	</select>
-
-	<select id="selectAll2L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTimingTaskLogHistory.Base_Select_List"/>
-		from batch_timing_task_log_history
-		where null = #{taskAutoFlag} for update
-	</select>
-
 </mapper>

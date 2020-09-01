@@ -156,7 +156,23 @@
 		where history_task_execution_id = #{historyTaskExecutionId} for update
 	</update>
 
-	<update id="batchUpdateXML1" parameterType="java.util.List">
+	<update id="batchUpdate1" parameterType="org.mine.model.BatchTaskExecutionLogHistory">
+		update batch_task_execution_log_history
+		<trim prefix="set" suffixOverrides=",">
+			<if test="historyTaskJobId != null">history_task_job_id = #{historyTaskJobId},</if>
+			<if test="historyTaskJobName != null">history_task_job_name = #{historyTaskJobName},</if>
+			<if test="historyTaskStartTime != null">history_task_start_time = #{historyTaskStartTime},</if>
+			<if test="historyTaskEndTime != null">history_task_end_time = #{historyTaskEndTime},</if>
+			<if test="historyTaskJobStatus != null">history_task_job_status = #{historyTaskJobStatus},</if>
+			<if test="historyTaskJobErrmsg != null">history_task_job_errmsg = #{historyTaskJobErrmsg},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where history_task_execution_id = #{historyTaskExecutionId}
+	</update>
+
+	<update id="batchUpdateXML" parameterType="java.util.List">
 		update batch_task_execution_log_history set
 		<trim prefix="history_task_job_id=case" suffix="end,">
 			<foreach collection="list" item="item" index="index">
@@ -227,62 +243,4 @@
 			#{item.historyTaskExecutionId}
 		</foreach>
 	</update>
-	<update id="batchUpdate" parameterType="org.mine.model.BatchTaskExecutionLogHistory">
-		update batch_task_execution_log_history
-		<trim prefix="set" suffixOverrides=",">
-			<if test="historyTaskJobId != null">history_task_job_id = #{historyTaskJobId},</if>
-			<if test="historyTaskJobName != null">history_task_job_name = #{historyTaskJobName},</if>
-			<if test="historyTaskStartTime != null">history_task_start_time = #{historyTaskStartTime},</if>
-			<if test="historyTaskEndTime != null">history_task_end_time = #{historyTaskEndTime},</if>
-			<if test="historyTaskJobStatus != null">history_task_job_status = #{historyTaskJobStatus},</if>
-			<if test="historyTaskJobErrmsg != null">history_task_job_errmsg = #{historyTaskJobErrmsg},</if>
-			<if test="createDate != null">create_date = #{createDate},</if>
-			<if test="validStatus != null">valid_status = #{validStatus},</if>
-			<if test="remark != null">remark = #{remark},</if>
-		</trim>
-		where history_task_execution_id = #{historyTaskExecutionId}
-	</update>
-
-	<select id="selectAll1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTaskExecutionLogHistory.Base_Select_List"/>
-		from batch_task_execution_log_history
-		where null = #{taskAssociateQueueId}
-	</select>
-
-	<select id="selectAll1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTaskExecutionLogHistory.Base_Select_List"/>
-		from batch_task_execution_log_history
-		where null = #{taskAssociateQueueId} and valid_status = '0'
-	</select>
-
-	<select id="selectAll1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTaskExecutionLogHistory.Base_Select_List"/>
-		from batch_task_execution_log_history
-		where null = #{taskAssociateQueueId} for update
-	</select>
-
-	<select id="selectAll2" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTaskExecutionLogHistory.Base_Select_List"/>
-		from batch_task_execution_log_history
-		where null = #{taskAutoFlag}
-	</select>
-
-	<select id="selectAll2R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTaskExecutionLogHistory.Base_Select_List"/>
-		from batch_task_execution_log_history
-		where null = #{taskAutoFlag} and valid_status = '0'
-	</select>
-
-	<select id="selectAll2L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-		select
-		<include refid="BatchTaskExecutionLogHistory.Base_Select_List"/>
-		from batch_task_execution_log_history
-		where null = #{taskAutoFlag} for update
-	</select>
-
 </mapper>

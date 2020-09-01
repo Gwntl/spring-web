@@ -4,14 +4,14 @@ package org.mine.model;
  * batch_job_definition--批量作业定义表
  * @filename BatchJobDefinition.java
  * @author wzaUsers
- * @date 2020-06-23 16:06:55
+ * @date 2020-08-20 11:08:58
  * @version v1.0
 */
 public class BatchJobDefinition {
 	/**
 	 * 作业ID
 	 */
-	private Long jobId;
+	private String jobId;
 	/**
 	 * 作业名称
 	 */
@@ -28,6 +28,10 @@ public class BatchJobDefinition {
 	 * 作业初始化值
 	 */
 	private String jobInitValue;
+	/**
+	 * 是否自动执行. 0-是, 1-否
+	 */
+	private Integer jobAutoFlag;
 	/**
 	 * 日志等级标记. 0-登记, 1-不登记
 	 */
@@ -66,11 +70,12 @@ public class BatchJobDefinition {
 	private String remark;
 
 	public BatchJobDefinition() {
-		this.jobId = 0L;
+		this.jobId = "";
 		this.jobName = "";
 		this.jobAssociateTriggerId = "";
 		this.jobExecutor = "";
 		this.jobInitValue = "";
+		this.jobAutoFlag = 1;
 		this.jobLogFlag = 0;
 		this.jobSkipFlag = 1;
 		this.jobRunMutiFlag = 0;
@@ -84,21 +89,21 @@ public class BatchJobDefinition {
 
 	/**
 	 * 作业ID
-	 * @return thejobId
+	 * @return the jobId
 	 */
-	public Long getJobId() {
+	public String getJobId() {
 		return jobId;
 	}
 	/**
 	 * 作业ID
 	 * @param jobId the jobId to set
 	 */
-	public void setJobId(Long jobId) {
+	public void setJobId(String jobId) {
 		this.jobId = jobId;
 	}
 	/**
 	 * 作业名称
-	 * @return thejobName
+	 * @return the jobName
 	 */
 	public String getJobName() {
 		return jobName;
@@ -112,7 +117,7 @@ public class BatchJobDefinition {
 	}
 	/**
 	 * 关联定时器ID
-	 * @return thejobAssociateTriggerId
+	 * @return the jobAssociateTriggerId
 	 */
 	public String getJobAssociateTriggerId() {
 		return jobAssociateTriggerId;
@@ -126,7 +131,7 @@ public class BatchJobDefinition {
 	}
 	/**
 	 * 作业执行器
-	 * @return thejobExecutor
+	 * @return the jobExecutor
 	 */
 	public String getJobExecutor() {
 		return jobExecutor;
@@ -140,7 +145,7 @@ public class BatchJobDefinition {
 	}
 	/**
 	 * 作业初始化值
-	 * @return thejobInitValue
+	 * @return the jobInitValue
 	 */
 	public String getJobInitValue() {
 		return jobInitValue;
@@ -153,8 +158,22 @@ public class BatchJobDefinition {
 		this.jobInitValue = jobInitValue;
 	}
 	/**
+	 * 是否自动执行. 0-是, 1-否
+	 * @return the jobAutoFlag
+	 */
+	public Integer getJobAutoFlag() {
+		return jobAutoFlag;
+	}
+	/**
+	 * 是否自动执行. 0-是, 1-否
+	 * @param jobAutoFlag the jobAutoFlag to set
+	 */
+	public void setJobAutoFlag(Integer jobAutoFlag) {
+		this.jobAutoFlag = jobAutoFlag;
+	}
+	/**
 	 * 日志等级标记. 0-登记, 1-不登记
-	 * @return thejobLogFlag
+	 * @return the jobLogFlag
 	 */
 	public Integer getJobLogFlag() {
 		return jobLogFlag;
@@ -168,7 +187,7 @@ public class BatchJobDefinition {
 	}
 	/**
 	 * 可跳过标志. 0-是, 1-否
-	 * @return thejobSkipFlag
+	 * @return the jobSkipFlag
 	 */
 	public Integer getJobSkipFlag() {
 		return jobSkipFlag;
@@ -182,7 +201,7 @@ public class BatchJobDefinition {
 	}
 	/**
 	 * 多次执行标志, 0-是, 1-否
-	 * @return thejobRunMutiFlag
+	 * @return the jobRunMutiFlag
 	 */
 	public Integer getJobRunMutiFlag() {
 		return jobRunMutiFlag;
@@ -196,7 +215,7 @@ public class BatchJobDefinition {
 	}
 	/**
 	 * 可暂停标志, 0-是, 1-否
-	 * @return thejobPauseFlag
+	 * @return the jobPauseFlag
 	 */
 	public Integer getJobPauseFlag() {
 		return jobPauseFlag;
@@ -210,7 +229,7 @@ public class BatchJobDefinition {
 	}
 	/**
 	 * 延时执行标志, 0-是, 1-否
-	 * @return thejobTimeDelayFlag
+	 * @return the jobTimeDelayFlag
 	 */
 	public Integer getJobTimeDelayFlag() {
 		return jobTimeDelayFlag;
@@ -224,7 +243,7 @@ public class BatchJobDefinition {
 	}
 	/**
 	 * 延时时间
-	 * @return thejobTimeDelayValue
+	 * @return the jobTimeDelayValue
 	 */
 	public String getJobTimeDelayValue() {
 		return jobTimeDelayValue;
@@ -238,7 +257,7 @@ public class BatchJobDefinition {
 	}
 	/**
 	 * 创建时间
-	 * @return thecreateDate
+	 * @return the createDate
 	 */
 	public String getCreateDate() {
 		return createDate;
@@ -252,7 +271,7 @@ public class BatchJobDefinition {
 	}
 	/**
 	 * 有效状态. 0-是, 1-否, D-已废弃
-	 * @return thevalidStatus
+	 * @return the validStatus
 	 */
 	public String getValidStatus() {
 		return validStatus;
@@ -266,7 +285,7 @@ public class BatchJobDefinition {
 	}
 	/**
 	 * 备注
-	 * @return theremark
+	 * @return the remark
 	 */
 	public String getRemark() {
 		return remark;
@@ -286,9 +305,9 @@ public class BatchJobDefinition {
 	public String toString() {
 		return "BatchJobDefinition[" + 
 		"jobId=" + jobId + ", jobName=" + jobName + ", jobAssociateTriggerId=" + jobAssociateTriggerId + ", jobExecutor=" + jobExecutor + 
-		", jobInitValue=" + jobInitValue + ", jobLogFlag=" + jobLogFlag + ", jobSkipFlag=" + jobSkipFlag + 
-		", jobRunMutiFlag=" + jobRunMutiFlag + ", jobPauseFlag=" + jobPauseFlag + ", jobTimeDelayFlag=" + jobTimeDelayFlag + 
-		", jobTimeDelayValue=" + jobTimeDelayValue + ", createDate=" + createDate + ", validStatus=" + validStatus + 
-		", remark=" + remark + "]";
+		", jobInitValue=" + jobInitValue + ", jobAutoFlag=" + jobAutoFlag + ", jobLogFlag=" + jobLogFlag + 
+		", jobSkipFlag=" + jobSkipFlag + ", jobRunMutiFlag=" + jobRunMutiFlag + ", jobPauseFlag=" + jobPauseFlag + 
+		", jobTimeDelayFlag=" + jobTimeDelayFlag + ", jobTimeDelayValue=" + jobTimeDelayValue + ", createDate=" + createDate + 
+		", validStatus=" + validStatus + ", remark=" + remark + "]";
 	}
 }

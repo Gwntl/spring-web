@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.mine.aplt.exception.MineException;
-import org.mine.aplt.support.BaseServiceTasketExcutor;
+import org.mine.aplt.support.BaseServiceTaskletExecutor;
 import org.mine.aplt.util.CommonUtils;
 import org.mine.dao.BatchQueueDefinitionDao;
 import org.mine.dao.BatchTriggerDefinitionDao;
@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
  * @date: 2020年4月28日 下午7:30:32
  */
 @Service(value = "actualAddMultiJob")
-public class ActualAddMultiJobImpl extends BaseServiceTasketExcutor{
+public class ActualAddMultiJobImpl extends BaseServiceTaskletExecutor {
 
 	@Autowired
 	private BatchTriggerDefinitionDao triggerDao;
@@ -33,16 +33,16 @@ public class ActualAddMultiJobImpl extends BaseServiceTasketExcutor{
 	 * @see org.mine.aplt.support.ExcutorTask#call(java.util.Map)
 	 */
 	@Override
-	public Map<String, Object> excutor(Map<String, Object> map) {
+	public Map<String, Object> executor(Map<String, Object> map) {
 		logger.debug("ActualAddMultiJobImpl >>>> begin>>>>>");
 		Map<String, Object> output = null;
 		try{
 			TimeUnit.SECONDS.sleep(10);
-			System.out.println(triggerDao.selectOne1R(2L, true).toString());
+			System.out.println(triggerDao.selectOne1R("", true).toString());
 			System.out.println(CommonUtils.dateToString(new Date(), "yyyy-MM-dd HH:mm:ss") + " >>second job , first step>>> actualAddMultiJob>>>>>>");
 			
 			BatchQueueDefinition queueDefinition = new BatchQueueDefinition();
-			queueDefinition.setQueueId(5L);
+			queueDefinition.setQueueId("");
 			queueDefinition.setQueueName("INSERT_TEST_5L");
 			queueDefinition.setQueueExecutionNum(1);
 			queueDefinition.setRemark("R");

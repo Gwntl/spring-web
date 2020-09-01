@@ -14,7 +14,7 @@ public class GitWebException extends MineBizException{
 	
 	/**
 	 * %s
-	 * @param errmsg
+	 * @param error_msg
 	 * @return
 	 */
 	public static MineBizException GIT1001(String error_msg){
@@ -45,6 +45,28 @@ public class GitWebException extends MineBizException{
 	 */
 	public static MineBizException GIT1004(String error_msg){
 		return newException(PROPERTIES, "GIT1004", new Object[]{error_msg});
+	}
+
+	/**
+	* {%s}不存在
+	* @param error_msg
+	* @return: org.mine.aplt.exception.MineException
+	* @Author: wntl
+	* @Date: 2020/8/10
+	*/
+	public static MineException GIT1005(String error_msg){
+		return newException(PROPERTIES, "GIT1005", new Object[]{error_msg});
+	}
+
+	/**
+	* {%s}已存在
+	* @param error_msg
+	* @return: org.mine.aplt.exception.MineException
+	* @Author: wntl
+	* @Date: 2020/8/10
+	*/
+	public static MineException GIT1006(String error_msg){
+		return newException(PROPERTIES, "GIT1006", new Object[]{error_msg});
 	}
 	
 	/**
@@ -134,5 +156,26 @@ public class GitWebException extends MineBizException{
 	 */
 	public static MineBizException GIT_EMPTY(String msg){
 		return newException(PROPERTIES, "GIT_EMPTY", new Object[]{msg});
+	}
+
+	/**
+	* 表[%s]设计异常
+	* @param err_msg
+	* @return: org.mine.aplt.exception.MineException
+	* @Author: wntl
+	* @Date: 2020/8/11
+	*/
+	public static MineException GIT_DB_CREATE(String err_msg){
+		return newException(PROPERTIES, "GIT_DB_CREATE", new Object[]{err_msg});
+	}
+
+	/**
+	* 系统错误
+	* @return: org.mine.aplt.exception.MineException
+	* @Author: wntl
+	* @Date: 2020/8/25
+	*/
+	public static MineException GIT_APP_ERROR() {
+		return newException(PROPERTIES, "GIT_APP_ERROR", new Object[]{});
 	}
 }

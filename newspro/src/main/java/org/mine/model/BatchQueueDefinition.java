@@ -4,14 +4,14 @@ package org.mine.model;
  * batch_queue_definition--批量执行队列定义表(串行)
  * @filename BatchQueueDefinition.java
  * @author wzaUsers
- * @date 2020-06-09 10:06:03
+ * @date 2020-08-20 11:08:58
  * @version v1.0
 */
 public class BatchQueueDefinition {
 	/**
 	 * 队列ID
 	 */
-	private Long queueId;
+	private String queueId;
 	/**
 	 * 对列名称
 	 */
@@ -50,7 +50,7 @@ public class BatchQueueDefinition {
 	private String remark;
 
 	public BatchQueueDefinition() {
-		this.queueId = 0L;
+		this.queueId = "";
 		this.queueName = "";
 		this.queueExcFlag = 0;
 		this.queueTriggerId = "";
@@ -64,21 +64,21 @@ public class BatchQueueDefinition {
 
 	/**
 	 * 队列ID
-	 * @return thequeueId
+	 * @return the queueId
 	 */
-	public Long getQueueId() {
+	public String getQueueId() {
 		return queueId;
 	}
 	/**
 	 * 队列ID
 	 * @param queueId the queueId to set
 	 */
-	public void setQueueId(Long queueId) {
+	public void setQueueId(String queueId) {
 		this.queueId = queueId;
 	}
 	/**
 	 * 对列名称
-	 * @return thequeueName
+	 * @return the queueName
 	 */
 	public String getQueueName() {
 		return queueName;
@@ -92,7 +92,7 @@ public class BatchQueueDefinition {
 	}
 	/**
 	 * 任务执行标志. 0-手动, 1-自动, 2-手/自.
-	 * @return thequeueExcFlag
+	 * @return the queueExcFlag
 	 */
 	public Integer getQueueExcFlag() {
 		return queueExcFlag;
@@ -106,7 +106,7 @@ public class BatchQueueDefinition {
 	}
 	/**
 	 * 关联触发器ID
-	 * @return thequeueTriggerId
+	 * @return the queueTriggerId
 	 */
 	public String getQueueTriggerId() {
 		return queueTriggerId;
@@ -120,7 +120,7 @@ public class BatchQueueDefinition {
 	}
 	/**
 	 * 队列执行器
-	 * @return thequeueExecutor
+	 * @return the queueExecutor
 	 */
 	public String getQueueExecutor() {
 		return queueExecutor;
@@ -134,7 +134,7 @@ public class BatchQueueDefinition {
 	}
 	/**
 	 * 队列初始值
-	 * @return thequeueInitValue
+	 * @return the queueInitValue
 	 */
 	public String getQueueInitValue() {
 		return queueInitValue;
@@ -148,7 +148,7 @@ public class BatchQueueDefinition {
 	}
 	/**
 	 * 队列执行序号
-	 * @return thequeueExecutionNum
+	 * @return the queueExecutionNum
 	 */
 	public Integer getQueueExecutionNum() {
 		return queueExecutionNum;
@@ -162,7 +162,7 @@ public class BatchQueueDefinition {
 	}
 	/**
 	 * 创建时间
-	 * @return thecreateDate
+	 * @return the createDate
 	 */
 	public String getCreateDate() {
 		return createDate;
@@ -176,7 +176,7 @@ public class BatchQueueDefinition {
 	}
 	/**
 	 * 有效状态. 0-是, 1-否, D-已废弃
-	 * @return thevalidStatus
+	 * @return the validStatus
 	 */
 	public String getValidStatus() {
 		return validStatus;
@@ -190,7 +190,7 @@ public class BatchQueueDefinition {
 	}
 	/**
 	 * 备注
-	 * @return theremark
+	 * @return the remark
 	 */
 	public String getRemark() {
 		return remark;

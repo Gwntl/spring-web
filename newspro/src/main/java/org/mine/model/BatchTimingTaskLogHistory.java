@@ -4,18 +4,18 @@ package org.mine.model;
  * batch_timing_task_log_history--定时批量任务日志历史表
  * @filename BatchTimingTaskLogHistory.java
  * @author wzaUsers
- * @date 2020-06-08 10:06:39
+ * @date 2020-08-20 11:08:58
  * @version v1.0
 */
 public class BatchTimingTaskLogHistory {
 	/**
 	 * 定时任务执行ID
 	 */
-	private Long historyTimingExecutionId;
+	private String historyTimingExecutionId;
 	/**
 	 * 定时作业ID
 	 */
-	private Long historyTimingJobId;
+	private String historyTimingJobId;
 	/**
 	 * 定时作业名称
 	 */
@@ -54,8 +54,8 @@ public class BatchTimingTaskLogHistory {
 	private String remark;
 
 	public BatchTimingTaskLogHistory() {
-		this.historyTimingExecutionId = 0L;
-		this.historyTimingJobId = 0L;
+		this.historyTimingExecutionId = "";
+		this.historyTimingJobId = "";
 		this.historyTimingJobName = "";
 		this.historyTimingAssociateTaskId = 0L;
 		this.historyTimingStartTime = null;
@@ -69,35 +69,35 @@ public class BatchTimingTaskLogHistory {
 
 	/**
 	 * 定时任务执行ID
-	 * @return thehistoryTimingExecutionId
+	 * @return the historyTimingExecutionId
 	 */
-	public Long getHistoryTimingExecutionId() {
+	public String getHistoryTimingExecutionId() {
 		return historyTimingExecutionId;
 	}
 	/**
 	 * 定时任务执行ID
 	 * @param historyTimingExecutionId the historyTimingExecutionId to set
 	 */
-	public void setHistoryTimingExecutionId(Long historyTimingExecutionId) {
+	public void setHistoryTimingExecutionId(String historyTimingExecutionId) {
 		this.historyTimingExecutionId = historyTimingExecutionId;
 	}
 	/**
 	 * 定时作业ID
-	 * @return thehistoryTimingJobId
+	 * @return the historyTimingJobId
 	 */
-	public Long getHistoryTimingJobId() {
+	public String getHistoryTimingJobId() {
 		return historyTimingJobId;
 	}
 	/**
 	 * 定时作业ID
 	 * @param historyTimingJobId the historyTimingJobId to set
 	 */
-	public void setHistoryTimingJobId(Long historyTimingJobId) {
+	public void setHistoryTimingJobId(String historyTimingJobId) {
 		this.historyTimingJobId = historyTimingJobId;
 	}
 	/**
 	 * 定时作业名称
-	 * @return thehistoryTimingJobName
+	 * @return the historyTimingJobName
 	 */
 	public String getHistoryTimingJobName() {
 		return historyTimingJobName;
@@ -111,7 +111,7 @@ public class BatchTimingTaskLogHistory {
 	}
 	/**
 	 * 任务ID
-	 * @return thehistoryTimingAssociateTaskId
+	 * @return the historyTimingAssociateTaskId
 	 */
 	public Long getHistoryTimingAssociateTaskId() {
 		return historyTimingAssociateTaskId;
@@ -125,7 +125,7 @@ public class BatchTimingTaskLogHistory {
 	}
 	/**
 	 * 开始时间
-	 * @return thehistoryTimingStartTime
+	 * @return the historyTimingStartTime
 	 */
 	public String getHistoryTimingStartTime() {
 		return historyTimingStartTime;
@@ -139,7 +139,7 @@ public class BatchTimingTaskLogHistory {
 	}
 	/**
 	 * 结束时间
-	 * @return thehistoryTimingEndTime
+	 * @return the historyTimingEndTime
 	 */
 	public String getHistoryTimingEndTime() {
 		return historyTimingEndTime;
@@ -153,7 +153,7 @@ public class BatchTimingTaskLogHistory {
 	}
 	/**
 	 * 定时任务状态,COMPLETED-处理中, SUCCSS-成功, FAILED-失败,UNKOWN-非正常状态
-	 * @return thehistoryTimingJobStatus
+	 * @return the historyTimingJobStatus
 	 */
 	public String getHistoryTimingJobStatus() {
 		return historyTimingJobStatus;
@@ -167,7 +167,7 @@ public class BatchTimingTaskLogHistory {
 	}
 	/**
 	 * 定时任务错误信息
-	 * @return thehistoryTimingJobErrmsg
+	 * @return the historyTimingJobErrmsg
 	 */
 	public String getHistoryTimingJobErrmsg() {
 		return historyTimingJobErrmsg;
@@ -181,7 +181,7 @@ public class BatchTimingTaskLogHistory {
 	}
 	/**
 	 * 创建时间
-	 * @return thecreateDate
+	 * @return the createDate
 	 */
 	public String getCreateDate() {
 		return createDate;
@@ -195,7 +195,7 @@ public class BatchTimingTaskLogHistory {
 	}
 	/**
 	 * 有效状态. 0-是, 1-否
-	 * @return thevalidStatus
+	 * @return the validStatus
 	 */
 	public String getValidStatus() {
 		return validStatus;
@@ -209,7 +209,7 @@ public class BatchTimingTaskLogHistory {
 	}
 	/**
 	 * 备注
-	 * @return theremark
+	 * @return the remark
 	 */
 	public String getRemark() {
 		return remark;

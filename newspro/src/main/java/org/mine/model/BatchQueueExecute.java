@@ -4,14 +4,14 @@ package org.mine.model;
  * batch_queue_execute--批量队列运行表
  * @filename BatchQueueExecute.java
  * @author wzaUsers
- * @date 2020-06-08 10:06:21
+ * @date 2020-08-20 11:08:19
  * @version v1.0
 */
 public class BatchQueueExecute {
 	/**
 	 * 执行队列ID
 	 */
-	private Long executeQueueId;
+	private String executeQueueId;
 	/**
 	 * 执行对列名称
 	 */
@@ -19,7 +19,7 @@ public class BatchQueueExecute {
 	/**
 	 * 执行任务ID
 	 */
-	private Long executeTaskId;
+	private String executeTaskId;
 	/**
 	 * 执行任务名称
 	 */
@@ -42,9 +42,9 @@ public class BatchQueueExecute {
 	private String remark;
 
 	public BatchQueueExecute() {
-		this.executeQueueId = 0L;
+		this.executeQueueId = "";
 		this.executeQueueName = "";
-		this.executeTaskId = 0L;
+		this.executeTaskId = "";
 		this.executeTaskName = "";
 		this.executeNum = 0;
 		this.createDate = "";
@@ -54,21 +54,21 @@ public class BatchQueueExecute {
 
 	/**
 	 * 执行队列ID
-	 * @return theexecuteQueueId
+	 * @return the executeQueueId
 	 */
-	public Long getExecuteQueueId() {
+	public String getExecuteQueueId() {
 		return executeQueueId;
 	}
 	/**
 	 * 执行队列ID
 	 * @param executeQueueId the executeQueueId to set
 	 */
-	public void setExecuteQueueId(Long executeQueueId) {
+	public void setExecuteQueueId(String executeQueueId) {
 		this.executeQueueId = executeQueueId;
 	}
 	/**
 	 * 执行对列名称
-	 * @return theexecuteQueueName
+	 * @return the executeQueueName
 	 */
 	public String getExecuteQueueName() {
 		return executeQueueName;
@@ -82,21 +82,21 @@ public class BatchQueueExecute {
 	}
 	/**
 	 * 执行任务ID
-	 * @return theexecuteTaskId
+	 * @return the executeTaskId
 	 */
-	public Long getExecuteTaskId() {
+	public String getExecuteTaskId() {
 		return executeTaskId;
 	}
 	/**
 	 * 执行任务ID
 	 * @param executeTaskId the executeTaskId to set
 	 */
-	public void setExecuteTaskId(Long executeTaskId) {
+	public void setExecuteTaskId(String executeTaskId) {
 		this.executeTaskId = executeTaskId;
 	}
 	/**
 	 * 执行任务名称
-	 * @return theexecuteTaskName
+	 * @return the executeTaskName
 	 */
 	public String getExecuteTaskName() {
 		return executeTaskName;
@@ -110,7 +110,7 @@ public class BatchQueueExecute {
 	}
 	/**
 	 * 任务执行序号
-	 * @return theexecuteNum
+	 * @return the executeNum
 	 */
 	public Integer getExecuteNum() {
 		return executeNum;
@@ -124,7 +124,7 @@ public class BatchQueueExecute {
 	}
 	/**
 	 * 创建时间
-	 * @return thecreateDate
+	 * @return the createDate
 	 */
 	public String getCreateDate() {
 		return createDate;
@@ -138,7 +138,7 @@ public class BatchQueueExecute {
 	}
 	/**
 	 * 有效状态. 0-是, 1-否, D-已废弃
-	 * @return thevalidStatus
+	 * @return the validStatus
 	 */
 	public String getValidStatus() {
 		return validStatus;
@@ -152,7 +152,7 @@ public class BatchQueueExecute {
 	}
 	/**
 	 * 备注
-	 * @return theremark
+	 * @return the remark
 	 */
 	public String getRemark() {
 		return remark;

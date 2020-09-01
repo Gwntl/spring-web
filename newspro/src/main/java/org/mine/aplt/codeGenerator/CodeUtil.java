@@ -1,35 +1,18 @@
 package org.mine.aplt.codeGenerator;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.nio.charset.Charset;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.mine.aplt.constant.ApltContanst;
 import org.mine.aplt.exception.GitWebException;
 import org.mine.aplt.exception.MineException;
 import org.mine.aplt.util.CommonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.nio.charset.Charset;
+import java.sql.*;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CodeUtil {
 
@@ -101,22 +84,33 @@ public class CodeUtil {
 //			}
 			logger.debug("数据库中表名为: {}, 注释为: {}", tableName, getTableDefintion(tableName));
 			//获取主键
-			ResultSet primary = metaData.getPrimaryKeys("msbadb", null, tableName);
-			while(primary != null && primary.next()){
-				for(int i =  1; i < 11; i++){
-					logger.debug("{} = {}", i, primary.getString(i));
-				}
-			}
+//			ResultSet primary = metaData.getPrimaryKeys("msbadb", null, tableName);
+//			while(primary != null && primary.next()){
+//				for(int i =  1; i < 11; i++){
+//					logger.debug("{} = {}", i, primary.getString(i));
+//				}
+//			}
 			
-			ResultSet indexInfo = metaData.getIndexInfo(null, null, tableName, false, false);
+//			ResultSet indexInfo = metaData.getIndexInfo(null, null, tableName, false, false);
 //			ResultSetMetaData data = indexInfo.getMetaData();
-			while(indexInfo.next()){
+//			while(indexInfo.next()){
 //				for(int i = 1, count = data.getColumnCount(); i < count; i ++){
 					//打印返回值
 //					System.out.println(data.getColumnName(i) + " = " + indexInfo.getObject(i));
 //				}
-				logger.debug("数据库中表名为: {}, 索引名: {}, 索引为: {}", 
-						indexInfo.getString(3), indexInfo.getString(6), indexInfo.getString(9));
+//				logger.debug("数据库中表名为: {}, 索引名: {}, 索引为: {}",
+//						indexInfo.getString(3), indexInfo.getString(6), indexInfo.getString(9));
+//			}
+
+			ResultSet primaryKeys = metaData.getPrimaryKeys("msbadb", null, tableName);
+			//TABLE_CAT
+			//TABLE_SCHEM
+			//TABLE_NAME
+			//COLUMN_NAME
+			//KEY_SEQ
+			while (primaryKeys.next()) {
+				logger.debug("TABLE_CAT : {}, TABLE_SCHEM : {}, TABLE_NAME : {}, COLUMN_NAME : {}, KEY_SEQ : {}",
+						primaryKeys.getString(1), primaryKeys.getString(2), primaryKeys.getString(3), primaryKeys.getString(4), primaryKeys.getString(5));
 			}
 			
 		} catch (SQLException e) {
@@ -150,7 +144,7 @@ public class CodeUtil {
 	 * @param tableName
 	 * @return
 	 */
-	public static CodeDto columnInfos(String tableName){
+	public static CodeDto columnInfos(String tableName, String catalog){
 		CodeDto dto = null;
 		try{
 			dto = new CodeDto();
@@ -170,6 +164,8 @@ public class CodeUtil {
 			Map<String, StringBuffer> normalIndex = Collections.synchronizedMap(new LinkedHashMap<>());
 			List<String> impoertResource = dto.getImportResource();
 			HashSet<String> hashSet = new HashSet<>();
+			//用来判断主键存在并且存在同一个唯一索引时, 报错
+			HashSet<String> uniqueSet = new HashSet<>();
 			
 			DatabaseMetaData metaData = conn.getMetaData();
 			
@@ -188,6 +184,11 @@ public class CodeUtil {
 			while(resultSet.next()){
 				String orginalStr = resultSet.getString(4);
 				String column = CommonUtils.underLineToHump(orginalStr,false);
+
+				if (CommonUtils.equalIgnoreCase(column, "innodbID")) {
+					continue;
+				}
+
 				String field = CommonUtils.underLineToHump(orginalStr,true);
 				String type = typeConversion(resultSet.getInt(5));
 				if(resultSet.getInt(5) == 93){
@@ -223,6 +224,13 @@ public class CodeUtil {
 				boolean indexType = indexInfo.getBoolean(4);
 				String indexName = indexInfo.getString(6);
 				String columnName = CommonUtils.underLineToHump(indexInfo.getString(9),true);
+
+				if (CommonUtils.equalIgnoreCase(columnName, "innodbID")) {
+					continue;
+				}
+
+				logger.debug("表名: {}, 索引类型: {}, 索引名: {}, 列名: {}",
+						tableName, indexType ? "普通" : "唯一", indexName, columnName);
 				if(indexType){
 					//普通索引
 					if(normalIndex.containsKey(indexName)){
@@ -241,11 +249,13 @@ public class CodeUtil {
 						buffer.append(columnName);
 						uniqueIndex.put(indexName, buffer);
 					}
+					if (!uniqueSet.add(uniqueIndex.get(indexName).toString())) {
+						logger.error("唯一索引建立异常,请检查主键和唯一索引是否冲突!!!");
+						throw GitWebException.GIT_DB_CREATE(tableName);
+					}
 				}
-				logger.debug("表名: {}, 索引类型: {}, 索引名: {}, 列名: {}", 
-						tableName, indexType ? "普通" : "唯一", indexName, columnName);
 			}
-			
+
 			//增加List类型
 			dto.setOrginalColumns(orginalColumns);
 			dto.setColumns(columns);
@@ -527,16 +537,19 @@ public class CodeUtil {
 //				"batch_step_definition", "batch_trigger_definition", "batch_task_execution_log_register",
 //				"batch_task_execution_log_history", "batch_step_execution_log_register",
 //				"batch_step_execution_log_history", "batch_timing_task_log_register", "batch_timing_task_log_history",
-//				"batch_timing_step_log_register", "batch_timing_step_log_history" };
+//				"batch_timing_job_log_register", "batch_timing_job_log_history"};
 //		String[] tables = {"batch_task_execute", "batch_job_execute", "batch_queue_execute"};
-		String[] tables = {"batch_executor_seqlog"};
+		String[] tables = {"batch_task_execute"};
+//		String[] tables = {"batch_step_log", "batch_step_log_history"};
+//		String[] tables = {"batch_job_log", "batch_job_log_history"};
+//		String[] tables = {"batch_task_log", "batch_task_log_history"};
 		for(String tableName : tables){
-			CodeDto codeDto = columnInfos(tableName);
+			CodeDto codeDto = columnInfos(tableName, "msbadb");
 			createJavaFile(codeDto, tableName);
 			createDaoJavaFile(codeDto, tableName, false);
 			createDaoJavaFile(codeDto, tableName, true);
 			createMyBatisMapperXml(codeDto, tableName);
-			CodeGeneration.setIsOneIndex();
+			CodeGeneration.clear();
 		}
 		
 //		tableInfos("t_user");

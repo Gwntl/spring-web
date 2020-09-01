@@ -4,18 +4,18 @@ package org.mine.model;
  * batch_timing_step_log_register--定时批量步骤执行日志登记表
  * @filename BatchTimingStepLogRegister.java
  * @author wzaUsers
- * @date 2020-06-08 10:06:39
+ * @date 2020-08-14 16:08:07
  * @version v1.0
 */
 public class BatchTimingStepLogRegister {
 	/**
 	 * 任务执行ID
 	 */
-	private Long stepExecutionId;
+	private String stepExecutionId;
 	/**
 	 * 执行步骤ID
 	 */
-	private Long stepJobId;
+	private String stepJobId;
 	/**
 	 * 执行步骤名称
 	 */
@@ -39,7 +39,7 @@ public class BatchTimingStepLogRegister {
 	/**
 	 * 关联作业ID
 	 */
-	private Long stepAssociateJobId;
+	private String stepAssociateJobId;
 	/**
 	 * 创建时间
 	 */
@@ -54,14 +54,14 @@ public class BatchTimingStepLogRegister {
 	private String remark;
 
 	public BatchTimingStepLogRegister() {
-		this.stepExecutionId = 0L;
-		this.stepJobId = 0L;
+		this.stepExecutionId = "";
+		this.stepJobId = "";
 		this.stepJobName = "";
 		this.stepStartTime = null;
 		this.stepEndTime = null;
 		this.stepJobStatus = "";
 		this.stepJobErrmsg = "";
-		this.stepAssociateJobId = 0L;
+		this.stepAssociateJobId = "";
 		this.createDate = "";
 		this.validStatus = "0";
 		this.remark = "";
@@ -69,35 +69,35 @@ public class BatchTimingStepLogRegister {
 
 	/**
 	 * 任务执行ID
-	 * @return thestepExecutionId
+	 * @return the stepExecutionId
 	 */
-	public Long getStepExecutionId() {
+	public String getStepExecutionId() {
 		return stepExecutionId;
 	}
 	/**
 	 * 任务执行ID
 	 * @param stepExecutionId the stepExecutionId to set
 	 */
-	public void setStepExecutionId(Long stepExecutionId) {
+	public void setStepExecutionId(String stepExecutionId) {
 		this.stepExecutionId = stepExecutionId;
 	}
 	/**
 	 * 执行步骤ID
-	 * @return thestepJobId
+	 * @return the stepJobId
 	 */
-	public Long getStepJobId() {
+	public String getStepJobId() {
 		return stepJobId;
 	}
 	/**
 	 * 执行步骤ID
 	 * @param stepJobId the stepJobId to set
 	 */
-	public void setStepJobId(Long stepJobId) {
+	public void setStepJobId(String stepJobId) {
 		this.stepJobId = stepJobId;
 	}
 	/**
 	 * 执行步骤名称
-	 * @return thestepJobName
+	 * @return the stepJobName
 	 */
 	public String getStepJobName() {
 		return stepJobName;
@@ -111,7 +111,7 @@ public class BatchTimingStepLogRegister {
 	}
 	/**
 	 * 开始时间
-	 * @return thestepStartTime
+	 * @return the stepStartTime
 	 */
 	public String getStepStartTime() {
 		return stepStartTime;
@@ -125,7 +125,7 @@ public class BatchTimingStepLogRegister {
 	}
 	/**
 	 * 结束时间
-	 * @return thestepEndTime
+	 * @return the stepEndTime
 	 */
 	public String getStepEndTime() {
 		return stepEndTime;
@@ -139,7 +139,7 @@ public class BatchTimingStepLogRegister {
 	}
 	/**
 	 * 步骤状态,COMPLETED-处理中, SUCCSS-成功, FAILED-失败,UNKOWN-非正常状态
-	 * @return thestepJobStatus
+	 * @return the stepJobStatus
 	 */
 	public String getStepJobStatus() {
 		return stepJobStatus;
@@ -153,7 +153,7 @@ public class BatchTimingStepLogRegister {
 	}
 	/**
 	 * 步骤错误信息
-	 * @return thestepJobErrmsg
+	 * @return the stepJobErrmsg
 	 */
 	public String getStepJobErrmsg() {
 		return stepJobErrmsg;
@@ -167,21 +167,21 @@ public class BatchTimingStepLogRegister {
 	}
 	/**
 	 * 关联作业ID
-	 * @return thestepAssociateJobId
+	 * @return the stepAssociateJobId
 	 */
-	public Long getStepAssociateJobId() {
+	public String getStepAssociateJobId() {
 		return stepAssociateJobId;
 	}
 	/**
 	 * 关联作业ID
 	 * @param stepAssociateJobId the stepAssociateJobId to set
 	 */
-	public void setStepAssociateJobId(Long stepAssociateJobId) {
+	public void setStepAssociateJobId(String stepAssociateJobId) {
 		this.stepAssociateJobId = stepAssociateJobId;
 	}
 	/**
 	 * 创建时间
-	 * @return thecreateDate
+	 * @return the createDate
 	 */
 	public String getCreateDate() {
 		return createDate;
@@ -195,7 +195,7 @@ public class BatchTimingStepLogRegister {
 	}
 	/**
 	 * 有效状态. 0-是, 1-否
-	 * @return thevalidStatus
+	 * @return the validStatus
 	 */
 	public String getValidStatus() {
 		return validStatus;
@@ -209,7 +209,7 @@ public class BatchTimingStepLogRegister {
 	}
 	/**
 	 * 备注
-	 * @return theremark
+	 * @return the remark
 	 */
 	public String getRemark() {
 		return remark;

@@ -67,6 +67,91 @@
 				,#{item.createDate},#{item.validStatus},#{item.remark})
 		</foreach>
 	</insert>
+	<select id="selectOne1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchQueueExecute.Base_Select_List"/>
+		from batch_queue_execute
+		where execute_queue_id = #{executeQueueId} and execute_task_id = #{executeTaskId}
+	</select>
+
+	<select id="selectOne1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchQueueExecute.Base_Select_List"/>
+		from batch_queue_execute
+		where execute_queue_id = #{executeQueueId} and execute_task_id = #{executeTaskId} and valid_status = '0'
+	</select>
+
+	<select id="selectOne1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchQueueExecute.Base_Select_List"/>
+		from batch_queue_execute
+		where execute_queue_id = #{executeQueueId} and execute_task_id = #{executeTaskId} for update
+	</select>
+
+	<delete id="deleteOne1" parameterType="org.mine.model.BatchQueueExecute">
+		delete from batch_queue_execute
+		where
+		execute_queue_id = #{executeQueueId} and execute_task_id = #{executeTaskId}
+	</delete>
+
+	<delete id="deleteOne1L" parameterType="org.mine.model.BatchQueueExecute">
+		delete from batch_queue_execute
+		where
+		execute_queue_id = #{executeQueueId} and execute_task_id = #{executeTaskId} for update
+	</delete>
+
+	<update id="updateOne1" parameterType="org.mine.model.BatchQueueExecute">
+		update batch_queue_execute
+		<trim prefix="set" suffixOverrides=",">
+			<if test="executeQueueName != null">execute_queue_name = #{executeQueueName},</if>
+			<if test="executeTaskName != null">execute_task_name = #{executeTaskName},</if>
+			<if test="executeNum != null">execute_num = #{executeNum},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where execute_queue_id = #{executeQueueId} and execute_task_id = #{executeTaskId}
+	</update>
+
+	<update id="updateOne1R" parameterType="org.mine.model.BatchQueueExecute">
+		update batch_queue_execute
+		<trim prefix="set" suffixOverrides=",">
+			<if test="executeQueueName != null">execute_queue_name = #{executeQueueName},</if>
+			<if test="executeTaskName != null">execute_task_name = #{executeTaskName},</if>
+			<if test="executeNum != null">execute_num = #{executeNum},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where execute_queue_id = #{executeQueueId} and execute_task_id = #{executeTaskId} and valid_status = '0'
+	</update>
+
+	<update id="updateOne1L" parameterType="org.mine.model.BatchQueueExecute">
+		update batch_queue_execute
+		<trim prefix="set" suffixOverrides=",">
+			<if test="executeQueueName != null">execute_queue_name = #{executeQueueName},</if>
+			<if test="executeTaskName != null">execute_task_name = #{executeTaskName},</if>
+			<if test="executeNum != null">execute_num = #{executeNum},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where execute_queue_id = #{executeQueueId} and execute_task_id = #{executeTaskId} for update
+	</update>
+
+	<update id="batchUpdate1" parameterType="org.mine.model.BatchQueueExecute">
+		update batch_queue_execute
+		<trim prefix="set" suffixOverrides=",">
+			<if test="executeQueueName != null">execute_queue_name = #{executeQueueName},</if>
+			<if test="executeTaskName != null">execute_task_name = #{executeTaskName},</if>
+			<if test="executeNum != null">execute_num = #{executeNum},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where execute_queue_id = #{executeQueueId} and execute_task_id = #{executeTaskId}
+	</update>
+
 	<select id="selectAll1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
 		select
 		<include refid="BatchQueueExecute.Base_Select_List"/>

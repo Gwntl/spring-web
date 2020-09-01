@@ -67,6 +67,91 @@
 				,#{item.createDate},#{item.validStatus},#{item.remark})
 		</foreach>
 	</insert>
+	<select id="selectOne1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchJobExecute.Base_Select_List"/>
+		from batch_job_execute
+		where execute_job_id = #{executeJobId} and execute_step_id = #{executeStepId}
+	</select>
+
+	<select id="selectOne1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchJobExecute.Base_Select_List"/>
+		from batch_job_execute
+		where execute_job_id = #{executeJobId} and execute_step_id = #{executeStepId} and valid_status = '0'
+	</select>
+
+	<select id="selectOne1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchJobExecute.Base_Select_List"/>
+		from batch_job_execute
+		where execute_job_id = #{executeJobId} and execute_step_id = #{executeStepId} for update
+	</select>
+
+	<delete id="deleteOne1" parameterType="org.mine.model.BatchJobExecute">
+		delete from batch_job_execute
+		where
+		execute_job_id = #{executeJobId} and execute_step_id = #{executeStepId}
+	</delete>
+
+	<delete id="deleteOne1L" parameterType="org.mine.model.BatchJobExecute">
+		delete from batch_job_execute
+		where
+		execute_job_id = #{executeJobId} and execute_step_id = #{executeStepId} for update
+	</delete>
+
+	<update id="updateOne1" parameterType="org.mine.model.BatchJobExecute">
+		update batch_job_execute
+		<trim prefix="set" suffixOverrides=",">
+			<if test="executeJobName != null">execute_job_name = #{executeJobName},</if>
+			<if test="executeStepNum != null">execute_step_num = #{executeStepNum},</if>
+			<if test="executeStrongDepen != null">execute_strong_depen = #{executeStrongDepen},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where execute_job_id = #{executeJobId} and execute_step_id = #{executeStepId}
+	</update>
+
+	<update id="updateOne1R" parameterType="org.mine.model.BatchJobExecute">
+		update batch_job_execute
+		<trim prefix="set" suffixOverrides=",">
+			<if test="executeJobName != null">execute_job_name = #{executeJobName},</if>
+			<if test="executeStepNum != null">execute_step_num = #{executeStepNum},</if>
+			<if test="executeStrongDepen != null">execute_strong_depen = #{executeStrongDepen},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where execute_job_id = #{executeJobId} and execute_step_id = #{executeStepId} and valid_status = '0'
+	</update>
+
+	<update id="updateOne1L" parameterType="org.mine.model.BatchJobExecute">
+		update batch_job_execute
+		<trim prefix="set" suffixOverrides=",">
+			<if test="executeJobName != null">execute_job_name = #{executeJobName},</if>
+			<if test="executeStepNum != null">execute_step_num = #{executeStepNum},</if>
+			<if test="executeStrongDepen != null">execute_strong_depen = #{executeStrongDepen},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where execute_job_id = #{executeJobId} and execute_step_id = #{executeStepId} for update
+	</update>
+
+	<update id="batchUpdate1" parameterType="org.mine.model.BatchJobExecute">
+		update batch_job_execute
+		<trim prefix="set" suffixOverrides=",">
+			<if test="executeJobName != null">execute_job_name = #{executeJobName},</if>
+			<if test="executeStepNum != null">execute_step_num = #{executeStepNum},</if>
+			<if test="executeStrongDepen != null">execute_strong_depen = #{executeStrongDepen},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where execute_job_id = #{executeJobId} and execute_step_id = #{executeStepId}
+	</update>
+
 	<select id="selectAll1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
 		select
 		<include refid="BatchJobExecute.Base_Select_List"/>

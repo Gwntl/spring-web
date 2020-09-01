@@ -1,24 +1,7 @@
 package org.mine.service.impl.async;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import org.mine.aplt.constant.ApltContanst;
-import org.mine.aplt.support.bean.GitContext;
-import org.mine.aplt.support.dao.BatchOperator;
-import org.mine.dao.BatchTimingTaskLogRegisterDao;
-import org.mine.dao.custom.BatchDefineCostomDao;
-import org.mine.model.BatchTimingTaskLogRegister;
-import org.mine.quartz.ExecutorBase;
-import org.mine.quartz.job.run.JobTaskCallable;
-import org.mine.quartz.schduler.AutoScheduler;
-import org.quartz.SchedulerException;
-import org.quartz.TriggerKey;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 public class Starter {
 	public static void main(String[] args) {
@@ -78,7 +61,7 @@ public class Starter {
 //				triggerIds.add(triggerId + "");
 //				triggerIds.add(triggerId1 + "");
 //				auToscheduler.addBatchGroup(costomDao.getJobGroupConfMaxId(), "测试组-实时增加-Mul", 
-//						"0", "org.mine.quartz.job.ConcurrentExcutorJob", "transName=acutalMulGroup", triggerIds, "1", 1, queueId, "每40s运行一次");
+//						"0", "org.mine.batch.job.ConcurrentExcutorJob", "transName=acutalMulGroup", triggerIds, "1", 1, queueId, "每40s运行一次");
 //				auToscheduler.addScheduleJob(queueId, null, null, triggerIds, "org.mine.service.impl.async.ActualAddMultiJobImpl");
 //				System.out.println(">>>>>>>>>>>>>>>>>>>>>>addJob end---------------");
 //				return null;

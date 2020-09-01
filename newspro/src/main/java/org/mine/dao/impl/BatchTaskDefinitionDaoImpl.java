@@ -15,14 +15,14 @@ import org.springframework.stereotype.Repository;
  * 
  * @filename BatchTaskDefinitionDaoImpl.java
  * @author wzaUsers
- * @date 2020-06-08 10:06:39
+ * @date 2020-08-20 11:08:58
  * @version v1.0
 */
 @Repository
 public class BatchTaskDefinitionDaoImpl extends BaseDaoSupport implements BatchTaskDefinitionDao {
 	/**
 	 * 单笔插入
-	 * @param BatchTaskDefinition 
+	 * @param batchTaskDefinition 
 	 */
 	@Override
 	public int insertOne(BatchTaskDefinition batchTaskDefinition){
@@ -31,7 +31,7 @@ public class BatchTaskDefinitionDaoImpl extends BaseDaoSupport implements BatchT
 
 	/**
 	 * 批量插入(直接调用Mybatis代码)
-	 * @param BatchTaskDefinition 
+	 * @param list 
 	 */
 	@Override
 	public void batchInsert(List<BatchTaskDefinition> list){
@@ -40,7 +40,7 @@ public class BatchTaskDefinitionDaoImpl extends BaseDaoSupport implements BatchT
 
 	/**
 	 * 批量插入(使用XML中的foreach语句)
-	 * @param BatchTaskDefinition 
+	 * @param list 
 	 */
 	@Override
 	public void batchInsertXML(List<BatchTaskDefinition> list){
@@ -57,7 +57,7 @@ public class BatchTaskDefinitionDaoImpl extends BaseDaoSupport implements BatchT
 	 * @param taskId 任务ID
 	 */
 	@Override
-	public BatchTaskDefinition selectOne1(Long taskId, boolean nullException){
+	public BatchTaskDefinition selectOne1(String taskId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("taskId", taskId);
 		BatchTaskDefinition batchTaskDefinition = new BatchTaskDefinition();
@@ -71,7 +71,7 @@ public class BatchTaskDefinitionDaoImpl extends BaseDaoSupport implements BatchT
 	 * @param taskId 任务ID
 	 */
 	@Override
-	public BatchTaskDefinition selectOne1R(Long taskId, boolean nullException){
+	public BatchTaskDefinition selectOne1R(String taskId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("taskId", taskId);
 		BatchTaskDefinition batchTaskDefinition = new BatchTaskDefinition();
@@ -85,7 +85,7 @@ public class BatchTaskDefinitionDaoImpl extends BaseDaoSupport implements BatchT
 	 * @param taskId 任务ID
 	 */
 	@Override
-	public BatchTaskDefinition selectOne1L(Long taskId, boolean nullException){
+	public BatchTaskDefinition selectOne1L(String taskId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("taskId", taskId);
 		BatchTaskDefinition batchTaskDefinition = new BatchTaskDefinition();
@@ -99,7 +99,7 @@ public class BatchTaskDefinitionDaoImpl extends BaseDaoSupport implements BatchT
 	 * @param taskId 任务ID
 	 */
 	@Override
-	public int deleteOne1(Long taskId){
+	public int deleteOne1(String taskId){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("taskId", taskId);
 		return getSqlSessionTemplate().delete("BatchTaskDefinition.deleteOne1", map);
@@ -110,7 +110,7 @@ public class BatchTaskDefinitionDaoImpl extends BaseDaoSupport implements BatchT
 	 * @param taskId 任务ID
 	 */
 	@Override
-	public int deleteOne1L(Long taskId){
+	public int deleteOne1L(String taskId){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("taskId", taskId);
 		return getSqlSessionTemplate().delete("BatchTaskDefinition.deleteOne1L", map);
@@ -118,7 +118,7 @@ public class BatchTaskDefinitionDaoImpl extends BaseDaoSupport implements BatchT
 
 	/**
 	 * 单笔更新
-	 * @param BatchTaskDefinition 
+	 * @param batchTaskDefinition 
 	 */
 	@Override
 	public int updateOne1(BatchTaskDefinition batchTaskDefinition){
@@ -127,7 +127,7 @@ public class BatchTaskDefinitionDaoImpl extends BaseDaoSupport implements BatchT
 
 	/**
 	 * 单笔更新(正常状态 valid_status = 0)
-	 * @param BatchTaskDefinition 
+	 * @param batchTaskDefinition 
 	 */
 	@Override
 	public int updateOne1R(BatchTaskDefinition batchTaskDefinition){
@@ -136,7 +136,7 @@ public class BatchTaskDefinitionDaoImpl extends BaseDaoSupport implements BatchT
 
 	/**
 	 * 单笔更新(加锁  for update: 当使用索引时锁行, 其他锁表)
-	 * @param BatchTaskDefinition 
+	 * @param batchTaskDefinition 
 	 */
 	@Override
 	public int updateOne1L(BatchTaskDefinition batchTaskDefinition){
@@ -144,31 +144,31 @@ public class BatchTaskDefinitionDaoImpl extends BaseDaoSupport implements BatchT
 	}
 
 	/**
-	 * 批量更新(使用XML中的foreach语句)
-	 * @param BatchTaskDefinition 
+	 * 批量更新(直接调用Mybatis代码)
+	 * @param list 
 	 */
 	@Override
-	public void batchUpdateXML1(List<BatchTaskDefinition> list){
+	public void batchUpdate1(List<BatchTaskDefinition> list){
+		batchExcutor("BatchTaskDefinition.batchUpdate1", list, "update", 20);
+	}
+
+	/**
+	 * 批量更新(使用XML中的foreach语句)
+	 * @param list 
+	 */
+	@Override
+	public void batchUpdateXML(List<BatchTaskDefinition> list){
 		BatchInsertByXML(list, "list", 20, new BatchOperator<Integer, Map<String, Object>>() {
 			@Override
 			public Integer call(Map<String, Object> map) {
-				return getSqlSessionTemplate().update("BatchTaskDefinition.batchUpdateXML1", map);
+				return getSqlSessionTemplate().update("BatchTaskDefinition.batchUpdateXML", map);
 			};
 		});
 	}
 
 	/**
-	 * 批量更新(直接调用Mybatis代码)
-	 * @param BatchTaskDefinition 
-	 */
-	@Override
-	public void batchUpdate(List<BatchTaskDefinition> list){
-		batchExcutor("BatchTaskDefinition.batchUpdate", list, "update", 20);
-	}
-
-	/**
 	 * 批量删除(直接调用Mybatis代码)
-	 * @param BatchTaskDefinition 
+	 * @param list 
 	 */
 	@Override
 	public void batchDelete(List<BatchTaskDefinition> list){
@@ -177,68 +177,35 @@ public class BatchTaskDefinitionDaoImpl extends BaseDaoSupport implements BatchT
 
 	/**
 	 * 查询多笔数据
-	 * @param taskAssociateQueueId 关联队列ID
+	 * @param taskAutoFlag 是否自动执行. 0-是, 1-否
 	 */
 	@Override
-	public List<BatchTaskDefinition> selectAll1(Long taskAssociateQueueId){
+	public List<BatchTaskDefinition> selectAll1(Integer taskAutoFlag){
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("taskAssociateQueueId", taskAssociateQueueId);
+		map.put("taskAutoFlag", taskAutoFlag);
 		return getSqlSessionTemplate().selectList("BatchTaskDefinition.selectAll1", map);
 	}
 
 	/**
 	 * 查询多笔数据(正常状态 valid_status = 0)
-	 * @param taskAssociateQueueId 关联队列ID
+	 * @param taskAutoFlag 是否自动执行. 0-是, 1-否
 	 */
 	@Override
-	public List<BatchTaskDefinition> selectAll1R(Long taskAssociateQueueId){
+	public List<BatchTaskDefinition> selectAll1R(Integer taskAutoFlag){
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("taskAssociateQueueId", taskAssociateQueueId);
+		map.put("taskAutoFlag", taskAutoFlag);
 		return getSqlSessionTemplate().selectList("BatchTaskDefinition.selectAll1R", map);
 	}
 
 	/**
 	 * 查询多笔数据(加锁  for update: 当使用索引时锁行, 其他锁表)
-	 * @param taskAssociateQueueId 关联队列ID
+	 * @param taskAutoFlag 是否自动执行. 0-是, 1-否
 	 */
 	@Override
-	public List<BatchTaskDefinition> selectAll1L(Long taskAssociateQueueId){
+	public List<BatchTaskDefinition> selectAll1L(Integer taskAutoFlag){
 		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("taskAssociateQueueId", taskAssociateQueueId);
+		map.put("taskAutoFlag", taskAutoFlag);
 		return getSqlSessionTemplate().selectList("BatchTaskDefinition.selectAll1L", map);
-	}
-
-	/**
-	 * 查询多笔数据
-	 * @param taskAutoFlag 是否自动执行. 0-是, 1-否
-	 */
-	@Override
-	public List<BatchTaskDefinition> selectAll2(Integer taskAutoFlag){
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("taskAutoFlag", taskAutoFlag);
-		return getSqlSessionTemplate().selectList("BatchTaskDefinition.selectAll2", map);
-	}
-
-	/**
-	 * 查询多笔数据(正常状态 valid_status = 0)
-	 * @param taskAutoFlag 是否自动执行. 0-是, 1-否
-	 */
-	@Override
-	public List<BatchTaskDefinition> selectAll2R(Integer taskAutoFlag){
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("taskAutoFlag", taskAutoFlag);
-		return getSqlSessionTemplate().selectList("BatchTaskDefinition.selectAll2R", map);
-	}
-
-	/**
-	 * 查询多笔数据(加锁  for update: 当使用索引时锁行, 其他锁表)
-	 * @param taskAutoFlag 是否自动执行. 0-是, 1-否
-	 */
-	@Override
-	public List<BatchTaskDefinition> selectAll2L(Integer taskAutoFlag){
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("taskAutoFlag", taskAutoFlag);
-		return getSqlSessionTemplate().selectList("BatchTaskDefinition.selectAll2L", map);
 	}
 
 }

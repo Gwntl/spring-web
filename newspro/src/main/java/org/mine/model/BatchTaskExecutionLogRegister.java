@@ -4,18 +4,18 @@ package org.mine.model;
  * batch_task_execution_log_register--批量任务执行日志登记表
  * @filename BatchTaskExecutionLogRegister.java
  * @author wzaUsers
- * @date 2020-06-08 10:06:39
+ * @date 2020-08-20 11:08:58
  * @version v1.0
 */
 public class BatchTaskExecutionLogRegister {
 	/**
 	 * 任务执行ID
 	 */
-	private Long taskExecutionId;
+	private String taskExecutionId;
 	/**
 	 * 执行作业ID
 	 */
-	private Long taskJobId;
+	private String taskJobId;
 	/**
 	 * 执行作业名称
 	 */
@@ -54,8 +54,8 @@ public class BatchTaskExecutionLogRegister {
 	private String remark;
 
 	public BatchTaskExecutionLogRegister() {
-		this.taskExecutionId = 0L;
-		this.taskJobId = 0L;
+		this.taskExecutionId = "";
+		this.taskJobId = "";
 		this.taskJobName = "";
 		this.taskJobAssociateId = 0L;
 		this.taskStartTime = null;
@@ -69,35 +69,35 @@ public class BatchTaskExecutionLogRegister {
 
 	/**
 	 * 任务执行ID
-	 * @return thetaskExecutionId
+	 * @return the taskExecutionId
 	 */
-	public Long getTaskExecutionId() {
+	public String getTaskExecutionId() {
 		return taskExecutionId;
 	}
 	/**
 	 * 任务执行ID
 	 * @param taskExecutionId the taskExecutionId to set
 	 */
-	public void setTaskExecutionId(Long taskExecutionId) {
+	public void setTaskExecutionId(String taskExecutionId) {
 		this.taskExecutionId = taskExecutionId;
 	}
 	/**
 	 * 执行作业ID
-	 * @return thetaskJobId
+	 * @return the taskJobId
 	 */
-	public Long getTaskJobId() {
+	public String getTaskJobId() {
 		return taskJobId;
 	}
 	/**
 	 * 执行作业ID
 	 * @param taskJobId the taskJobId to set
 	 */
-	public void setTaskJobId(Long taskJobId) {
+	public void setTaskJobId(String taskJobId) {
 		this.taskJobId = taskJobId;
 	}
 	/**
 	 * 执行作业名称
-	 * @return thetaskJobName
+	 * @return the taskJobName
 	 */
 	public String getTaskJobName() {
 		return taskJobName;
@@ -111,7 +111,7 @@ public class BatchTaskExecutionLogRegister {
 	}
 	/**
 	 * 任务ID
-	 * @return thetaskJobAssociateId
+	 * @return the taskJobAssociateId
 	 */
 	public Long getTaskJobAssociateId() {
 		return taskJobAssociateId;
@@ -125,7 +125,7 @@ public class BatchTaskExecutionLogRegister {
 	}
 	/**
 	 * 开始时间
-	 * @return thetaskStartTime
+	 * @return the taskStartTime
 	 */
 	public String getTaskStartTime() {
 		return taskStartTime;
@@ -139,7 +139,7 @@ public class BatchTaskExecutionLogRegister {
 	}
 	/**
 	 * 结束时间
-	 * @return thetaskEndTime
+	 * @return the taskEndTime
 	 */
 	public String getTaskEndTime() {
 		return taskEndTime;
@@ -153,7 +153,7 @@ public class BatchTaskExecutionLogRegister {
 	}
 	/**
 	 * 任务状态,COMPLETED-处理中, SUCCSS-成功, FAILED-失败,UNKOWN-非正常状态
-	 * @return thetaskJobStatus
+	 * @return the taskJobStatus
 	 */
 	public String getTaskJobStatus() {
 		return taskJobStatus;
@@ -167,7 +167,7 @@ public class BatchTaskExecutionLogRegister {
 	}
 	/**
 	 * 任务错误信息
-	 * @return thetaskJobErrmsg
+	 * @return the taskJobErrmsg
 	 */
 	public String getTaskJobErrmsg() {
 		return taskJobErrmsg;
@@ -181,7 +181,7 @@ public class BatchTaskExecutionLogRegister {
 	}
 	/**
 	 * 创建时间
-	 * @return thecreateDate
+	 * @return the createDate
 	 */
 	public String getCreateDate() {
 		return createDate;
@@ -195,7 +195,7 @@ public class BatchTaskExecutionLogRegister {
 	}
 	/**
 	 * 有效状态. 0-是, 1-否
-	 * @return thevalidStatus
+	 * @return the validStatus
 	 */
 	public String getValidStatus() {
 		return validStatus;
@@ -209,7 +209,7 @@ public class BatchTaskExecutionLogRegister {
 	}
 	/**
 	 * 备注
-	 * @return theremark
+	 * @return the remark
 	 */
 	public String getRemark() {
 		return remark;

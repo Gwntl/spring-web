@@ -4,14 +4,14 @@ package org.mine.model;
  * batch_step_definition--批量执行步骤定义表(串行)
  * @filename BatchStepDefinition.java
  * @author wzaUsers
- * @date 2020-06-08 10:06:39
+ * @date 2020-08-20 11:08:58
  * @version v1.0
 */
 public class BatchStepDefinition {
 	/**
 	 * 作业步骤ID
 	 */
-	private Long stepId;
+	private String stepId;
 	/**
 	 * 作业步骤名称
 	 */
@@ -42,7 +42,7 @@ public class BatchStepDefinition {
 	private String remark;
 
 	public BatchStepDefinition() {
-		this.stepId = 0L;
+		this.stepId = "";
 		this.stepName = "";
 		this.stepActuator = "";
 		this.stepLogMdcValue = "";
@@ -54,21 +54,21 @@ public class BatchStepDefinition {
 
 	/**
 	 * 作业步骤ID
-	 * @return thestepId
+	 * @return the stepId
 	 */
-	public Long getStepId() {
+	public String getStepId() {
 		return stepId;
 	}
 	/**
 	 * 作业步骤ID
 	 * @param stepId the stepId to set
 	 */
-	public void setStepId(Long stepId) {
+	public void setStepId(String stepId) {
 		this.stepId = stepId;
 	}
 	/**
 	 * 作业步骤名称
-	 * @return thestepName
+	 * @return the stepName
 	 */
 	public String getStepName() {
 		return stepName;
@@ -82,7 +82,7 @@ public class BatchStepDefinition {
 	}
 	/**
 	 * 步骤执行器
-	 * @return thestepActuator
+	 * @return the stepActuator
 	 */
 	public String getStepActuator() {
 		return stepActuator;
@@ -96,7 +96,7 @@ public class BatchStepDefinition {
 	}
 	/**
 	 * 日志文件名
-	 * @return thestepLogMdcValue
+	 * @return the stepLogMdcValue
 	 */
 	public String getStepLogMdcValue() {
 		return stepLogMdcValue;
@@ -110,7 +110,7 @@ public class BatchStepDefinition {
 	}
 	/**
 	 * 初始化值
-	 * @return thestepInitValue
+	 * @return the stepInitValue
 	 */
 	public String getStepInitValue() {
 		return stepInitValue;
@@ -124,7 +124,7 @@ public class BatchStepDefinition {
 	}
 	/**
 	 * 创建时间
-	 * @return thecreateDate
+	 * @return the createDate
 	 */
 	public String getCreateDate() {
 		return createDate;
@@ -138,7 +138,7 @@ public class BatchStepDefinition {
 	}
 	/**
 	 * 有效状态. 0-是, 1-否, D-已废弃
-	 * @return thevalidStatus
+	 * @return the validStatus
 	 */
 	public String getValidStatus() {
 		return validStatus;
@@ -152,7 +152,7 @@ public class BatchStepDefinition {
 	}
 	/**
 	 * 备注
-	 * @return theremark
+	 * @return the remark
 	 */
 	public String getRemark() {
 		return remark;

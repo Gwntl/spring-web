@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="BatchExecutorSeqLog">
+	<resultMap type="org.mine.model.BatchExecutorSeqLog" id="BaseResultMap">
+		<result column="execution_instance" property="executionInstance"/>
+		<result column="job_id" property="jobId"/>
+		<result column="job_name" property="jobName"/>
+		<result column="status" property="status"/>
+		<result column="error_meg" property="errorMeg"/>
+		<result column="create_date" property="createDate"/>
+		<result column="time_stamp" property="timeStamp"/>
+		<result column="valid_status" property="validStatus"/>
+		<result column="remark" property="remark"/>
+	</resultMap>
+
+	<sql id="Base_Select_List">
+		execution_instance,job_id,job_name,status,error_meg,create_date,
+		time_stamp,valid_status,remark
+	</sql>
+
+	<sql id="Base_Insert_Column">
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="executionInstance != null">execution_instance,</if>
+			<if test="jobId != null">job_id,</if>
+			<if test="jobName != null">job_name,</if>
+			<if test="status != null">status,</if>
+			<if test="errorMeg != null">error_meg,</if>
+			<if test="createDate != null">create_date,</if>
+			<if test="timeStamp != null">time_stamp,</if>
+			<if test="validStatus != null">valid_status,</if>
+			<if test="remark != null">remark,</if>
+		</trim>
+	</sql>
+
+	<sql id="Base_Insert_Values">
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="executionInstance != null">#{executionInstance},</if>
+			<if test="jobId != null">#{jobId},</if>
+			<if test="jobName != null">#{jobName},</if>
+			<if test="status != null">#{status},</if>
+			<if test="errorMeg != null">#{errorMeg},</if>
+			<if test="createDate != null">#{createDate},</if>
+			<if test="timeStamp != null">#{timeStamp},</if>
+			<if test="validStatus != null">#{validStatus},</if>
+			<if test="remark != null">#{remark},</if>
+		</trim>
+	</sql>
+
+	<insert id="insertOne" parameterType="org.mine.model.BatchExecutorSeqLog">
+		insert into batch_executor_seq_log
+		<include refid="BatchExecutorSeqLog.Base_Insert_Column"/>
+		values 
+		<include refid="BatchExecutorSeqLog.Base_Insert_Values"/>
+	</insert>
+
+	<insert id="batchInsert" parameterType="org.mine.model.BatchExecutorSeqLog">
+		insert into batch_executor_seq_log
+		<include refid="BatchExecutorSeqLog.Base_Insert_Column"/>
+		values 
+		<include refid="BatchExecutorSeqLog.Base_Insert_Values"/>
+	</insert>
+
+	<insert id="batchInsertXML" parameterType="java.util.List">
+		insert into batch_executor_seq_log
+		(execution_instance,job_id,job_name,status,error_meg
+			,create_date,time_stamp,valid_status,remark)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.executionInstance},#{item.jobId},#{item.jobName},#{item.status},#{item.errorMeg}
+				,#{item.createDate},#{item.timeStamp},#{item.validStatus},#{item.remark})
+		</foreach>
+	</insert>
+	<select id="selectOne1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchExecutorSeqLog.Base_Select_List"/>
+		from batch_executor_seq_log
+		where execution_instance = #{executionInstance}
+	</select>
+
+	<select id="selectOne1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchExecutorSeqLog.Base_Select_List"/>
+		from batch_executor_seq_log
+		where execution_instance = #{executionInstance} and valid_status = '0'
+	</select>
+
+	<select id="selectOne1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="BatchExecutorSeqLog.Base_Select_List"/>
+		from batch_executor_seq_log
+		where execution_instance = #{executionInstance} for update
+	</select>
+
+	<delete id="deleteOne1" parameterType="org.mine.model.BatchExecutorSeqLog">
+		delete from batch_executor_seq_log
+		where
+		execution_instance = #{executionInstance}
+	</delete>
+
+	<delete id="deleteOne1L" parameterType="org.mine.model.BatchExecutorSeqLog">
+		delete from batch_executor_seq_log
+		where
+		execution_instance = #{executionInstance} for update
+	</delete>
+
+	<update id="updateOne1" parameterType="org.mine.model.BatchExecutorSeqLog">
+		update batch_executor_seq_log
+		<trim prefix="set" suffixOverrides=",">
+			<if test="jobId != null">job_id = #{jobId},</if>
+			<if test="jobName != null">job_name = #{jobName},</if>
+			<if test="status != null">status = #{status},</if>
+			<if test="errorMeg != null">error_meg = #{errorMeg},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="timeStamp != null">time_stamp = #{timeStamp},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where execution_instance = #{executionInstance}
+	</update>
+
+	<update id="updateOne1R" parameterType="org.mine.model.BatchExecutorSeqLog">
+		update batch_executor_seq_log
+		<trim prefix="set" suffixOverrides=",">
+			<if test="jobId != null">job_id = #{jobId},</if>
+			<if test="jobName != null">job_name = #{jobName},</if>
+			<if test="status != null">status = #{status},</if>
+			<if test="errorMeg != null">error_meg = #{errorMeg},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="timeStamp != null">time_stamp = #{timeStamp},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where execution_instance = #{executionInstance} and valid_status = '0'
+	</update>
+
+	<update id="updateOne1L" parameterType="org.mine.model.BatchExecutorSeqLog">
+		update batch_executor_seq_log
+		<trim prefix="set" suffixOverrides=",">
+			<if test="jobId != null">job_id = #{jobId},</if>
+			<if test="jobName != null">job_name = #{jobName},</if>
+			<if test="status != null">status = #{status},</if>
+			<if test="errorMeg != null">error_meg = #{errorMeg},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="timeStamp != null">time_stamp = #{timeStamp},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where execution_instance = #{executionInstance} for update
+	</update>
+
+	<update id="batchUpdate1" parameterType="org.mine.model.BatchExecutorSeqLog">
+		update batch_executor_seq_log
+		<trim prefix="set" suffixOverrides=",">
+			<if test="jobId != null">job_id = #{jobId},</if>
+			<if test="jobName != null">job_name = #{jobName},</if>
+			<if test="status != null">status = #{status},</if>
+			<if test="errorMeg != null">error_meg = #{errorMeg},</if>
+			<if test="createDate != null">create_date = #{createDate},</if>
+			<if test="timeStamp != null">time_stamp = #{timeStamp},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where execution_instance = #{executionInstance}
+	</update>
+
+	<update id="batchUpdateXML" parameterType="java.util.List">
+		update batch_executor_seq_log set
+		<trim prefix="job_id=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.jobId != null">
+					when execution_instance = #{item.executionInstance} then #{item.jobId}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="job_name=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.jobName != null">
+					when execution_instance = #{item.executionInstance} then #{item.jobName}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="status=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.status != null">
+					when execution_instance = #{item.executionInstance} then #{item.status}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="error_meg=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.errorMeg != null">
+					when execution_instance = #{item.executionInstance} then #{item.errorMeg}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="create_date=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.createDate != null">
+					when execution_instance = #{item.executionInstance} then #{item.createDate}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="time_stamp=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.timeStamp != null">
+					when execution_instance = #{item.executionInstance} then #{item.timeStamp}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="valid_status=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.validStatus != null">
+					when execution_instance = #{item.executionInstance} then #{item.validStatus}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="remark=case" suffix="end">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.remark != null">
+					when execution_instance = #{item.executionInstance} then #{item.remark}
+				</if>
+			</foreach>
+		</trim>
+		where
+		execution_instance in
+		<foreach collection="list" item="item" index="index" separator="," open="(" close=")">
+			#{item.executionInstance}
+		</foreach>
+	</update>
+</mapper>

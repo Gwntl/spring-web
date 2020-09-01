@@ -16,7 +16,7 @@ public class AutoSchedulerJobDaoImpl extends BaseDaoSupport implements AutoSched
 	}
 
 	@Override
-	public int updateTaskExectorStatus(Long executeTaskId, String vaildStatus) {
+	public int updateTaskExectorStatus(String executeTaskId, String vaildStatus) {
 		HashMap<String, Object> map = new HashMap<>();
 		map.put("executeTaskId", executeTaskId);
 		map.put("vaildStatus", vaildStatus);

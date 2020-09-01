@@ -1,31 +1,25 @@
 package org.mine.aplt.util;
 
+import org.mine.aplt.support.BaseServiceTaskletExecutor;
+import org.mine.controller.dto.UserDto;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.FatalBeanException;
+
 import java.beans.PropertyDescriptor;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.mine.aplt.support.BaseServiceTasketExcutor;
-import org.mine.controller.dto.UserDto;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.FatalBeanException;
+import java.util.*;
 
 public class BeanUtil extends BeanUtils{
 
-	public static BaseServiceTasketExcutor getObj(String className){
-		BaseServiceTasketExcutor obj = null;
+	public static BaseServiceTaskletExecutor getObj(String className){
+		BaseServiceTaskletExecutor obj = null;
 		try{
-			obj = (BaseServiceTasketExcutor) Class.forName(className).newInstance();
+			obj = (BaseServiceTaskletExecutor) Class.forName(className).newInstance();
 		} catch(ClassNotFoundException | IllegalAccessException | InstantiationException e){
 			throw new FatalBeanException("Could not newinstance clazz : " + className);
 		}
@@ -356,7 +350,22 @@ public class BeanUtil extends BeanUtils{
 			return obj.toString();
 		}
 	}
-	
+
+	/**
+	* DTO深度克隆.此方法需要DTO类实现序列化接口.
+	* @param obj
+	* @return: T
+	* @Author: wntl
+	* @Date: 2020/8/24
+	*/
+	public static <T> T deepClone(T obj) throws IOException, ClassNotFoundException {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(bos);
+		oos.writeObject(obj);
+		oos.flush();
+		ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
+		return (T)ois.readObject();
+	}
 	
 	public static void main(String[] args) {
 		UserDto dto = BeanUtil.newInstance(UserDto.class);

@@ -4,18 +4,18 @@ package org.mine.model;
  * batch_timing_task_log_register--批量定时任务日志登记表
  * @filename BatchTimingTaskLogRegister.java
  * @author wzaUsers
- * @date 2020-06-08 10:06:39
+ * @date 2020-08-20 11:08:58
  * @version v1.0
 */
 public class BatchTimingTaskLogRegister {
 	/**
 	 * 定时任务执行ID
 	 */
-	private Long timingExecutionId;
+	private String timingExecutionId;
 	/**
 	 * 定时作业ID
 	 */
-	private Long timingJobId;
+	private String timingTaskId;
 	/**
 	 * 定时作业名称
 	 */
@@ -23,7 +23,7 @@ public class BatchTimingTaskLogRegister {
 	/**
 	 * 任务ID
 	 */
-	private Long timingAssociateTaskId;
+	private String timingAssociateTaskId;
 	/**
 	 * 开始时间
 	 */
@@ -54,10 +54,10 @@ public class BatchTimingTaskLogRegister {
 	private String remark;
 
 	public BatchTimingTaskLogRegister() {
-		this.timingExecutionId = 0L;
-		this.timingJobId = 0L;
+		this.timingExecutionId = "";
+		this.timingTaskId = "";
 		this.timingJobName = "";
-		this.timingAssociateTaskId = 0L;
+		this.timingAssociateTaskId = "";
 		this.timingStartTime = null;
 		this.timingEndTime = null;
 		this.timingJobStatus = "";
@@ -69,35 +69,35 @@ public class BatchTimingTaskLogRegister {
 
 	/**
 	 * 定时任务执行ID
-	 * @return thetimingExecutionId
+	 * @return the timingExecutionId
 	 */
-	public Long getTimingExecutionId() {
+	public String getTimingExecutionId() {
 		return timingExecutionId;
 	}
 	/**
 	 * 定时任务执行ID
 	 * @param timingExecutionId the timingExecutionId to set
 	 */
-	public void setTimingExecutionId(Long timingExecutionId) {
+	public void setTimingExecutionId(String timingExecutionId) {
 		this.timingExecutionId = timingExecutionId;
 	}
 	/**
 	 * 定时作业ID
-	 * @return thetimingJobId
+	 * @return the timingTaskId
 	 */
-	public Long getTimingJobId() {
-		return timingJobId;
+	public String getTimingTaskId() {
+		return timingTaskId;
 	}
 	/**
 	 * 定时作业ID
-	 * @param timingJobId the timingJobId to set
+	 * @param timingTaskId the timingTaskId to set
 	 */
-	public void setTimingJobId(Long timingJobId) {
-		this.timingJobId = timingJobId;
+	public void setTimingTaskId(String timingTaskId) {
+		this.timingTaskId = timingTaskId;
 	}
 	/**
 	 * 定时作业名称
-	 * @return thetimingJobName
+	 * @return the timingJobName
 	 */
 	public String getTimingJobName() {
 		return timingJobName;
@@ -111,21 +111,21 @@ public class BatchTimingTaskLogRegister {
 	}
 	/**
 	 * 任务ID
-	 * @return thetimingAssociateTaskId
+	 * @return the timingAssociateTaskId
 	 */
-	public Long getTimingAssociateTaskId() {
+	public String getTimingAssociateTaskId() {
 		return timingAssociateTaskId;
 	}
 	/**
 	 * 任务ID
 	 * @param timingAssociateTaskId the timingAssociateTaskId to set
 	 */
-	public void setTimingAssociateTaskId(Long timingAssociateTaskId) {
+	public void setTimingAssociateTaskId(String timingAssociateTaskId) {
 		this.timingAssociateTaskId = timingAssociateTaskId;
 	}
 	/**
 	 * 开始时间
-	 * @return thetimingStartTime
+	 * @return the timingStartTime
 	 */
 	public String getTimingStartTime() {
 		return timingStartTime;
@@ -139,7 +139,7 @@ public class BatchTimingTaskLogRegister {
 	}
 	/**
 	 * 结束时间
-	 * @return thetimingEndTime
+	 * @return the timingEndTime
 	 */
 	public String getTimingEndTime() {
 		return timingEndTime;
@@ -153,7 +153,7 @@ public class BatchTimingTaskLogRegister {
 	}
 	/**
 	 * 定时任务状态,COMPLETED-处理中, SUCCSS-成功, FAILED-失败,UNKOWN-非正常状态
-	 * @return thetimingJobStatus
+	 * @return the timingJobStatus
 	 */
 	public String getTimingJobStatus() {
 		return timingJobStatus;
@@ -167,7 +167,7 @@ public class BatchTimingTaskLogRegister {
 	}
 	/**
 	 * 定时任务错误信息
-	 * @return thetimingJobErrmsg
+	 * @return the timingJobErrmsg
 	 */
 	public String getTimingJobErrmsg() {
 		return timingJobErrmsg;
@@ -181,7 +181,7 @@ public class BatchTimingTaskLogRegister {
 	}
 	/**
 	 * 创建时间
-	 * @return thecreateDate
+	 * @return the createDate
 	 */
 	public String getCreateDate() {
 		return createDate;
@@ -195,7 +195,7 @@ public class BatchTimingTaskLogRegister {
 	}
 	/**
 	 * 有效状态. 0-是, 1-否
-	 * @return thevalidStatus
+	 * @return the validStatus
 	 */
 	public String getValidStatus() {
 		return validStatus;
@@ -209,7 +209,7 @@ public class BatchTimingTaskLogRegister {
 	}
 	/**
 	 * 备注
-	 * @return theremark
+	 * @return the remark
 	 */
 	public String getRemark() {
 		return remark;
@@ -228,7 +228,7 @@ public class BatchTimingTaskLogRegister {
 	@Override
 	public String toString() {
 		return "BatchTimingTaskLogRegister[" + 
-		"timingExecutionId=" + timingExecutionId + ", timingJobId=" + timingJobId + ", timingJobName=" + timingJobName + ", timingAssociateTaskId=" + timingAssociateTaskId + 
+		"timingExecutionId=" + timingExecutionId + ", timingTaskId=" + timingTaskId + ", timingJobName=" + timingJobName + ", timingAssociateTaskId=" + timingAssociateTaskId + 
 		", timingStartTime=" + timingStartTime + ", timingEndTime=" + timingEndTime + ", timingJobStatus=" + timingJobStatus + 
 		", timingJobErrmsg=" + timingJobErrmsg + ", createDate=" + createDate + ", validStatus=" + validStatus + 
 		", remark=" + remark + "]";
