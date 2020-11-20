@@ -17,14 +17,14 @@ public class JobDemo01 {
 	public void sayHello() {
 		try{
 			System.out.println(new Date() + " -> 进入Demo01");
-//			GetSynchronizedLock.lock.lock();
+//			GetSynchronizedLock.lock.properties.lock.properties();
 			System.out.println(new Date() + " -> Demo01获取锁");
 			String s = new Date() + " -> Hello, 我是任务 1";
 			GetSynchronizedLock.lockMaps.put("demo01", s);
 //			GetSynchronizedLock.condition.signal();
 			System.out.println(s);
 		} finally{
-//			GetSynchronizedLock.lock.unlock();
+//			GetSynchronizedLock.lock.properties.unlock();
 		}
 	}
 

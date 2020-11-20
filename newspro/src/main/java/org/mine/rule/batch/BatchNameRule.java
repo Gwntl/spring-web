@@ -1,6 +1,6 @@
 package org.mine.rule.batch;
 
-import org.mine.aplt.constant.JobContanst;
+import org.mine.aplt.constant.JobConstant;
 import org.mine.rule.Ruler;
 
 /**
@@ -19,7 +19,7 @@ public class BatchNameRule implements Ruler {
     * @Date: 2020/8/11
     */
     public static String queueIDNamed(String queueID) {
-        return JobContanst.QUEUE_ID_PREFIX + queueID;
+        return JobConstant.QUEUE_ID_PREFIX + queueID;
     }
 
     /**
@@ -31,7 +31,7 @@ public class BatchNameRule implements Ruler {
     */
 
     public static String executeNamed(String executeID) {
-        return JobContanst.EXECUTE_PREFIX + executeID;
+        return JobConstant.EXECUTE_PREFIX + executeID;
     }
 
     /**
@@ -42,7 +42,7 @@ public class BatchNameRule implements Ruler {
     * @Date: 2020/8/11
     */
     public static String taskIDNamed(String taskID) {
-        return JobContanst.TASK_ID_PREFIX + taskID;
+        return JobConstant.TASK_ID_PREFIX + taskID;
     }
 
     /**
@@ -53,7 +53,7 @@ public class BatchNameRule implements Ruler {
     * @Date: 2020/8/11
     */
     public static String jobIDNamed(String jobID) {
-        return JobContanst.JOB_ID_PREFIX + jobID;
+        return JobConstant.JOB_ID_PREFIX + jobID;
     }
 
     /**
@@ -64,7 +64,7 @@ public class BatchNameRule implements Ruler {
     * @Date: 2020/8/11
     */
     public static String stepIDNamed(String stepID){
-        return JobContanst.STEP_ID_PREFIX + stepID;
+        return JobConstant.STEP_ID_PREFIX + stepID;
     }
 
     /**
@@ -75,6 +75,22 @@ public class BatchNameRule implements Ruler {
     * @Date: 2020/8/11
     */
     public static String triggerIDNamed(String triggerID){
-        return JobContanst.TRIGGER_ID_PREFIX + triggerID;
+        return JobConstant.TRIGGER_ID_PREFIX + triggerID;
+    }
+
+    public static String getType(String name) {
+        String index = name.substring(0, name.indexOf("_"));
+        switch (index) {
+            case JobConstant.QUEUE_ID_PREFIX :
+                return JobConstant.QUEUE_TYPE;
+            case JobConstant.TASK_ID_PREFIX :
+                return JobConstant.TASK_TYPE;
+            case JobConstant.JOB_ID_PREFIX :
+                return JobConstant.JOB_TYPE;
+            case JobConstant.STEP_ID_PREFIX :
+                return JobConstant.STEP_TYPE;
+            default :
+                return "";
+        }
     }
 }

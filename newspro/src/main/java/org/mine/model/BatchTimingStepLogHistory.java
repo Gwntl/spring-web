@@ -4,18 +4,18 @@ package org.mine.model;
  * batch_timing_step_log_history--定时批量步骤执行日志历史表
  * @filename BatchTimingStepLogHistory.java
  * @author wzaUsers
- * @date 2020-08-14 16:08:07
+ * @date 2020-09-14 19:09:48
  * @version v1.0
 */
 public class BatchTimingStepLogHistory {
 	/**
 	 * 任务执行ID
 	 */
-	private String historyStepExecutionId;
+	private Long historyStepExecutionId;
 	/**
 	 * 执行步骤ID
 	 */
-	private String historyStepJobId;
+	private Long historyStepJobId;
 	/**
 	 * 执行步骤名称
 	 */
@@ -54,8 +54,8 @@ public class BatchTimingStepLogHistory {
 	private String remark;
 
 	public BatchTimingStepLogHistory() {
-		this.historyStepExecutionId = "";
-		this.historyStepJobId = "";
+		this.historyStepExecutionId = 0L;
+		this.historyStepJobId = 0L;
 		this.historyStepJobName = "";
 		this.historyStepStartTime = null;
 		this.historyStepEndTime = null;
@@ -71,28 +71,28 @@ public class BatchTimingStepLogHistory {
 	 * 任务执行ID
 	 * @return the historyStepExecutionId
 	 */
-	public String getHistoryStepExecutionId() {
+	public Long getHistoryStepExecutionId() {
 		return historyStepExecutionId;
 	}
 	/**
 	 * 任务执行ID
 	 * @param historyStepExecutionId the historyStepExecutionId to set
 	 */
-	public void setHistoryStepExecutionId(String historyStepExecutionId) {
+	public void setHistoryStepExecutionId(Long historyStepExecutionId) {
 		this.historyStepExecutionId = historyStepExecutionId;
 	}
 	/**
 	 * 执行步骤ID
 	 * @return the historyStepJobId
 	 */
-	public String getHistoryStepJobId() {
+	public Long getHistoryStepJobId() {
 		return historyStepJobId;
 	}
 	/**
 	 * 执行步骤ID
 	 * @param historyStepJobId the historyStepJobId to set
 	 */
-	public void setHistoryStepJobId(String historyStepJobId) {
+	public void setHistoryStepJobId(Long historyStepJobId) {
 		this.historyStepJobId = historyStepJobId;
 	}
 	/**

@@ -4,7 +4,7 @@ package org.mine.model;
  * batch_task_execute--批量任务运行表
  * @filename BatchTaskExecute.java
  * @author wzaUsers
- * @date 2020-08-26 10:08:58
+ * @date 2020-09-02 10:09:24
  * @version v1.0
 */
 public class BatchTaskExecute {
@@ -25,9 +25,9 @@ public class BatchTaskExecute {
 	 */
 	private Integer executeJobNum;
 	/**
-	 * 是否一次性作业. 0-是, 1-否
+	 * 作业执行次数
 	 */
-	private Integer executeJobOneTime;
+	private Integer executeJobTimes;
 	/**
 	 * 依赖作业
 	 */
@@ -50,7 +50,7 @@ public class BatchTaskExecute {
 		this.executeTaskName = "";
 		this.executeJobId = "";
 		this.executeJobNum = 0;
-		this.executeJobOneTime = 1;
+		this.executeJobTimes = 1;
 		this.executeJobDepends = "";
 		this.createDate = "";
 		this.validStatus = "0";
@@ -114,18 +114,18 @@ public class BatchTaskExecute {
 		this.executeJobNum = executeJobNum;
 	}
 	/**
-	 * 是否一次性作业. 0-是, 1-否
-	 * @return the executeJobOneTime
+	 * 作业执行次数
+	 * @return the executeJobTimes
 	 */
-	public Integer getExecuteJobOneTime() {
-		return executeJobOneTime;
+	public Integer getExecuteJobTimes() {
+		return executeJobTimes;
 	}
 	/**
-	 * 是否一次性作业. 0-是, 1-否
-	 * @param executeJobOneTime the executeJobOneTime to set
+	 * 作业执行次数
+	 * @param executeJobTimes the executeJobTimes to set
 	 */
-	public void setExecuteJobOneTime(Integer executeJobOneTime) {
-		this.executeJobOneTime = executeJobOneTime;
+	public void setExecuteJobTimes(Integer executeJobTimes) {
+		this.executeJobTimes = executeJobTimes;
 	}
 	/**
 	 * 依赖作业
@@ -191,7 +191,7 @@ public class BatchTaskExecute {
 	public String toString() {
 		return "BatchTaskExecute[" + 
 		"executeTaskId=" + executeTaskId + ", executeTaskName=" + executeTaskName + ", executeJobId=" + executeJobId + ", executeJobNum=" + executeJobNum + 
-		", executeJobOneTime=" + executeJobOneTime + ", executeJobDepends=" + executeJobDepends + ", createDate=" + createDate + 
+		", executeJobTimes=" + executeJobTimes + ", executeJobDepends=" + executeJobDepends + ", createDate=" + createDate + 
 		", validStatus=" + validStatus + ", remark=" + remark + "]";
 	}
 }

@@ -1,6 +1,6 @@
 package org.mine.quartz.schduler;
 
-import org.mine.aplt.constant.JobContanst;
+import org.mine.aplt.constant.JobConstant;
 import org.mine.aplt.exception.GitWebException;
 import org.mine.aplt.support.bean.GitContext;
 import org.mine.aplt.util.CommonUtils;
@@ -30,8 +30,6 @@ import java.util.List;
 public class AutoScheduler {
     @Autowired
     private BatchQueueDefinitionDao queueDefinitionDao;
-    @Autowired
-    private BatchGroupDefinitionDao groupDefinitionDao;
     @Autowired
     private BatchConfCustomDao defineCostomDao;
     @Autowired
@@ -71,7 +69,7 @@ public class AutoScheduler {
         definition.setQueueExcFlag(timingFlag);
         definition.setQueueExecutionNum(defineCostomDao.getMaxNumByQueueDefin());
         definition.setCreateDate(CommonUtils.dateToString(new Date(), "yyyyMMdd"));
-        definition.setValidStatus(JobContanst.VALID_STATUS_0);
+        definition.setValidStatus(JobConstant.VALID_STATUS_0);
         return queueDefinitionDao.insertOne(definition);
     }
 
@@ -98,13 +96,13 @@ public class AutoScheduler {
         for (String taskID : taskIDs) {
             taskDefinition = taskDefinitionDao.selectOne1R(taskID, true);
             queueExecute = new BatchQueueExecute();
-            queueExecute.setExecuteQueueId(BatchNameRule.executeNamed(queueID));
+            queueExecute.setExecuteQueueId(queueID);
             queueExecute.setExecuteQueueName(queueDefinition.getQueueName());
             queueExecute.setExecuteTaskId(taskID);
             queueExecute.setExecuteTaskName(taskDefinition.getTaskName());
             queueExecute.setExecuteNum(defineCostomDao.getMaxNumByQueueExecute(queueExecute.getExecuteQueueId()));
             queueExecute.setCreateDate(CommonUtils.dateToString(new Date(), "yyyyMMdd"));
-            queueExecute.setValidStatus(JobContanst.VALID_STATUS_0);
+            queueExecute.setValidStatus(JobConstant.VALID_STATUS_0);
             queueExecuteDao.insertOne(queueExecute);
         }
     }
@@ -136,7 +134,7 @@ public class AutoScheduler {
         definition.setGroupAssociateQueueId(queueId);
         definition.setGroupExecutionNum(defineCostomDao.getMaxNumByGroupDefin());
         definition.setCreateDate(CommonUtils.dateToString(new Date(), "yyyyMMdd"));
-        definition.setValidStatus(JobContanst.VALID_STATUS_0);
+        definition.setValidStatus(JobConstant.VALID_STATUS_0);
         return groupDefinitionDao.insertOne(definition);
     }*/
 
@@ -170,7 +168,7 @@ public class AutoScheduler {
         definition.setTaskInitValue(CommonUtils.listToStr(list, ";"));
         definition.setTaskConcurrencyNum(10);
         definition.setCreateDate(CommonUtils.dateToString(new Date(), "yyyyMMdd"));
-        definition.setValidStatus(JobContanst.VALID_STATUS_0);
+        definition.setValidStatus(JobConstant.VALID_STATUS_0);
         return taskDefinitionDao.insertOne(definition);
     }
 
@@ -228,7 +226,7 @@ public class AutoScheduler {
         definition.setJobTimeDelayFlag(delayFlag);
         definition.setJobTimeDelayValue(delayTime);
         definition.setCreateDate(CommonUtils.dateToString(new Date(), "yyyyMMdd"));
-        definition.setValidStatus(JobContanst.VALID_STATUS_0);
+        definition.setValidStatus(JobConstant.VALID_STATUS_0);
         return jobDefinitionDao.insertOne(definition);
     }
 
@@ -280,7 +278,7 @@ public class AutoScheduler {
         definition.setStepLogMdcValue(CommonUtils.firstLetterUpperCase(actuator));
         definition.setStepInitValue(CommonUtils.listToStr(list, ";"));
         definition.setCreateDate(CommonUtils.dateToString(new Date(), "yyyyMMdd"));
-        definition.setValidStatus(JobContanst.VALID_STATUS_0);
+        definition.setValidStatus(JobConstant.VALID_STATUS_0);
         stepDefinitionDao.insertOne(definition);
     }
 
@@ -314,7 +312,7 @@ public class AutoScheduler {
         definition.setTriggerEndTime(CommonUtils.isEmpty(endTime) ? null : endTime);
         definition.setTriggerCrontrigger(cronTrigger);
         definition.setCreateDate(CommonUtils.dateToString(new Date(), "yyyyMMdd"));
-        definition.setValidStatus(JobContanst.VALID_STATUS_0);
+        definition.setValidStatus(JobConstant.VALID_STATUS_0);
         definition.setTriggerRemark(remark);
         return triggerDefinitionDao.insertOne(definition);
     }
@@ -364,9 +362,10 @@ public class AutoScheduler {
             taskExecute.setExecuteTaskId(taskId);
             taskExecute.setExecuteTaskName(taskName);
             taskExecute.setExecuteJobId(jobId);
-            taskExecute.setExecuteJobOneTime(JobContanst.ONE_TIME_1);
+            taskExecute.setExecuteJobTimes(0);
             taskExecute.setExecuteJobNum(defineCostomDao.getMaxNumByTaskExecute(taskExecute.getExecuteTaskId()));
-            taskExecute.setValidStatus(JobContanst.VALID_STATUS_0);
+            taskExecute.setValidStatus(JobConstant.VALID_STATUS_0);
+            taskExecute.setCreateDate(CommonUtils.currentDate(new Date()));
             taskExecuteDao.insertOne(taskExecute);
         }
     }
@@ -389,7 +388,7 @@ public class AutoScheduler {
             jobExecute.setExecuteStepId(stepId);
             jobExecute.setExecuteStepNum(defineCostomDao.getMaxNumByJobExecute(jobExecute.getExecuteJobId()));
             jobExecute.setCreateDate(CommonUtils.dateToString(new Date(), "yyyyMMdd"));
-            jobExecute.setValidStatus(JobContanst.VALID_STATUS_0);
+            jobExecute.setValidStatus(JobConstant.VALID_STATUS_0);
             jobExecuteDao.insertOne(jobExecute);
         }
     }

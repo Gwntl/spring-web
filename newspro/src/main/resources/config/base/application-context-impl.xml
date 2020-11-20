@@ -10,11 +10,26 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
 
 	<!-- 引入配置文件 -->
-	<context:property-placeholder location="classpath:config/properties/jdbc.properties"/>
+	<!-- spring扫描注册PropertyPlaceholderConfigurer的bean被设置为单例模式，spring只会扫描一个PropertyPlaceholderConfigurer
+		或者<context:property-placeholder>配置，其它多余将被忽略，所以才会出现替代属性值的占位符无法解析 -->
+	<!-- 第一种载入方式 -->
+	<!--<context:property-placeholder location="classpath:config/properties/jdbc.properties" ignore-unresolvable="true"/>
+	<context:property-placeholder location="classpath:config/properties/redis.properties" ignore-unresolvable="true"/>-->
+	<!-- 第二种载入方式 -->
+	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<array>
+				<value>classpath:config/properties/jdbc.properties</value>
+				<value>classpath:config/properties/redis.properties</value>
+			</array>
+		</property>
+	</bean>
 	<context:component-scan base-package="org.mine.*"/>
 	
 	<import resource="../quartz/quartz.xml"/>
-	
+	<!--加载Redis文件-->
+	<import resource="../redis/redis.xml"/>
+
 	<!-- 配置数据源 此处采用JDBC -->
 <!-- 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource"> -->
 <!-- 		<property name="driverClassName" value="${jdbc.driverClassName}"></property> -->
@@ -25,49 +40,49 @@
 	
 	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
 	init-method="init" destroy-method="close">
-		<property name="driverClassName" value="${jdbc.driverClassName}"></property>
-		<property name="url" value="${jdbc.url}"></property>
-		<property name="username" value="${jdbc.username}"></property>
-		<property name="password" value="${jdbc.password}"></property>
+		<property name="driverClassName" value="${jdbc.driverClassName}"/>
+		<property name="url" value="${jdbc.url}"/>
+		<property name="username" value="${jdbc.username}"/>
+		<property name="password" value="${jdbc.password}"/>
 		
 		<!-- 配置初始化大小、最小、最大 -->
-		<property name="initialSize" value="${jdbc.initialSize}"></property>
-		<property name="minIdle" value="${jdbc.minIdle}"></property>
-		<property name="maxActive" value="${jdbc.maxActive}"></property>
+		<property name="initialSize" value="${jdbc.initialSize}"/>
+		<property name="minIdle" value="${jdbc.minIdle}"/>
+		<property name="maxActive" value="${jdbc.maxActive}"/>
 		
 		<!-- 配置获取连接等待超时的时间 以毫秒为单位 -->
-		<property name="maxWait" value="${jdbc.maxWait}"></property>
+		<property name="maxWait" value="${jdbc.maxWait}"/>
 		
 		<!-- 开启游标  PSCache对支持游标的数据库性能提升巨大-->
-		<property name="poolPreparedStatements" value="true"></property>
-		<property name="maxPoolPreparedStatementPerConnectionSize" value="20"></property>
-		<property name="maxOpenPreparedStatements" value="20"></property>
+		<property name="poolPreparedStatements" value="true"/>
+		<property name="maxPoolPreparedStatementPerConnectionSize" value="20"/>
+		<property name="maxOpenPreparedStatements" value="20"/>
 		
 		<!-- 超过设定时间 将数据库断开 -->
 		<!-- 此值为true的时候会降低效率 -->
-		<property name="removeAbandoned" value="false"></property>
+		<property name="removeAbandoned" value="false"/>
 		<!-- 超时时间(以秒数为单位) -->
-		<property name="removeAbandonedTimeout" value="360000"></property>
+		<property name="removeAbandonedTimeout" value="360000"/>
 	<!-- 配置间隔多久启动一次DestroyThread，对连接池内的连接才进行一次检测，单位是毫秒。
 	 		检测时:
 	 		1.如果连接空闲并且超过minIdle以外的连接，如果空闲时间超过minEvictableIdleTimeMillis
 	 			设置的值则直接物理关闭。
 	 		2.在minIdle以内的不处理。 -->
-		<property name="timeBetweenEvictionRunsMillis" value="14400000"></property>
+		<property name="timeBetweenEvictionRunsMillis" value="14400000"/>
 		<!-- 配置一个连接在池中最大空闲时间，单位是毫秒 -->
-		<property name="minEvictableIdleTimeMillis" value="14400000"></property>
+		<property name="minEvictableIdleTimeMillis" value="14400000"/>
 	</bean>
 	
 	<!-- 配置SqlSessionFactory -->
 	<bean id="sessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<!-- 加载数据库连接池 -->
-		<property name="dataSource" ref="dataSource"></property>
+		<property name="dataSource" ref="dataSource"/>
 		<!-- 别名 -->
 <!-- 		<property name="typeAliasesPackage" value="org.mine.model"></property> -->
 		<!-- 加载mybatis mapper*.xml文件 -->
-		<property name="mapperLocations" value="classpath:config/mybatis/mapper/*.xml"></property>
+		<property name="mapperLocations" value="classpath:config/mybatis/mapper/*.xml"/>
 		<!-- 加载mybatis配置文件 -->
-		<property name="configLocation" value="classpath:config/mybatis/mybatis-config.xml"></property>
+		<property name="configLocation" value="classpath:config/mybatis/mybatis-config.xml"/>
 	</bean>
 	<!-- DAO接口所在包名，Spring会自动查找其下的类 -->
 <!-- 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer"> -->
@@ -86,12 +101,12 @@
 	</bean>
 	<!-- (事务管理) -->
 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSource"></property>
+		<property name="dataSource" ref="dataSource"/>
 	</bean>
 	
 	<!-- 独立事务管理, 当前事务下处理. -->
 	<bean id="transActionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
-		<property name="transactionManager" ref="transactionManager"></property>
+		<property name="transactionManager" ref="transactionManager"/>
 		<!-- 
 		事务传播行为:
 		* 保证同一个事务中
@@ -103,25 +118,25 @@
          PROPAGATION_NOT_SUPPORTED  以非事务方式运行，如果有事务存在，挂起当前事务
          PROPAGATION_NEVER 以非事务方式运行，如果有事务存在，抛出异常
          PROPAGATION_NESTED 如果当前事务存在，则嵌套事务执行 -->
-		<property name="propagationBehaviorName" value="PROPAGATION_REQUIRED"></property>
+		<property name="propagationBehaviorName" value="PROPAGATION_REQUIRED"/>
 		<!-- 
 		事务隔离级别:
 		ReadUncommitted(READ_UNCOMMITTED)：未提交读。当事务A更新某条数据的时候，不容许其他事务来更新该数据，但可以进行读取操作.(容易产生脏读,一个事务读取后一个事务提交的数据)
 　　	ReadCommitted(READ_COMMITTED)：提交读。当事务A更新数据时，不容许其他事务进行任何的操作包括读取，但事务A读取时，其他事务可以进行读取、更新
 		RepeatableRead(READ_REPEATABLE)：重复读。当事务A更新数据时，不容许其他事务进行任何的操作，但是当事务A进行读取的时候，其他事务只能读取，不能更新
 		Serializable(SERIALIZABLE)：序列化。最严格的隔离级别，当然并发性也是最差的，事务必须依次进行。 -->
-		<property name="isolationLevelName" value="ISOLATION_READ_COMMITTED"></property>
-		<property name="timeout" value="86000"></property>
+		<property name="isolationLevelName" value="ISOLATION_READ_COMMITTED"/>
+		<property name="timeout" value="86000"/>
 	</bean>
 	<bean id="independentTransActionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
-		<property name="transactionManager" ref="transactionManager"></property>
-		<property name="propagationBehaviorName" value="PROPAGATION_REQUIRES_NEW"></property>
-		<property name="isolationLevelName" value="ISOLATION_READ_COMMITTED"></property>
-		<property name="timeout" value="86000"></property>
+		<property name="transactionManager" ref="transactionManager"/>
+		<property name="propagationBehaviorName" value="PROPAGATION_REQUIRES_NEW"/>
+		<property name="isolationLevelName" value="ISOLATION_READ_COMMITTED"/>
+		<property name="timeout" value="86000"/>
 	</bean>
 	
 	<bean id="jdncTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
-		<property name="dataSource" ref="dataSource"></property>
+		<property name="dataSource" ref="dataSource"/>
 	</bean>
 	
 	<!-- 使用tx标签判定那些方法需要加上事务管理 controller方法 -->
@@ -154,8 +169,11 @@
 	
 	<!-- 开启事务自动注解,用于独立业务代码使用 -->
 	<tx:annotation-driven transaction-manager="transactionManager"/>
-	
-	<!-- 配置线程池 -->
+
+	<!-- 开启aspectj代理,用于注解aop -->
+	<aop:aspectj-autoproxy proxy-target-class="true"/>
+
+    <!-- 配置线程池 -->
 	<bean id="threadTaskPoll" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
 		<property name="corePoolSize" value="20"/>
 		<property name="maxPoolSize" value="30"/>

@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
  * 
  * @filename BatchTimingStepLogRegisterDaoImpl.java
  * @author wzaUsers
- * @date 2020-08-14 16:08:07
+ * @date 2020-09-14 19:09:47
  * @version v1.0
 */
 @Repository
@@ -57,7 +57,7 @@ public class BatchTimingStepLogRegisterDaoImpl extends BaseDaoSupport implements
 	 * @param stepExecutionId 任务执行ID
 	 */
 	@Override
-	public BatchTimingStepLogRegister selectOne1(String stepExecutionId, boolean nullException){
+	public BatchTimingStepLogRegister selectOne1(Long stepExecutionId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("stepExecutionId", stepExecutionId);
 		BatchTimingStepLogRegister batchTimingStepLogRegister = new BatchTimingStepLogRegister();
@@ -71,7 +71,7 @@ public class BatchTimingStepLogRegisterDaoImpl extends BaseDaoSupport implements
 	 * @param stepExecutionId 任务执行ID
 	 */
 	@Override
-	public BatchTimingStepLogRegister selectOne1R(String stepExecutionId, boolean nullException){
+	public BatchTimingStepLogRegister selectOne1R(Long stepExecutionId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("stepExecutionId", stepExecutionId);
 		BatchTimingStepLogRegister batchTimingStepLogRegister = new BatchTimingStepLogRegister();
@@ -85,7 +85,7 @@ public class BatchTimingStepLogRegisterDaoImpl extends BaseDaoSupport implements
 	 * @param stepExecutionId 任务执行ID
 	 */
 	@Override
-	public BatchTimingStepLogRegister selectOne1L(String stepExecutionId, boolean nullException){
+	public BatchTimingStepLogRegister selectOne1L(Long stepExecutionId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("stepExecutionId", stepExecutionId);
 		BatchTimingStepLogRegister batchTimingStepLogRegister = new BatchTimingStepLogRegister();
@@ -99,7 +99,7 @@ public class BatchTimingStepLogRegisterDaoImpl extends BaseDaoSupport implements
 	 * @param stepExecutionId 任务执行ID
 	 */
 	@Override
-	public int deleteOne1(String stepExecutionId){
+	public int deleteOne1(Long stepExecutionId){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("stepExecutionId", stepExecutionId);
 		return getSqlSessionTemplate().delete("BatchTimingStepLogRegister.deleteOne1", map);
@@ -110,7 +110,7 @@ public class BatchTimingStepLogRegisterDaoImpl extends BaseDaoSupport implements
 	 * @param stepExecutionId 任务执行ID
 	 */
 	@Override
-	public int deleteOne1L(String stepExecutionId){
+	public int deleteOne1L(Long stepExecutionId){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("stepExecutionId", stepExecutionId);
 		return getSqlSessionTemplate().delete("BatchTimingStepLogRegister.deleteOne1L", map);

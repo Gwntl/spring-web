@@ -7,7 +7,7 @@ import org.mine.model.BatchStepLogHistory;
  * 
  * @filename BatchStepLogHistoryDao.java
  * @author wzaUsers
- * @date 2020-08-20 17:08:03
+ * @date 2020-09-24 14:09:30
  * @version v1.0
 */
 
@@ -29,27 +29,27 @@ public interface BatchStepLogHistoryDao {
 	void batchInsertXML(List<BatchStepLogHistory> list);
 	/**
 	 * 单笔查询
-	 * @param executionId 任务执行ID
+	 * @param executionId 步骤执行实例
 	 */
 	BatchStepLogHistory selectOne1(String executionId, boolean nullException);
 	/**
 	 * 单笔查询(正常状态 valid_status = 0)
-	 * @param executionId 任务执行ID
+	 * @param executionId 步骤执行实例
 	 */
 	BatchStepLogHistory selectOne1R(String executionId, boolean nullException);
 	/**
 	 * 单笔查询(加锁  for update: 当使用索引时锁行, 其他锁表)
-	 * @param executionId 任务执行ID
+	 * @param executionId 步骤执行实例
 	 */
 	BatchStepLogHistory selectOne1L(String executionId, boolean nullException);
 	/**
 	 * 单笔删除
-	 * @param executionId 任务执行ID
+	 * @param executionId 步骤执行实例
 	 */
 	int deleteOne1(String executionId);
 	/**
 	 * 单笔删除(加锁  for update: 当使用索引时锁行, 其他锁表)
-	 * @param executionId 任务执行ID
+	 * @param executionId 步骤执行实例
 	 */
 	int deleteOne1L(String executionId);
 	/**
@@ -69,31 +69,31 @@ public interface BatchStepLogHistoryDao {
 	int updateOne1L(BatchStepLogHistory batchStepLogHistory);
 	/**
 	 * 单笔查询
-	 * @param executionInstance 任务执行实例
+	 * @param executionInstance JOB执行实例
 	 * @param stepId 执行步骤ID
 	 */
 	BatchStepLogHistory selectOne2(String executionInstance, String stepId, boolean nullException);
 	/**
 	 * 单笔查询(正常状态 valid_status = 0)
-	 * @param executionInstance 任务执行实例
+	 * @param executionInstance JOB执行实例
 	 * @param stepId 执行步骤ID
 	 */
 	BatchStepLogHistory selectOne2R(String executionInstance, String stepId, boolean nullException);
 	/**
 	 * 单笔查询(加锁  for update: 当使用索引时锁行, 其他锁表)
-	 * @param executionInstance 任务执行实例
+	 * @param executionInstance JOB执行实例
 	 * @param stepId 执行步骤ID
 	 */
 	BatchStepLogHistory selectOne2L(String executionInstance, String stepId, boolean nullException);
 	/**
 	 * 单笔删除
-	 * @param executionInstance 任务执行实例
+	 * @param executionInstance JOB执行实例
 	 * @param stepId 执行步骤ID
 	 */
 	int deleteOne2(String executionInstance, String stepId);
 	/**
 	 * 单笔删除(加锁  for update: 当使用索引时锁行, 其他锁表)
-	 * @param executionInstance 任务执行实例
+	 * @param executionInstance JOB执行实例
 	 * @param stepId 执行步骤ID
 	 */
 	int deleteOne2L(String executionInstance, String stepId);

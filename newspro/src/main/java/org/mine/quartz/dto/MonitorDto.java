@@ -1,5 +1,7 @@
 package org.mine.quartz.dto;
 
+import org.mine.aplt.util.CommonUtils;
+
 /**
  * @Description: 监视器Dto
  * @ClassName: MonitorDto
@@ -31,6 +33,15 @@ public class MonitorDto {
 	 * job运行状态
 	 */
 	private String jobStatus;
+
+	public MonitorDto() {
+		this.jobID = "";
+		this.jobExecutionInstance = "";
+		this.taskExecutionInstance = "";
+		this.queueExecutionInstance = "";
+		this.concurrencyNum = 0;
+		this.jobStatus = "";
+	}
 
 	/**
 	 * @return the jobID as $field.comment
@@ -117,6 +128,11 @@ public class MonitorDto {
 	 */
 	public void setJobStatus(String jobStatus) {
 		this.jobStatus = jobStatus;
+	}
+
+	public boolean hasEmptyTask() {
+		return CommonUtils.isEmpty(this.taskExecutionInstance) || CommonUtils.isEmpty(this.jobExecutionInstance)
+				|| CommonUtils.isEmpty(this.jobID) || CommonUtils.isEmpty(this.jobStatus);
 	}
 
 	@Override

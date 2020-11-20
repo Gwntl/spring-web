@@ -18,8 +18,9 @@ import java.util.Map;
  * @ClassName: QuartzTimingJobExecutor
  * @date 2020/8/1316:44
  */
-public class QuartzTimingJobExecutor implements Job{
+public class QuartzTimingJobExecutor implements Job {
     private static final Logger logger = LoggerFactory.getLogger(QuartzTimingJobExecutor.class);
+
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         logger.debug("QuartzTimingJobExecutor.execute() begin >>>>>>>>>>>>>>>>>>>>>>");

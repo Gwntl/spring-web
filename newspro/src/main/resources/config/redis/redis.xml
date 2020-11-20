@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--<bean id="redisSentinelConfiguration" class="org.springframework.data.redis.connection.RedisSentinelConfiguration">
+        <property name="master" value="myMaster"/>
+        <property name="sentinels">
+            <set>
+                <bean id="sentinel1" class="org.springframework.data.redis.connection.RedisNode">
+                    <constructor-arg name="host" value="127.0.0.1"/>
+                    <constructor-arg name="port" value="21315"/>
+                    <property name="name" value=""/>
+                </bean>
+            </set>
+        </property>
+    </bean>-->
+
+    <bean id="redisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <!--最小空连接数(默认为0): 用于设置一个Jedis连接池最少有几个空闲状态的Jedis实例-->
+        <property name="minIdle" value="${spring.redis.config.minIdle}"/>
+        <!--最大空闲数(默认为8): 用于设置一个Jedis连接池最多有几个空闲状态的Jedis实例-->
+        <property name="maxIdle" value="${spring.redis.config.maxIdle}"/>
+        <!--最大实例个数(默认为8): 用于设置一个连接池最多可以分配多少个Jedis实例，如果值为-1，则表示分配的Jedis实例个数不受限制；如果连接池已经分配了maxTotal个Jedis
+        实例，则此时连接池的状态为exhausted-->
+        <property name="maxTotal" value="${spring.redis.config.maxTotal}"/>
+        <!--最大等待时(默认为-1):，表示当创建一个Jedis实例时，如果超过这个最大等待时间，则直接抛出JedisConnectionException异常-->
+        <property name="maxWaitMillis" value="${spring.redis.config.maxWaitMillis}"/>
+        <!--表示一个Jedis保留的最小时间，即到达时间后会逐出连接，默认1800000L-->
+        <property name="minEvictableIdleTimeMillis" value="${spring.redis.config.minEvictableIdleTimeMillis}"/>
+        <!--表示扫描空闲对象的间隔时间, 默认-1L-->
+        <property name="timeBetweenEvictionRunsMillis" value="${spring.redis.config.timeBetweenEvictionRunsMillis}"/>
+        <!--当borrowObject返回对象时(默认为true): 表示使用后进先出的队列, 如果为false则使用FIFO队列-->
+        <property name="lifo" value="true"/>
+        <!--表示在分配一个Jedis实例时，是否使用提前验证。如果其值设置为true，则得到的Jedis实例都是可用的.默认使用false-->
+        <property name="testOnBorrow" value="true"/>
+        <!--如果为true，表示有一个idle object evitor线程对空闲对象进行扫描。如果验证失败，那么此对象会被从连接中删除；这一项只有在timeBetweenEvictionRunsMillis大于0
+        时才有意义. 默认为false-->
+        <property name="testWhileIdle" value="true"/>
+    </bean>
+
+    <bean id="redisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <property name="hostName" value="${spring.redis.host}"/>
+        <property name="port" value="${spring.redis.port}"/>
+        <property name="timeout" value="${spring.redis.timeout}"/>
+        <property name="password" value="${spring.redis.password}"/>
+        <!--指定数据库(默认为0)-->
+        <property name="database" value="${spring.redis.database}"/>
+        <property name="poolConfig" ref="redisPoolConfig"/>
+        <property name="usePool" value="true"/>
+    </bean>
+
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="redisConnectionFactory"/>
+        <!--
+            GenericJackson2JsonRedisSerializer、Jackson2JsonRedisSerializer 先将对象转为json，然后再保存到redis，所以在redis中是字符串1，无法进行加1.
+            JdkSerializationRedisSerializer 使用的jdk对象序列化，序列化后的值有类信息、版本号等，所以是一个包含很多字母的字符串，所以根本无法加1
+            GenericToStringSerializer、StringRedisSerializer 将[字符串的值]直接转为[字节数组]，所以保存到redis中是数字，所以可以进行加1
+        -->
+        <!--以下指定key及value序列化的对象. 默认均使用JdkSerializationRedisSerializer(序列化后为字符串,不可进行数值增加操作)-->
+        <property name="keySerializer">
+            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"/>
+        </property>
+        <property name="valueSerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+        </property>
+        <property name="hashKeySerializer">
+            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"/>
+        </property>
+        <property name="hashValueSerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+        </property>
+    </bean>
+
+</beans>

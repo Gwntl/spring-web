@@ -1,7 +1,8 @@
 package org.mine.aplt.enumqz;
 
-public enum JobExcutorEnum {
-	NEW("NEW"), COMPLETING("COMPLETING"), SUCCESS("SUCCESS"),FAILED("FAILED"),UNKOWN("UNKOWN"),CANCEL("CANCLE_MANUAL");
+public enum JobExecutorEnum {
+	NEW("NEW"), COMPLETING("COMPLETING"), SUCCESS("SUCCESS"), FAILED("FAILED"), UNKNOWN("UNKNOWN"),
+	CANCEL("CANCEL_MANUAL"), STOP("STOP"), RESTART("RESTART"), PAUSE("PAUSE"), TERMINAL("TERMINAL");
 	
 	/**
 	 * JOB执行并发
@@ -52,19 +53,19 @@ public enum JobExcutorEnum {
 	
 	private String value;
 	
-	private JobExcutorEnum(String value) {
+	private JobExecutorEnum(String value) {
 		this.value = value;
 	}
 	
 	/**
-	 * @return the id
+	 * @return the value
 	 */
 	public String getValue() {
 		return value;
 	}
 
 	/**
-	 * @param id the id to set
+	 * @param value the value to set
 	 */
 	public void setValue(String value) {
 		this.value = value;

@@ -9,6 +9,8 @@
 		<result column="queue_executor" property="queueExecutor"/>
 		<result column="queue_init_value" property="queueInitValue"/>
 		<result column="queue_execution_num" property="queueExecutionNum"/>
+		<result column="queue_same_time_run" property="queueSameTimeRun"/>
+		<result column="queue_max_run_num" property="queueMaxRunNum"/>
 		<result column="create_date" property="createDate"/>
 		<result column="valid_status" property="validStatus"/>
 		<result column="remark" property="remark"/>
@@ -16,7 +18,8 @@
 
 	<sql id="Base_Select_List">
 		queue_id,queue_name,queue_exc_flag,queue_trigger_id,queue_executor,queue_init_value,
-		queue_execution_num,create_date,valid_status,remark
+		queue_execution_num,queue_same_time_run,queue_max_run_num,create_date,valid_status,
+		remark
 	</sql>
 
 	<sql id="Base_Insert_Column">
@@ -28,6 +31,8 @@
 			<if test="queueExecutor != null">queue_executor,</if>
 			<if test="queueInitValue != null">queue_init_value,</if>
 			<if test="queueExecutionNum != null">queue_execution_num,</if>
+			<if test="queueSameTimeRun != null">queue_same_time_run,</if>
+			<if test="queueMaxRunNum != null">queue_max_run_num,</if>
 			<if test="createDate != null">create_date,</if>
 			<if test="validStatus != null">valid_status,</if>
 			<if test="remark != null">remark,</if>
@@ -43,6 +48,8 @@
 			<if test="queueExecutor != null">#{queueExecutor},</if>
 			<if test="queueInitValue != null">#{queueInitValue},</if>
 			<if test="queueExecutionNum != null">#{queueExecutionNum},</if>
+			<if test="queueSameTimeRun != null">#{queueSameTimeRun},</if>
+			<if test="queueMaxRunNum != null">#{queueMaxRunNum},</if>
 			<if test="createDate != null">#{createDate},</if>
 			<if test="validStatus != null">#{validStatus},</if>
 			<if test="remark != null">#{remark},</if>
@@ -66,13 +73,13 @@
 	<insert id="batchInsertXML" parameterType="java.util.List">
 		insert into batch_queue_definition
 		(queue_id,queue_name,queue_exc_flag,queue_trigger_id,queue_executor
-			,queue_init_value,queue_execution_num,create_date,valid_status
-			,remark)
+			,queue_init_value,queue_execution_num,queue_same_time_run,queue_max_run_num
+			,create_date,valid_status,remark)
 		values
 		<foreach collection="list" item="item" index="index" separator=",">
 			(#{item.queueId},#{item.queueName},#{item.queueExcFlag},#{item.queueTriggerId},#{item.queueExecutor}
-				,#{item.queueInitValue},#{item.queueExecutionNum},#{item.createDate},#{item.validStatus}
-				,#{item.remark})
+				,#{item.queueInitValue},#{item.queueExecutionNum},#{item.queueSameTimeRun},#{item.queueMaxRunNum}
+				,#{item.createDate},#{item.validStatus},#{item.remark})
 		</foreach>
 	</insert>
 	<select id="selectOne1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
@@ -117,6 +124,8 @@
 			<if test="queueExecutor != null">queue_executor = #{queueExecutor},</if>
 			<if test="queueInitValue != null">queue_init_value = #{queueInitValue},</if>
 			<if test="queueExecutionNum != null">queue_execution_num = #{queueExecutionNum},</if>
+			<if test="queueSameTimeRun != null">queue_same_time_run = #{queueSameTimeRun},</if>
+			<if test="queueMaxRunNum != null">queue_max_run_num = #{queueMaxRunNum},</if>
 			<if test="createDate != null">create_date = #{createDate},</if>
 			<if test="validStatus != null">valid_status = #{validStatus},</if>
 			<if test="remark != null">remark = #{remark},</if>
@@ -133,6 +142,8 @@
 			<if test="queueExecutor != null">queue_executor = #{queueExecutor},</if>
 			<if test="queueInitValue != null">queue_init_value = #{queueInitValue},</if>
 			<if test="queueExecutionNum != null">queue_execution_num = #{queueExecutionNum},</if>
+			<if test="queueSameTimeRun != null">queue_same_time_run = #{queueSameTimeRun},</if>
+			<if test="queueMaxRunNum != null">queue_max_run_num = #{queueMaxRunNum},</if>
 			<if test="createDate != null">create_date = #{createDate},</if>
 			<if test="validStatus != null">valid_status = #{validStatus},</if>
 			<if test="remark != null">remark = #{remark},</if>
@@ -149,6 +160,8 @@
 			<if test="queueExecutor != null">queue_executor = #{queueExecutor},</if>
 			<if test="queueInitValue != null">queue_init_value = #{queueInitValue},</if>
 			<if test="queueExecutionNum != null">queue_execution_num = #{queueExecutionNum},</if>
+			<if test="queueSameTimeRun != null">queue_same_time_run = #{queueSameTimeRun},</if>
+			<if test="queueMaxRunNum != null">queue_max_run_num = #{queueMaxRunNum},</if>
 			<if test="createDate != null">create_date = #{createDate},</if>
 			<if test="validStatus != null">valid_status = #{validStatus},</if>
 			<if test="remark != null">remark = #{remark},</if>
@@ -165,6 +178,8 @@
 			<if test="queueExecutor != null">queue_executor = #{queueExecutor},</if>
 			<if test="queueInitValue != null">queue_init_value = #{queueInitValue},</if>
 			<if test="queueExecutionNum != null">queue_execution_num = #{queueExecutionNum},</if>
+			<if test="queueSameTimeRun != null">queue_same_time_run = #{queueSameTimeRun},</if>
+			<if test="queueMaxRunNum != null">queue_max_run_num = #{queueMaxRunNum},</if>
 			<if test="createDate != null">create_date = #{createDate},</if>
 			<if test="validStatus != null">valid_status = #{validStatus},</if>
 			<if test="remark != null">remark = #{remark},</if>
@@ -213,6 +228,20 @@
 			<foreach collection="list" item="item" index="index">
 				<if test="item.queueExecutionNum != null">
 					when queue_id = #{item.queueId} then #{item.queueExecutionNum}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="queue_same_time_run=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.queueSameTimeRun != null">
+					when queue_id = #{item.queueId} then #{item.queueSameTimeRun}
+				</if>
+			</foreach>
+		</trim>
+		<trim prefix="queue_max_run_num=case" suffix="end,">
+			<foreach collection="list" item="item" index="index">
+				<if test="item.queueMaxRunNum != null">
+					when queue_id = #{item.queueId} then #{item.queueMaxRunNum}
 				</if>
 			</foreach>
 		</trim>

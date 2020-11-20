@@ -4,18 +4,18 @@ package org.mine.model;
  * batch_timing_step_log_register--定时批量步骤执行日志登记表
  * @filename BatchTimingStepLogRegister.java
  * @author wzaUsers
- * @date 2020-08-14 16:08:07
+ * @date 2020-09-14 19:09:47
  * @version v1.0
 */
 public class BatchTimingStepLogRegister {
 	/**
 	 * 任务执行ID
 	 */
-	private String stepExecutionId;
+	private Long stepExecutionId;
 	/**
 	 * 执行步骤ID
 	 */
-	private String stepJobId;
+	private Long stepJobId;
 	/**
 	 * 执行步骤名称
 	 */
@@ -39,7 +39,7 @@ public class BatchTimingStepLogRegister {
 	/**
 	 * 关联作业ID
 	 */
-	private String stepAssociateJobId;
+	private Long stepAssociateJobId;
 	/**
 	 * 创建时间
 	 */
@@ -54,14 +54,14 @@ public class BatchTimingStepLogRegister {
 	private String remark;
 
 	public BatchTimingStepLogRegister() {
-		this.stepExecutionId = "";
-		this.stepJobId = "";
+		this.stepExecutionId = 0L;
+		this.stepJobId = 0L;
 		this.stepJobName = "";
 		this.stepStartTime = null;
 		this.stepEndTime = null;
 		this.stepJobStatus = "";
 		this.stepJobErrmsg = "";
-		this.stepAssociateJobId = "";
+		this.stepAssociateJobId = 0L;
 		this.createDate = "";
 		this.validStatus = "0";
 		this.remark = "";
@@ -71,28 +71,28 @@ public class BatchTimingStepLogRegister {
 	 * 任务执行ID
 	 * @return the stepExecutionId
 	 */
-	public String getStepExecutionId() {
+	public Long getStepExecutionId() {
 		return stepExecutionId;
 	}
 	/**
 	 * 任务执行ID
 	 * @param stepExecutionId the stepExecutionId to set
 	 */
-	public void setStepExecutionId(String stepExecutionId) {
+	public void setStepExecutionId(Long stepExecutionId) {
 		this.stepExecutionId = stepExecutionId;
 	}
 	/**
 	 * 执行步骤ID
 	 * @return the stepJobId
 	 */
-	public String getStepJobId() {
+	public Long getStepJobId() {
 		return stepJobId;
 	}
 	/**
 	 * 执行步骤ID
 	 * @param stepJobId the stepJobId to set
 	 */
-	public void setStepJobId(String stepJobId) {
+	public void setStepJobId(Long stepJobId) {
 		this.stepJobId = stepJobId;
 	}
 	/**
@@ -169,14 +169,14 @@ public class BatchTimingStepLogRegister {
 	 * 关联作业ID
 	 * @return the stepAssociateJobId
 	 */
-	public String getStepAssociateJobId() {
+	public Long getStepAssociateJobId() {
 		return stepAssociateJobId;
 	}
 	/**
 	 * 关联作业ID
 	 * @param stepAssociateJobId the stepAssociateJobId to set
 	 */
-	public void setStepAssociateJobId(String stepAssociateJobId) {
+	public void setStepAssociateJobId(Long stepAssociateJobId) {
 		this.stepAssociateJobId = stepAssociateJobId;
 	}
 	/**

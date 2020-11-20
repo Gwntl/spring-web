@@ -99,7 +99,7 @@ public class StdSchedulerFactoryDecoration extends StdSchedulerFactory {
 	@Override
 	public void initialize() throws SchedulerException {
 		String requestedFile = System.getProperty(PROPERTIES_FILE);
-		String propFileName = requestedFile != null ? requestedFile : "quartz.properties";
+		String propFileName = requestedFile != null ? requestedFile : "batch.properties";
 		File propFile = new File(propFileName);
 		Properties props = new Properties();
 		InputStream in = null;
@@ -110,7 +110,7 @@ public class StdSchedulerFactoryDecoration extends StdSchedulerFactory {
 					if (requestedFile != null) {
 						propSrc = "specified file: '" + requestedFile + "'";
 					} else {
-						propSrc = "default file in current working dir: 'quartz.properties'";
+						propSrc = "default file in current working dir: 'batch.properties'";
 					}
 					logger.info(propSrc);
 					in = new BufferedInputStream(new FileInputStream(propFileName));
@@ -132,7 +132,7 @@ public class StdSchedulerFactoryDecoration extends StdSchedulerFactory {
 				}
 				logger.info(propSrc);
 			} else {
-				propSrc = "default resource file in Quartz package: 'quartz.properties'";
+				propSrc = "default resource file in Quartz package: 'batch.properties'";
 				logger.info(propSrc);
 				ClassLoader cl = getClass().getClassLoader();
 				if (cl == null) {
@@ -141,20 +141,20 @@ public class StdSchedulerFactoryDecoration extends StdSchedulerFactory {
 				if (cl == null) {
 					throw new SchedulerConfigException("Unable to find a class loader on the current thread or class.");
 				}
-				in = cl.getResourceAsStream("quartz.properties");
+				in = cl.getResourceAsStream("batch.properties");
 				if (in == null) {
-					in = cl.getResourceAsStream("/quartz.properties");
+					in = cl.getResourceAsStream("/batch.properties");
 				}
 				if (in == null) {
 					in = cl.getResourceAsStream("org/quartz/quartz.properties");
 				}
 				if (in == null) {
-					throw new SchedulerException("Default quartz.properties not found in class path");
+					throw new SchedulerException("Default batch.properties not found in class path");
 				}
 				try {
 					props.load(in);
 				} catch (IOException ioe) {
-					throw new SchedulerException("Resource properties file: 'org/quartz/quartz.properties' "
+					throw new SchedulerException("Resource properties file: 'org/batch/batch.properties' "
 							+ "could not be read from the classpath.", ioe);
 				}
 			}
@@ -171,7 +171,7 @@ public class StdSchedulerFactoryDecoration extends StdSchedulerFactory {
 			sysProps = System.getProperties();
 		} catch (AccessControlException e) {
 			logger.error(MineException.getStackTrace(e));
-			getLog().warn("Skipping overriding quartz properties with System properties "
+			getLog().warn("Skipping overriding batch properties with System properties "
 					+ "during initialization because of an AccessControlException.  "
 					+ "This is likely due to not having read/write access for "
 					+ "java.util.PropertyPermission as required by java.lang.System.getProperties().  "
@@ -207,7 +207,7 @@ public class StdSchedulerFactoryDecoration extends StdSchedulerFactory {
 
 		// 指定当前Scheduler实例执行时的线程名, 未指定的话使用当前instanceName+_QuartzSchedulerThread
 		if (threadName != null && threadName.trim().length() > 0) {
-			props.put("org.quartz.scheduler.threadName", threadName);
+			props.put("org.batch.scheduler.threadName", threadName);
 		}
 
 		if (threadCount > 0) {

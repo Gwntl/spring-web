@@ -47,14 +47,19 @@ public class ActualAddJobImpl extends BaseServiceTaskletExecutor {
 	public Map<String, Object> executor(Map<String, Object> map) {
 		logger.debug("ActualAddJobImpl >>>> begin>>>>> {}", CommonUtils.toString(map));
 		try{
+			logger.debug("the current beanName : {}", beanName);
 			logger.debug("first operator : {}", map.get("operator"));
-			TimeUnit.SECONDS.sleep(3);
+			TimeUnit.SECONDS.sleep(5);
 		} catch (InterruptedException e){
 			logger.error("error message : {}", MineException.getStackTrace(e));
+//			Thread.currentThread().interrupt();
 		}
 		System.out.println(CommonUtils.dateToString(new Date(), "yyyy-MM-dd HH:mm:ss") + " actualAddJob>>>>>>>>first step>>> actualAddJob>>>>>>");
 		logger.debug("ActualAddJobImpl >>>> end>>>>>");
 //		throw new RuntimeException("执行失败.......");
-		return null;
+
+		Map<String, Object> out = new HashMap<>();
+		out.put("ActualAddJobImpl", "ActualAddJobImpl_TEST");
+		return out;
 	}
 }

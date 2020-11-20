@@ -31,21 +31,21 @@
 		</property>
 	</bean>
 	
-<!-- 	<bean id="d01" class="com.quartz.job.abs.SonDemo01"> -->
+<!-- 	<bean id="d01" class="com.batch.job.abs.SonDemo01"> -->
 <!-- 		<property name="className" value="sonDemo01"></property> -->
-<!-- 		<property name="classPath" value="com.quartz.job.abs.SonDemo01"></property> -->
+<!-- 		<property name="classPath" value="com.batch.job.abs.SonDemo01"></property> -->
 <!-- 	</bean> -->
-<!-- 	<bean id="d02" class="com.quartz.job.abs.SonDemo02"> -->
+<!-- 	<bean id="d02" class="com.batch.job.abs.SonDemo02"> -->
 <!-- 		<property name=""></property> -->
 <!-- 	</bean> -->
 	
 <!-- 	<bean id="demo01" parent="p"> -->
 <!-- 		<property name="className" value="sonDemo01"></property> -->
-<!-- 		<property name="classPath" value="com.quartz.job.abs.SonDemo01"></property> -->
+<!-- 		<property name="classPath" value="com.batch.job.abs.SonDemo01"></property> -->
 <!-- 	</bean> -->
 	
 <!-- 	<bean id="demo02" parent="p"> -->
 <!-- 		<property name="className" value="sonDemo02"></property> -->
-<!-- 		<property name="classPath" value="com.quartz.job.abs.SonDemo02"></property> -->
+<!-- 		<property name="classPath" value="com.batch.job.abs.SonDemo02"></property> -->
 <!-- 	</bean> -->
 </beans>

@@ -539,8 +539,8 @@ public class CodeUtil {
 //				"batch_step_execution_log_history", "batch_timing_task_log_register", "batch_timing_task_log_history",
 //				"batch_timing_job_log_register", "batch_timing_job_log_history"};
 //		String[] tables = {"batch_task_execute", "batch_job_execute", "batch_queue_execute"};
-		String[] tables = {"batch_task_execute"};
-//		String[] tables = {"batch_step_log", "batch_step_log_history"};
+//		String[] tables = {"db_optimistic_lock"};
+		String[] tables = {"batch_step_log", "batch_step_log_history"};
 //		String[] tables = {"batch_job_log", "batch_job_log_history"};
 //		String[] tables = {"batch_task_log", "batch_task_log_history"};
 		for(String tableName : tables){

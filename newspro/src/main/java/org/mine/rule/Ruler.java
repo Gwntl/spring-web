@@ -1,7 +1,5 @@
 package org.mine.rule;
 
-import com.google.common.base.Strings;
-import org.mine.aplt.constant.JobContanst;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

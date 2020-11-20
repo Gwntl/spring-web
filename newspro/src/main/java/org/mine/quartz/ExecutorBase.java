@@ -35,11 +35,11 @@ public class ExecutorBase implements ApplicationContextAware{
 		return (SchedulerFactoryBean) applicationContext.getBean("&DefaultQuartzScheduler");
 	}
 	
-	public static SchedulerFactoryBean getDymicScheduler() {
+	public static SchedulerFactoryBean getDynamicScheduler() {
 		return (SchedulerFactoryBean) applicationContext.getBean("&DynamicOperationScheduler");
 	}
 	
-	public static Class<? extends Job> getExcutorJob(String jobPath){
+	public static Class<? extends Job> getExecutorJob(String jobPath) {
 		try {
 			return (Class<? extends Job>) Class.forName(jobPath);
 		} catch (ClassNotFoundException e) {

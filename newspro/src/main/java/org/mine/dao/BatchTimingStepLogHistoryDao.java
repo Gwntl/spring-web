@@ -7,7 +7,7 @@ import org.mine.model.BatchTimingStepLogHistory;
  * 
  * @filename BatchTimingStepLogHistoryDao.java
  * @author wzaUsers
- * @date 2020-08-14 16:08:07
+ * @date 2020-09-14 19:09:48
  * @version v1.0
 */
 
@@ -31,27 +31,27 @@ public interface BatchTimingStepLogHistoryDao {
 	 * 单笔查询
 	 * @param historyStepExecutionId 任务执行ID
 	 */
-	BatchTimingStepLogHistory selectOne1(String historyStepExecutionId, boolean nullException);
+	BatchTimingStepLogHistory selectOne1(Long historyStepExecutionId, boolean nullException);
 	/**
 	 * 单笔查询(正常状态 valid_status = 0)
 	 * @param historyStepExecutionId 任务执行ID
 	 */
-	BatchTimingStepLogHistory selectOne1R(String historyStepExecutionId, boolean nullException);
+	BatchTimingStepLogHistory selectOne1R(Long historyStepExecutionId, boolean nullException);
 	/**
 	 * 单笔查询(加锁  for update: 当使用索引时锁行, 其他锁表)
 	 * @param historyStepExecutionId 任务执行ID
 	 */
-	BatchTimingStepLogHistory selectOne1L(String historyStepExecutionId, boolean nullException);
+	BatchTimingStepLogHistory selectOne1L(Long historyStepExecutionId, boolean nullException);
 	/**
 	 * 单笔删除
 	 * @param historyStepExecutionId 任务执行ID
 	 */
-	int deleteOne1(String historyStepExecutionId);
+	int deleteOne1(Long historyStepExecutionId);
 	/**
 	 * 单笔删除(加锁  for update: 当使用索引时锁行, 其他锁表)
 	 * @param historyStepExecutionId 任务执行ID
 	 */
-	int deleteOne1L(String historyStepExecutionId);
+	int deleteOne1L(Long historyStepExecutionId);
 	/**
 	 * 单笔更新
 	 * @param batchTimingStepLogHistory 

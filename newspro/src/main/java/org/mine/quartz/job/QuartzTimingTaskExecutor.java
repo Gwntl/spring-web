@@ -1,7 +1,7 @@
 package org.mine.quartz.job;
 
-import org.mine.aplt.constant.JobContanst;
-import org.mine.aplt.enumqz.JobExcutorEnum;
+import org.mine.aplt.constant.JobConstant;
+import org.mine.aplt.enumqz.JobExecutorEnum;
 import org.mine.aplt.support.bean.GitContext;
 import org.mine.aplt.util.CommonUtils;
 import org.mine.dao.BatchTaskLogDao;
@@ -33,7 +33,7 @@ public class QuartzTimingTaskExecutor implements Job{
         logger.debug("QuartzTimingTaskExecutor.execute() begin >>>>>>>>>>>>>>>>>>>>>>");
         Map<String, Object> map = context.getJobDetail().getJobDataMap();
         ExecuteTaskDto taskDto = (ExecuteTaskDto) map.get("dto");
-        taskDto.setTaskExecutionInstance(BaseExecutor.completeExecutionID("sequence_task_instance", JobContanst.EXECUTOR_TASK_PREFIX));
+        taskDto.setTaskExecutionInstance(BaseExecutor.completeExecutionID("sequence_task_instance", JobConstant.EXECUTOR_TASK_PREFIX));
         GitContext.doIndependentTransActionControl((input) -> {
             BatchTaskLog taskLog = new BatchTaskLog();
             taskLog.setExecutionInstance(input.getTaskExecutionInstance());
@@ -42,9 +42,9 @@ public class QuartzTimingTaskExecutor implements Job{
             taskLog.setAssociateQueueId(input.getQueueId());
             taskLog.setStartTime(CommonUtils.currentTime(new Date()));
             taskLog.setCreateDate(CommonUtils.currentDate(new Date()));
-            taskLog.setTaskStatus(JobExcutorEnum.NEW.getValue());
+            taskLog.setTaskStatus(JobExecutorEnum.NEW.getValue());
             taskLog.setTimeStamp(System.nanoTime());
-            taskLog.setValidStatus(JobContanst.VALID_STATUS_0);
+            taskLog.setValidStatus(JobConstant.VALID_STATUS_0);
             return GitContext.getBean(BatchTaskLogDao.class).insertOne(taskLog);
         }, taskDto);
         TaskRecodeLogLogic.taskLogic(taskDto);

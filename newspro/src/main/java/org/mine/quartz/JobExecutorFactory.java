@@ -9,21 +9,21 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.mine.aplt.constant.ApltContanst;
 
-public class JobExcutorFactory{
+public class JobExecutorFactory {
 	
-	private volatile static JobExcutorFactory factory = null;
+	private volatile static JobExecutorFactory factory = null;
 	
 	public volatile static ThreadPoolExecutor executor = null;
 	
 	public volatile static ThreadPoolExecutor executorNoLog = null;
 	
-	private JobExcutorFactory(){}
-	
-	public static JobExcutorFactory getFactory(){
-		if(factory == null){
-			synchronized(JobExcutorFactory.class){
-				if(factory == null){
-					factory = new JobExcutorFactory();
+	private JobExecutorFactory(){}
+
+	public static JobExecutorFactory getFactory() {
+		if (factory == null) {
+			synchronized (JobExecutorFactory.class) {
+				if (factory == null) {
+					factory = new JobExecutorFactory();
 				}
 			}
 		}
@@ -35,25 +35,25 @@ public class JobExcutorFactory{
 	 * 根据不同场景实现不同的线程池.
 	 * @return
 	 */
-	private static ThreadPoolExecutor getNewInstance(){
-		if(executor == null){
-			synchronized (JobExcutorFactory.class) {
-				if(executor == null){
+	private static ThreadPoolExecutor getNewInstance() {
+		if (executor == null) {
+			synchronized (JobExecutorFactory.class) {
+				if (executor == null) {
 					//此处使用有界队列, 由于需要记录日志的异步定时任务偏少.
-					executor = new ThreadPoolExecutor(20, 30, 50L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(20), new CustomThreadFactory("job-executor-"));
+					executor = new ThreadPoolExecutor(16, 32, 50L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(128), new CustomThreadFactory("JOB-EXECUTOR-"));
 				}
 			}
 		}
 		return executor;
 	}
-	
-	private static ThreadPoolExecutor getNoLogInstance(){
+
+	private static ThreadPoolExecutor getNoLogInstance() {
 		if (executorNoLog == null) {
-			synchronized(JobExcutorFactory.class){
+			synchronized (JobExecutorFactory.class) {
 				if (executorNoLog == null) {
 					//高并发执行任务时间短.
 					executorNoLog = new ThreadPoolExecutor(ApltContanst.CPU_COUNT << 1, ApltContanst.CPU_COUNT << 1,
-							1000, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(4096), new CustomThreadFactory("nolog-job-executor"));
+							1000, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(4096), new CustomThreadFactory("NO-LOG-JOB-EXECUTOR-"));
 				}
 			}
 		}
@@ -75,7 +75,7 @@ public class JobExcutorFactory{
 		public CustomThreadFactory(String threadNamePre) {
 			SecurityManager s = System.getSecurityManager();
 			group = (s != null) ? s.getThreadGroup() : Thread.currentThread().getThreadGroup();
-			namePrefix = threadNamePre + "pool-" + poolNumber.getAndIncrement() + "-thread-";
+			namePrefix = threadNamePre + "POOL-" + poolNumber.getAndIncrement() + "-THREAD-";
 		}
 
 		public Thread newThread(Runnable r) {

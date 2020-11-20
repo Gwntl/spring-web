@@ -19,8 +19,8 @@ public class DeamonThreadTest {
 //				while(true){
 //					if(blockingQueue.size() <= 0){
 //						try {
-//							synchronized(lock){
-//								lock.wait(1000L);
+//							synchronized(lock.properties){
+//								lock.properties.wait(1000L);
 //							}
 //						} catch (InterruptedException e) {
 //							e.printStackTrace();

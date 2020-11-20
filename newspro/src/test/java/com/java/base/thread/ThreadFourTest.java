@@ -53,10 +53,10 @@ public class ThreadFourTest {
 		for(int i=0;i<10;i++){  //这行不能改动
 			String input = i+"";  //这行不能改动
 			//1
-//			lock.lock();
+//			lock.properties.lock.properties();
 //			l.add(input);
 //			condition.signal();
-//			lock.unlock();
+//			lock.properties.unlock();
 			
 			//2
 //			try {
@@ -85,7 +85,7 @@ public class ThreadFourTest {
 			try {
 				while(true){
 					//1
-//					lock.lock();
+//					lock.properties.lock.properties();
 //					if(l.size() <= 0){
 //						condition.await();
 //					}

@@ -20,9 +20,13 @@ public class ExecuteTaskDto implements Serializable, Cloneable{
 	 */
 	private Map<String, Object> queueInitValue;
 	/**
-	 * 组别ID
+	 * 队列ID
 	 */
 	private String queueId;
+	/**
+	 * 队列名称
+	 */
+	private String queueName;
 	/**
 	 * 当前组别是否记录日志
 	 */
@@ -92,14 +96,27 @@ public class ExecuteTaskDto implements Serializable, Cloneable{
 	 */
 	private String taskExecutionInstance;
 	/**
+	 * Queue执行实例
+	 */
+	private String queueExecutionInstance;
+	/**
 	 * 指定并发数
 	 */
 	private int concurrencyNum;
+	/**
+	 * 已执行成功JOB
+	 */
+	private Map<String, Object> successJobMap;
+	/**
+	 * 重启标志
+	 */
+	private boolean restartTaskFlag;
 
 	public ExecuteTaskDto() {
 		super();
 		this.queueInitValue = new HashMap<>();
 		this.queueId = "";
+		this.queueName = "";
 		this.jobLogFlag = 0;
 		this.jobOneTime = 0;
 		this.taskId = "";
@@ -117,7 +134,10 @@ public class ExecuteTaskDto implements Serializable, Cloneable{
 		this.stepInitValue = new HashMap<>();
 		this.executionInstance = "";
 		this.taskExecutionInstance = "";
+		this.queueExecutionInstance = "";
 		this.concurrencyNum = 0;
+		this.successJobMap = new HashMap<>();
+		this.restartTaskFlag = false;
 	}
 	
 	/**
@@ -137,7 +157,7 @@ public class ExecuteTaskDto implements Serializable, Cloneable{
 	}
 
 	/**
-	 * 组别ID
+	 * 队列ID
 	 * @return the queueId
 	 */
 	public String getQueueId() {
@@ -145,11 +165,27 @@ public class ExecuteTaskDto implements Serializable, Cloneable{
 	}
 
 	/**
-	 * 组别ID
+	 * 队列ID
 	 * @param queueId the queueId to set
 	 */
 	public void setQueueId(String queueId) {
 		this.queueId = queueId;
+	}
+
+	/**
+	 * 队列名称
+	 * @return the queueName as $field.comment
+	 */
+	public String getQueueName() {
+		return queueName;
+	}
+
+	/**
+	 * 队列名称
+	 * @param queueName the queueName to set
+	 */
+	public void setQueueName(String queueName) {
+		this.queueName = queueName;
 	}
 
 	/**
@@ -391,6 +427,21 @@ public class ExecuteTaskDto implements Serializable, Cloneable{
 	public void setTaskExecutionInstance(String taskExecutionInstance) {
 		this.taskExecutionInstance = taskExecutionInstance;
 	}
+
+	/**
+	 * @return the queueExecutionInstance as $field.comment
+	 */
+	public String getQueueExecutionInstance() {
+		return queueExecutionInstance;
+	}
+
+	/**
+	 * @param queueExecutionInstance the queueExecutionInstance to set
+	 */
+	public void setQueueExecutionInstance(String queueExecutionInstance) {
+		this.queueExecutionInstance = queueExecutionInstance;
+	}
+
 	/**
 	 * 指定并发数
 	 * @return the concurrencyNum
@@ -406,13 +457,56 @@ public class ExecuteTaskDto implements Serializable, Cloneable{
 		this.concurrencyNum = concurrencyNum;
 	}
 
+	/**
+	 * 已执行成功JOB
+	 * @return the successJobMap as successJobMap
+	 */
+	public Map<String, Object> getSuccessJobMap() {
+		return successJobMap;
+	}
+
+	/**
+	 * 已执行成功JOB
+	 * @param successJobMap the successJobMap to set
+	 */
+	public void setSuccessJobMap(Map<String, Object> successJobMap) {
+		this.successJobMap = successJobMap;
+	}
+
+	/**
+	 * 重启标志
+	 * @return the restartTaskFlag as restartTaskFlag
+	 */
+	public boolean getRestartTaskFlag() {
+		return restartTaskFlag;
+	}
+
+	/**
+	 * 重启标志
+	 * @param restartTaskFlag the restartTaskFlag to set
+	 */
+	public void setRestartTaskFlag(boolean restartTaskFlag) {
+		this.restartTaskFlag = restartTaskFlag;
+	}
+
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		ExecuteTaskDto cloneDto = (ExecuteTaskDto)super.clone();
-		cloneDto.setQueueInitValue((HashMap<String, Object>)((HashMap<String, Object>)this.queueInitValue).clone());
-		cloneDto.setTaskInitValue((HashMap<String, Object>)((HashMap<String, Object>)this.taskInitValue).clone());
-		cloneDto.setJobInitValue((HashMap<String, Object>)((HashMap<String, Object>)this.jobInitValue).clone());
-		cloneDto.setStepInitValue((HashMap<String, Object>)((HashMap<String, Object>)this.stepInitValue).clone());
+		if (this.queueInitValue != null) {
+			cloneDto.setQueueInitValue((HashMap<String, Object>)((HashMap<String, Object>)this.queueInitValue).clone());
+		}
+		if (this.taskInitValue != null) {
+			cloneDto.setTaskInitValue((HashMap<String, Object>)((HashMap<String, Object>)this.taskInitValue).clone());
+		}
+		if (this.jobInitValue != null) {
+			cloneDto.setJobInitValue((HashMap<String, Object>)((HashMap<String, Object>)this.jobInitValue).clone());
+		}
+		if (this.stepInitValue != null) {
+			cloneDto.setStepInitValue((HashMap<String, Object>)((HashMap<String, Object>)this.stepInitValue).clone());
+		}
+		if (this.successJobMap != null) {
+			cloneDto.setStepInitValue((HashMap<String, Object>)((HashMap<String, Object>)this.successJobMap).clone());
+		}
 		return cloneDto;
 	}
 
@@ -421,7 +515,7 @@ public class ExecuteTaskDto implements Serializable, Cloneable{
 	 */
 	@Override
 	public String toString() {
-		return "ExecuteTaskDto [queueInitValue = " + CommonUtils.toString(queueInitValue) + ", queueId= " + queueId
+		return "ExecuteTaskDto [queueInitValue = " + CommonUtils.toString(queueInitValue) + ", queueId= " + queueId + ", queueName=" + queueName
 				+ ", groupSaveLog=" + jobLogFlag + ", jobOneTime=" + jobOneTime + ", taskId=" + taskId + ", taskName=" + taskName
 				+ ", taskSkipFlag=" + taskSkipFlag + ", taskInitValue=" + CommonUtils.toString(taskInitValue)
 				+ ", jobInitValue=" + CommonUtils.toString(jobInitValue) + ", jobSkipFlag=" + jobSkipFlag
@@ -429,7 +523,8 @@ public class ExecuteTaskDto implements Serializable, Cloneable{
 				+ ", jobTimeDelayValue=" + jobTimeDelayValue + ", jobId=" + jobId + ", jobName=" + jobName
 				+ ", stepMdcValue=" + stepMdcValue + ", stepInitValue=" + CommonUtils.toString(stepInitValue)
 				+ ", executionInstance=" + executionInstance + ", taskExecutionInstance=" + taskExecutionInstance
-				+ ", concurrencyNum=" + concurrencyNum +"]";
+				+ ", queueExecutionInstance=" + queueExecutionInstance + ", concurrencyNum=" + concurrencyNum
+				+ "，successJobMap=" + CommonUtils.toString(successJobMap) + ", restartTaskFlag=" + restartTaskFlag + "]";
 	}
 
 	public static void main(String[] args) throws Exception{

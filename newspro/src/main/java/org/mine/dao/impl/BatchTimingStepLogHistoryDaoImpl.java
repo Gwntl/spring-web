@@ -1,21 +1,22 @@
 package org.mine.dao.impl;
 
-import java.util.List;
-import org.mine.model.BatchTimingStepLogHistory;
-import java.util.Map;
-import java.util.HashMap;
 import org.mine.aplt.exception.GitWebException;
 import org.mine.aplt.support.dao.BaseDaoSupport;
 import org.mine.aplt.support.dao.BatchOperator;
 import org.mine.aplt.util.CommonUtils;
 import org.mine.dao.BatchTimingStepLogHistoryDao;
+import org.mine.model.BatchTimingStepLogHistory;
 import org.springframework.stereotype.Repository;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
  * @filename BatchTimingStepLogHistoryDaoImpl.java
  * @author wzaUsers
- * @date 2020-08-14 16:08:07
+ * @date 2020-09-14 19:09:48
  * @version v1.0
 */
 @Repository
@@ -57,7 +58,7 @@ public class BatchTimingStepLogHistoryDaoImpl extends BaseDaoSupport implements 
 	 * @param historyStepExecutionId 任务执行ID
 	 */
 	@Override
-	public BatchTimingStepLogHistory selectOne1(String historyStepExecutionId, boolean nullException){
+	public BatchTimingStepLogHistory selectOne1(Long historyStepExecutionId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("historyStepExecutionId", historyStepExecutionId);
 		BatchTimingStepLogHistory batchTimingStepLogHistory = new BatchTimingStepLogHistory();
@@ -71,7 +72,7 @@ public class BatchTimingStepLogHistoryDaoImpl extends BaseDaoSupport implements 
 	 * @param historyStepExecutionId 任务执行ID
 	 */
 	@Override
-	public BatchTimingStepLogHistory selectOne1R(String historyStepExecutionId, boolean nullException){
+	public BatchTimingStepLogHistory selectOne1R(Long historyStepExecutionId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("historyStepExecutionId", historyStepExecutionId);
 		BatchTimingStepLogHistory batchTimingStepLogHistory = new BatchTimingStepLogHistory();
@@ -85,7 +86,7 @@ public class BatchTimingStepLogHistoryDaoImpl extends BaseDaoSupport implements 
 	 * @param historyStepExecutionId 任务执行ID
 	 */
 	@Override
-	public BatchTimingStepLogHistory selectOne1L(String historyStepExecutionId, boolean nullException){
+	public BatchTimingStepLogHistory selectOne1L(Long historyStepExecutionId, boolean nullException){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("historyStepExecutionId", historyStepExecutionId);
 		BatchTimingStepLogHistory batchTimingStepLogHistory = new BatchTimingStepLogHistory();
@@ -99,7 +100,7 @@ public class BatchTimingStepLogHistoryDaoImpl extends BaseDaoSupport implements 
 	 * @param historyStepExecutionId 任务执行ID
 	 */
 	@Override
-	public int deleteOne1(String historyStepExecutionId){
+	public int deleteOne1(Long historyStepExecutionId){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("historyStepExecutionId", historyStepExecutionId);
 		return getSqlSessionTemplate().delete("BatchTimingStepLogHistory.deleteOne1", map);
@@ -110,7 +111,7 @@ public class BatchTimingStepLogHistoryDaoImpl extends BaseDaoSupport implements 
 	 * @param historyStepExecutionId 任务执行ID
 	 */
 	@Override
-	public int deleteOne1L(String historyStepExecutionId){
+	public int deleteOne1L(Long historyStepExecutionId){
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("historyStepExecutionId", historyStepExecutionId);
 		return getSqlSessionTemplate().delete("BatchTimingStepLogHistory.deleteOne1L", map);

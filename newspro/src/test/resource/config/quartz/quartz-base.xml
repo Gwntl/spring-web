@@ -26,5 +26,5 @@
 		</property>
 	</bean>
 	
-<!-- 	<bean id="p" abstract="true" class="com.quartz.job.abs.AbstractDemo" init-method="init"></bean> -->
+<!-- 	<bean id="p" abstract="true" class="com.batch.job.abs.AbstractDemo" init-method="init"></bean> -->
 </beans>

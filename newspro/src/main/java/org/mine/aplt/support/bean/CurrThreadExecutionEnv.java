@@ -6,6 +6,7 @@ import org.mine.aplt.util.CommonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
@@ -199,103 +200,178 @@ public class CurrThreadExecutionEnv {
 		}
 	}
 
-	public <T> List<T> queryForSingleFieldList(String sql, Object[] args, Class<T> elementType){
-		return jdbcTemplate.queryForList(sql, args, elementType);
+	public <T> List<T> queryForSingleFieldList(String sql, Object[] args, Class<T> elementType) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("queryForSingleFieldList sql : {}", sql);
+			logger.debug("queryForSingleFieldList args : {}", CommonUtils.toString(args));
+			logger.debug("queryForSingleFieldList elementType : {}", elementType);
+		}
+		try {
+			return jdbcTemplate.queryForList(sql, args, elementType);
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		} catch (DataAccessException de) {
+			throw GitWebException.GIT_DB_DATA_ACCESS("queryForSingleFieldList failed", de);
+		}
 	}
 
 	public Object[] queryForArrayByExtractor(final String sql, Object[] args) {
-		return this.jdbcTemplate.query(sql, new ResultSetExtractor<Object[]>() {
-			@Override
-			public Object[] extractData(ResultSet rs) throws SQLException, DataAccessException {
-				int count = 0;
-				Object[] obj = null;
-				while (rs.next()) {
-					if (count > 0) {
-						throw new TooManyResultsException(sql);
+		if (logger.isDebugEnabled()) {
+			logger.debug("queryForArrayByExtractor sql : {}", sql);
+			logger.debug("queryForArrayByExtractor args : {}", CommonUtils.toString(args));
+		}
+		try {
+			return this.jdbcTemplate.query(sql, new ResultSetExtractor<Object[]>() {
+				@Override
+				public Object[] extractData(ResultSet rs) throws SQLException, DataAccessException {
+					int count = 0;
+					Object[] obj = null;
+					while (rs.next()) {
+						if (count > 0) {
+							throw new TooManyResultsException(sql);
+						}
+						ResultSetMetaData metaData = rs.getMetaData();
+						int columnCount = metaData.getColumnCount();
+						obj = new Object[columnCount];
+						for (int index = 1; index <= columnCount; index++) {
+							obj[index - 1] = JdbcUtils.getResultSetValue(rs, index);
+						}
+						count ++;
 					}
-					ResultSetMetaData metaData = rs.getMetaData();
-					int columnCount = metaData.getColumnCount();
-					obj = new Object[columnCount];
-					for (int index = 1; index <= columnCount; index++) {
-						obj[index - 1] = JdbcUtils.getResultSetValue(rs, index);
-					}
-					count ++;
+					return obj;
 				}
-				return obj;
-			}
-		}, args);
+			}, args);
+		}  catch (DataAccessException de) {
+			throw GitWebException.GIT_DB_DATA_ACCESS("queryForArrayByExtractor failed", de);
+		}
 	}
 
 	public List<Object[]> queryForArraysByExtractor(String sql, Object[] args) {
-		return this.jdbcTemplate.query(sql, new ResultSetExtractor<List<Object[]>>() {
-			@Override
-			public List<Object[]> extractData(ResultSet rs) throws SQLException, DataAccessException {
-				List<Object[]> objects = new ArrayList<>();
-				while(rs.next()) {
-					ResultSetMetaData metaData = rs.getMetaData();
-					int columnCount = metaData.getColumnCount();
-					Object[] obj = new Object[columnCount];
-					for (int index = 1; index <= columnCount; index++) {
-						obj[index - 1] = JdbcUtils.getResultSetValue(rs, index);
+		if (logger.isDebugEnabled()) {
+			logger.debug("queryForSingleFieldList sql : {}", sql);
+			logger.debug("queryForSingleFieldList args : {}", CommonUtils.toString(args));
+		}
+		try {
+			return this.jdbcTemplate.query(sql, new ResultSetExtractor<List<Object[]>>() {
+				@Override
+				public List<Object[]> extractData(ResultSet rs) throws SQLException, DataAccessException {
+					List<Object[]> objects = new ArrayList<>();
+					while(rs.next()) {
+						ResultSetMetaData metaData = rs.getMetaData();
+						int columnCount = metaData.getColumnCount();
+						Object[] obj = new Object[columnCount];
+						for (int index = 1; index <= columnCount; index++) {
+							obj[index - 1] = JdbcUtils.getResultSetValue(rs, index);
+						}
+						objects.add(obj);
 					}
-					objects.add(obj);
+					return objects;
 				}
-				return objects;
-			}
-		}, args);
+			}, args);
+		} catch (DataAccessException de) {
+			throw GitWebException.GIT_DB_DATA_ACCESS("queryForArraysByExtractor failed", de);
+		}
 	}
 
 	public List<Object[]> queryForArraysByRowMapper(String sql, Object[] args) {
-		return this.jdbcTemplate.query(sql, args, new RowMapper<Object[]>() {
-			@Override
-			public Object[] mapRow(ResultSet rs, int rowNum) throws SQLException {
-				int count = rs.getMetaData().getColumnCount();
-				Object[] object = new Object[count];
-				for (int index = 1; index <= count; index++) {
-					object[index - 1] = JdbcUtils.getResultSetValue(rs, index);
+		if (logger.isDebugEnabled()) {
+			logger.debug("queryForSingleFieldList sql : {}", sql);
+			logger.debug("queryForSingleFieldList args : {}", CommonUtils.toString(args));
+		}
+		try {
+			return this.jdbcTemplate.query(sql, args, new RowMapper<Object[]>() {
+				@Override
+				public Object[] mapRow(ResultSet rs, int rowNum) throws SQLException {
+					int count = rs.getMetaData().getColumnCount();
+					Object[] object = new Object[count];
+					for (int index = 1; index <= count; index++) {
+						object[index - 1] = JdbcUtils.getResultSetValue(rs, index);
+					}
+					return object;
 				}
-				return object;
-			}
-		});
+			});
+		} catch (DataAccessException de) {
+			throw GitWebException.GIT_DB_DATA_ACCESS("queryForArraysByRowMapper failed", de);
+		}
 	}
 
 	public List<Map<String, Object>> queryForList(String sql, Object[] args) {
-		return jdbcTemplate.queryForList(sql, args);
+		if (logger.isDebugEnabled()) {
+			logger.debug("queryForSingleFieldList sql : {}", sql);
+			logger.debug("queryForSingleFieldList args : {}", CommonUtils.toString(args));
+		}
+		try {
+			return jdbcTemplate.queryForList(sql, args);
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		} catch (DataAccessException de) {
+			throw GitWebException.GIT_DB_DATA_ACCESS("queryForList failed", de);
+		}
 	}
 	
 	public <T> List<T> queryForList(String sql, Object[] args, Class<T> clz) {
-		return (List<T>) jdbcTemplate.query(sql, args, new CustomRowMapper<T>(clz));
+		if (logger.isDebugEnabled()) {
+			logger.debug("queryForSingleFieldList sql : {}", sql);
+			logger.debug("queryForSingleFieldList args : {}", CommonUtils.toString(args));
+		}
+		try {
+			return jdbcTemplate.query(sql, args, new CustomRowMapper<T>(clz));
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		} catch (DataAccessException de) {
+			throw GitWebException.GIT_DB_DATA_ACCESS("queryForList failed", de);
+		}
 	}
 	
 	public Map<String,Object> queryForMap(String sql, Object[] args) {
-		return this.jdbcTemplate.queryForMap(sql, args);
+		if (logger.isDebugEnabled()) {
+			logger.debug("queryForSingleFieldList sql : {}", sql);
+			logger.debug("queryForSingleFieldList args : {}", CommonUtils.toString(args));
+		}
+		try {
+			return this.jdbcTemplate.queryForMap(sql, args);
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		} catch (DataAccessException de) {
+			throw GitWebException.GIT_DB_DATA_ACCESS("queryForMap failed", de);
+		}
 	}
 	
 	public Map<String, Object> queryForMap(String sql, Object[] args, final String key, final String value) {
-		return this.jdbcTemplate.query(sql, new ResultSetExtractor<Map<String, Object>>() {
+		if (logger.isDebugEnabled()) {
+			logger.debug("queryForSingleFieldList sql : {}", sql);
+			logger.debug("queryForSingleFieldList args : {}", CommonUtils.toString(args));
+			logger.debug("queryForSingleFieldList key : {}", key);
+			logger.debug("queryForSingleFieldList value : {}", value);
+		}
+		try {
+			return this.jdbcTemplate.query(sql, new ResultSetExtractor<Map<String, Object>>() {
 
-			@Override
-			public Map<String, Object> extractData(ResultSet rs) throws SQLException, DataAccessException {
-				Map<String, Object> map = new LinkedCaseInsensitiveMap<>();
-				String k = "";
-				Object v = null;
-				while (rs.next()) {
-					ResultSetMetaData metaData = rs.getMetaData();
-					int columnCount = metaData.getColumnCount();
-					for (int index = 1; index <= columnCount; index++) {
-						String column = JdbcUtils.lookupColumnName(metaData, index);
-						if (column.equalsIgnoreCase(key)) {
-							k = (String) JdbcUtils.getResultSetValue(rs, index);
+				@Override
+				public Map<String, Object> extractData(ResultSet rs) throws SQLException, DataAccessException {
+					Map<String, Object> map = new LinkedCaseInsensitiveMap<>();
+					String k = "";
+					Object v = null;
+					while (rs.next()) {
+						ResultSetMetaData metaData = rs.getMetaData();
+						int columnCount = metaData.getColumnCount();
+						for (int index = 1; index <= columnCount; index++) {
+							String column = JdbcUtils.lookupColumnName(metaData, index);
+							if (column.equalsIgnoreCase(key)) {
+								k = (String) JdbcUtils.getResultSetValue(rs, index);
+							}
+							if (column.equalsIgnoreCase(value)) {
+								v = JdbcUtils.getResultSetValue(rs, index);
+							}
 						}
-						if (column.equalsIgnoreCase(value)) {
-							v = JdbcUtils.getResultSetValue(rs, index);
-						}
+						map.put(k, v);
 					}
-					map.put(k, v);
+					return map;
 				}
-				return map;
-			}
-		}, args);
+			}, args);
+		} catch (DataAccessException de) {
+			throw GitWebException.GIT_DB_DATA_ACCESS("queryForMap failed", de);
+		}
 	}
 	/**
 	* 根据条件查询单个指定对象
@@ -307,7 +383,18 @@ public class CurrThreadExecutionEnv {
 	* @Date: 2020/8/17
 	*/
 	public <T> T queryForObject(String sql, Object[] args, Class<T> clz) {
-		return (T) this.jdbcTemplate.queryForObject(sql, args, new CustomRowMapper<>(clz));
+		if (logger.isDebugEnabled()) {
+			logger.debug("queryForSingleFieldList sql : {}", sql);
+			logger.debug("queryForSingleFieldList args : {}", CommonUtils.toString(args));
+			logger.debug("queryForSingleFieldList clz : {}", clz);
+		}
+		try {
+			return this.jdbcTemplate.queryForObject(sql, args, new CustomRowMapper<>(clz));
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		} catch (DataAccessException de) {
+			throw GitWebException.GIT_DB_DATA_ACCESS("queryForObject failed", de);
+		}
 	}
 
 	/**
@@ -319,22 +406,46 @@ public class CurrThreadExecutionEnv {
 	* @Date: 2020/8/17
 	*/
 	public <T> T queryForObject(String sql, Class<T> clz) {
-		return this.jdbcTemplate.queryForObject(sql, clz);
+		if (logger.isDebugEnabled()) {
+			logger.debug("queryForSingleFieldList sql : {}", sql);
+			logger.debug("queryForSingleFieldList clz : {}", clz);
+		}
+		try {
+			return this.jdbcTemplate.queryForObject(sql, clz);
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		} catch (DataAccessException de) {
+			throw GitWebException.GIT_DB_DATA_ACCESS("queryForObject failed", de);
+		}
 	}
 	
 	public int update(String sql) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("queryForSingleFieldList sql : {}", sql);
+		}
 		return this.jdbcTemplate.update(sql);
 	}
 	
 	public int update(String sql, Object[] args) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("queryForSingleFieldList sql : {}", sql);
+			logger.debug("queryForSingleFieldList args : {}", CommonUtils.toString(args));
+		}
 		return this.jdbcTemplate.update(sql, args);
 	}
 	
 	public int[] batchUpdate(String sql) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("queryForSingleFieldList sql : {}", sql);
+		}
 		return this.jdbcTemplate.batchUpdate(sql);
 	}
 	
 	public int [] batchUpdate(String sql, List<Object[]> batchArgs) {
+		if (logger.isDebugEnabled()) {
+			logger.debug("queryForSingleFieldList sql : {}", sql);
+			logger.debug("queryForSingleFieldList batchArgs : {}", CommonUtils.toString(batchArgs));
+		}
 		return this.jdbcTemplate.batchUpdate(sql, batchArgs);
 	}
 }

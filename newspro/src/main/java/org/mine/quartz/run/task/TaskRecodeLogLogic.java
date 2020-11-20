@@ -1,7 +1,7 @@
 package org.mine.quartz.run.task;
 
-import org.mine.aplt.constant.JobContanst;
-import org.mine.aplt.enumqz.JobExcutorEnum;
+import org.mine.aplt.constant.JobConstant;
+import org.mine.aplt.enumqz.JobExecutorEnum;
 import org.mine.aplt.exception.GitWebException;
 import org.mine.aplt.exception.MineException;
 import org.mine.aplt.support.bean.GitContext;
@@ -14,12 +14,14 @@ import org.mine.model.BatchJobDefinition;
 import org.mine.model.BatchTaskDefinition;
 import org.mine.model.BatchTaskExecute;
 import org.mine.model.BatchTaskLog;
-import org.mine.quartz.JobExcutorFactory;
+import org.mine.quartz.JobExecutorFactory;
 import org.mine.quartz.PreProcessInfo;
 import org.mine.quartz.dto.ExecuteTaskDto;
 import org.mine.quartz.dto.MonitorDto;
+import org.mine.quartz.dto.RestartTaskDto;
 import org.mine.quartz.dto.TaskExecuteDto;
 import org.mine.quartz.run.BaseExecutor;
+import org.mine.quartz.run.job.JobRecodeLogLogic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -27,6 +29,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 单个定时任务执行逻辑. 每个TASK中存在多个JOB.单个JOB之间是并发执行,可以通过依赖关系将各个不相干的JOB串联起来.
@@ -43,8 +46,8 @@ public class TaskRecodeLogLogic implements InitializingBean {
     /**
      * Task执行线程池.
      */
-    private static ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(16, 32, 4, TimeUnit.SECONDS, new ArrayBlockingQueue<>(64),
-            new JobExcutorFactory.CustomThreadFactory("EXECUTE_TASK_"));
+    private static ThreadPoolExecutor poolExecutor = new ThreadPoolExecutor(8, 32, 1L, TimeUnit.SECONDS, new ArrayBlockingQueue<>(128),
+            new JobExecutorFactory.CustomThreadFactory("EXECUTE_TASK_"));
     /**
      * TASK执行实例缓存
      */
@@ -56,7 +59,11 @@ public class TaskRecodeLogLogic implements InitializingBean {
     /**
      * 信号量缓存
      */
-    private static  Map<String, Semaphore> semaphoreMap = new ConcurrentHashMap<>(1 << 6);
+    private static Map<String, Semaphore> semaphoreMap = new ConcurrentHashMap<>(1 << 6);
+    /**
+     * 执行次数缓存. 使用本地缓存时当服务重启数据便会消失, 因此需要第三方来保存数据.(后期维护更改)
+     */
+    private static Map<String, AtomicInteger> timesMap = new ConcurrentHashMap<>(1 << 6);
     /**
      * TASK执行监控线程
      */
@@ -73,28 +80,67 @@ public class TaskRecodeLogLogic implements InitializingBean {
         String taskID = taskDto.getTaskId();
         BatchTaskDefinition taskDefinition = GitContext.getBean(BatchTaskDefinitionDao.class).selectOne1R(taskID, true);
         taskDto.setConcurrencyNum(taskDefinition.getTaskConcurrencyNum());
-        if (!semaphoreMap.containsKey(taskDto.getTaskExecutionInstance())) {
-            semaphoreMap.put(taskDto.getTaskExecutionInstance(), new Semaphore(taskDto.getConcurrencyNum()));
-        } else {
-            throw GitWebException.GIT1001("TASK实例冲突, 请检查程序是否存在问题.");
+        String taskInstance = taskDto.getTaskExecutionInstance();
+        if (CommonUtils.isEmpty(taskInstance)) {
+            throw GitWebException.GIT_BATCH_INSTANCE("TASK", taskID);
         }
-        List<BatchTaskExecute> executes = GitContext.queryForList("SELECT EXECUTE_TASK_ID, EXECUTE_JOB_ID, EXECUTE_JOB_ONE_TIME, " +
+
+        if (taskDto.getConcurrencyNum() > 0) {
+            if (!semaphoreMap.containsKey(taskInstance)) {
+                semaphoreMap.put(taskInstance, new Semaphore(taskDto.getConcurrencyNum()));
+            } else {
+                throw GitWebException.GIT_BATCH_CONFLICT_INSTANCE("TASK", taskID);
+            }
+        } else {
+            throw GitWebException.GIT_SPECIFIED_CONCURRENT_NUMBER(taskID);
+        }
+
+        List<BatchTaskExecute> executes = GitContext.queryForList("SELECT EXECUTE_TASK_ID, EXECUTE_JOB_ID, EXECUTE_JOB_TIMES, " +
               "EXECUTE_JOB_DEPENDS FROM BATCH_TASK_EXECUTE WHERE EXECUTE_TASK_ID = ? AND VALID_STATUS = '0' " +
               "ORDER BY EXECUTE_JOB_NUM", new Object[]{taskID}, BatchTaskExecute.class);
-        for (BatchTaskExecute execute : executes) {
-            try {
-                poolExecutor.submit(new TaskWorker(assemblyObjectInfo(taskDto, execute.getExecuteJobId()), execute));
-            } catch (CloneNotSupportedException e) {
-                logger.error("deep clone error. {}", MineException.getStackTrace(e));
+        if (CommonUtils.isEmpty(executes)) {
+            logger.warn("The current task[{}] does not exists jobs!!!!.", taskID);
+            updateTaskLogStatus(taskInstance, JobExecutorEnum.SUCCESS.getValue(), "The current task does not exists jobs!!!!");
+        } else {
+            if (logger.isDebugEnabled()) {
+                logger.debug("TASK{}内作业信息: {}", taskID, CommonUtils.toString(executes));
             }
+            Map<String, ExecuteTaskDto> taskDtoMap = new HashMap<>();
+            for (BatchTaskExecute execute : executes) {
+                try {
+                    if (execute.getExecuteJobTimes() > 0) {
+                        timesMap.put(taskInstance + execute.getExecuteJobId(), new AtomicInteger(execute.getExecuteJobTimes()));
+                    }
+                    taskDtoMap.put(execute.getExecuteJobId(), assemblyObjectInfo(taskDto, execute.getExecuteJobId()));
+//                    poolExecutor.submit(new TaskWorker(assemblyObjectInfo(taskDto, execute.getExecuteJobId()), execute));
+                } catch (CloneNotSupportedException e) {
+                    logger.error("deep clone error. {}", MineException.getStackTrace(e));
+                    updateTaskLogStatus(taskInstance, JobExecutorEnum.FAILED.getValue(), "deep clone error");
+                    String timesKey = "";
+                    for (BatchTaskExecute executeFailed : executes) {
+                        if (timesMap.containsKey(timesKey = (taskInstance + executeFailed.getExecuteJobId()))) {
+                            timesMap.remove(timesKey);
+                        }
+                    }
+                    semaphoreMap.remove(taskInstance);
+                    throw GitWebException.GIT_OBJECT_CLONE_ERROR();
+                }
+            }
+
+            for (BatchTaskExecute execute : executes) {
+                ExecuteTaskDto executeTaskDto = taskDtoMap.get(execute.getExecuteJobId());
+                String taskIns = taskDto.getTaskExecutionInstance();
+                taskInstanceMap.put(taskIns, new TaskExecuteDto());
+                poolExecutor.submit(new TaskWorker(executeTaskDto, execute));
+            }
+
+            GitContext.doIndependentTransActionControl((input) -> {
+                BatchTaskLog taskLog = GitContext.getBean(BatchTaskLogDao.class).selectOne1(input, true);
+                taskLog.setTaskStatus(JobExecutorEnum.COMPLETING.getValue());
+                taskLog.setTimeStamp(System.nanoTime());
+                return GitContext.getBean(BatchTaskLogDao.class).updateOne1R(taskLog);
+            }, taskInstance);
         }
-        GitContext.doIndependentTransActionControl((input) -> {
-            BatchTaskLog taskLog = GitContext.getBean(BatchTaskLogDao.class).selectOne1(input.getTaskExecutionInstance(), true);
-            taskLog.setStartTime(CommonUtils.currentTime(new Date()));
-            taskLog.setTaskStatus(JobExcutorEnum.COMPLETING.getValue());
-            taskLog.setTimeStamp(System.nanoTime());
-            return GitContext.getBean(BatchTaskLogDao.class).updateOne1R(taskLog);
-        }, taskDto);
     }
     /**
     * 组装对象信息
@@ -142,14 +188,21 @@ public class TaskRecodeLogLogic implements InitializingBean {
                 * */
                 boolean isExecute = true;
                 String taskIns = taskDto.getTaskExecutionInstance();
+                String jobID = execute.getExecuteJobId();
+                String jobExecutionInstance = "";
+                TaskExecuteDto executeDto = null;
                 synchronized (taskInstanceMap) {
-                    String jobExecutionInstance = "";
-                    if (!taskInstanceMap.containsKey(taskIns)) {
-                        taskInstanceMap.put(taskIns, new TaskExecuteDto());
+                    executeDto = taskInstanceMap.get(taskIns);
+                    //当任务已停止, 则直接返回不继续向下执行.
+                    if (executeDto == null || executeDto.isTaskStatusAbnormal()) {
+                        logger.warn("当前任务已不存在或被停止或被取消, 不继续向下执行.");
+                        if (executeDto.isTaskStatusAbnormal()) {
+                            logger.info("任务状态: {}", executeDto.getTaskStatusFlag());
+                            taskInstanceMap.remove(taskIns);
+                        }
+                        return;
                     }
-                    TaskExecuteDto executeDto = taskInstanceMap.get(taskIns);
 
-                    String jobID = execute.getExecuteJobId();
                     //初始化依赖关系
                     Map<String, TaskExecuteDto.TaskInnerDto> innerDtoMap = executeDto.getInnerDtoMap();
                     TaskExecuteDto.TaskInnerDto innerDto = null;
@@ -160,7 +213,8 @@ public class TaskRecodeLogLogic implements InitializingBean {
                                 && CommonUtils.isEmpty(innerDto.getJobID())) {
                             try {
                                 //表明当前JOB被其他JOB依赖, 在执行之前已被初始化. 需要重新填充值
-                                jobInfoProcessingWithinTask(innerDto, jobExecutionInstance, execute, innerDtoMap);
+                                jobInfoProcessingWithinTask(innerDto, jobExecutionInstance, execute, innerDtoMap,
+                                        taskDto.getRestartTaskFlag(), taskDto.getSuccessJobMap());
                                 //保存当前TASK执行的DTO信息.
                                 innerDto.setTaskDto((ExecuteTaskDto) taskDto.clone());
                             } catch (CloneNotSupportedException e) {
@@ -168,7 +222,8 @@ public class TaskRecodeLogLogic implements InitializingBean {
                             }
                         }
 
-                        if (CommonUtils.isNotEmpty(taskDto.getExecutionInstance())) {
+                        if (CommonUtils.isNotEmpty(taskDto.getExecutionInstance())
+                                && CommonUtils.notEquals(taskDto.getExecutionInstance(), innerDto.getCurrentJobInstance())) {
                             logger.error("当前实例运行重复, 请查找原因.{}", innerDto.toString());
                             isExecute = false;
                         }
@@ -183,7 +238,15 @@ public class TaskRecodeLogLogic implements InitializingBean {
                         }
                     } else {
                         innerDto = new TaskExecuteDto.TaskInnerDto();
-                        innerDtoMap.put(jobID, jobInfoProcessingWithinTask(innerDto, jobExecutionInstance, execute, innerDtoMap));
+                        innerDtoMap.put(jobID, jobInfoProcessingWithinTask(innerDto, jobExecutionInstance, execute, innerDtoMap,
+                                taskDto.getRestartTaskFlag(), taskDto.getSuccessJobMap()));
+                        //增加JOB运行实例. 先生成JOB执行日志.
+                        if (CommonUtils.isEmpty(jobExecutionInstance = taskDto.getExecutionInstance())) {
+                            executeDto.getJobInstances().add(jobExecutionInstance = BaseExecutor.preStartupProcessing(jobID));
+                        }
+                        executeDto.getInnerDtoMap().get(jobID).setCurrentJobInstance(jobExecutionInstance);
+                        taskDto.setExecutionInstance(jobExecutionInstance);
+                        BaseExecutor.addJobLog(taskDto);
                         //判断是否依赖于其他JOB执行.依赖于其他JOB时直接返回.
                         if (innerDto.isDependsFlag()) {
                             try {
@@ -200,15 +263,46 @@ public class TaskRecodeLogLogic implements InitializingBean {
                     if (!isExecute) {
                         return;
                     }
-
-                    //增加JOB运行实例
-                    executeDto.getJobInstances().add(jobExecutionInstance = BaseExecutor.preStartupProcessing(taskDto.getJobId()));
-                    innerDto.setCurrentJobInstance(jobExecutionInstance);
-                    taskDto.setExecutionInstance(jobExecutionInstance);
-                    taskDto.setJobLogFlag(0);
                 }
+                //当获取锁时才执行真正的逻辑.
                 if (semaphoreMap.containsKey(taskIns)) {
+                    //由于semaphore在申请锁时会一致阻塞当前线程不会将当前持有锁释放.
                     semaphoreMap.get(taskIns).acquire();
+                    synchronized (taskInstanceMap) {
+                        executeDto = taskInstanceMap.get(taskIns);
+                        if (executeDto == null) {
+                            logger.error("任务实例[{}]缓存异常.", taskIns);
+                        }
+                        String pendingJob = taskIns + jobID;
+                        //将待执行的作业放入内存中
+                        executeDto.getPendingJobs().add(pendingJob);
+                        if (executeDto.isTaskStatusAbnormal()) {
+                            logger.warn("当前任务[{}]已被停止/取消, 待执行的作业[{}]不继续向下执行.状态: {}.", taskIns, jobID, executeDto.getTaskStatusFlag());
+                            executeDto.getPendingJobs().remove(pendingJob);
+                            //TODO 移除待执行作业实例.
+                            executeDto.getJobInstances().remove(jobExecutionInstance);
+                            semaphoreMap.get(taskIns).release();
+                            if (CommonUtils.isEmpty(executeDto.getInnerDtoMap()) && CommonUtils.isEmpty(executeDto.getJobInstances())
+                                    && CommonUtils.isEmpty(executeDto.getPendingJobs())) {
+                                taskInstanceMap.remove(taskIns);
+                                //更新TASK状态
+                                String status = executeDto.getTaskStatusFlag() == 1 ? JobExecutorEnum.STOP.getValue() :
+                                        ((executeDto.getTaskStatusFlag() == 2) ? JobExecutorEnum.CANCEL.getValue() : "");
+                                updateTaskLogToStopOrCancel(taskIns, status);
+                                updateJobLogToStopOrCancel(taskIns, status);
+                            }
+                            return;
+                        }
+                        //增加JOB运行实例. 执行时才生成.
+//                        executeDto.getJobInstances().add(jobExecutionInstance = BaseExecutor.preStartupProcessing(jobID));
+//                        executeDto.getInnerDtoMap().get(jobID).setCurrentJobInstance(jobExecutionInstance);
+//                        taskDto.setExecutionInstance(jobExecutionInstance);
+                        taskDto.setJobLogFlag(0);
+                        //将执行的作业从待执行队列中移除.
+                        executeDto.getPendingJobs().remove(pendingJob);
+                        //标志当前JOB在执行中.
+                        executeDto.getInnerDtoMap().get(jobID).setExecutingFlag(true);
+                    }
                     BaseExecutor.baseExecutor(taskDto);
                 } else {
                     logger.error("[{}]执行信号量已被消除.", taskIns);
@@ -229,30 +323,18 @@ public class TaskRecodeLogLogic implements InitializingBean {
     * @Date: 2020/8/27
     */
     public static TaskExecuteDto.TaskInnerDto jobInfoProcessingWithinTask(TaskExecuteDto.TaskInnerDto innerDto, String jobExecutionInstance,
-            BatchTaskExecute execute, Map<String, TaskExecuteDto.TaskInnerDto> innerDtoMap) {
+            BatchTaskExecute execute, Map<String, TaskExecuteDto.TaskInnerDto> innerDtoMap, boolean isRestart, Map<String, Object> successMap) {
         innerDto.setCurrentJobInstance(jobExecutionInstance);
         innerDto.setTaskID(execute.getExecuteTaskId());
         innerDto.setJobID(execute.getExecuteJobId());
-        innerDto.setOneTimeFlag(execute.getExecuteJobOneTime() == JobContanst.ONE_TIME_0);
-        /*innerDto.setDependsFlag(CommonUtils.isNotEmpty(jobDepends));
-        if (innerDto.isDependsFlag()) {
-            LinkedList<String> depends = CommonUtils.splitStrToLink(jobDepends, ";", false);
-            if (depends != null) {
-                innerDto.setDependsJob(depends);
-                for (String depend : depends) {
-                    if (!innerDtoMap.containsKey(depend)) {
-                        innerDtoMap.put(depend, new TaskExecuteDto.TaskInnerDto());
-                    }
-                    innerDtoMap.get(depend).setBeDependsFlag(true);
-                    innerDtoMap.get(depend).getBeDependsJob().add(innerDto.getJobID());
-                }
-            }
-        }*/
+        innerDto.setExecuteTimes(execute.getExecuteJobTimes());
         //获取依赖JOB信息
         Set<String> dependJobs = PreProcessInfo.getDependJob(innerDto.getJobID());
         if (CommonUtils.isNotEmpty(dependJobs)) {
-            innerDto.setDependsFlag(true);
-            innerDto.setDependsJob(new LinkedList<>(dependJobs));
+            innerDto.setDependsJob(new LinkedList<>(checkDependsJob(dependJobs, successMap)));
+            if (CommonUtils.isNotEmpty(innerDto.getDependsJob())) {
+                innerDto.setDependsFlag(true);
+            }
             Set<String> beDependJobs = null;
             for (String dependJob : dependJobs) {
                 if (innerDtoMap.containsKey(dependJob) && innerDtoMap.get(dependJob).isBeDependsFlag()) {
@@ -270,6 +352,27 @@ public class TaskRecodeLogLogic implements InitializingBean {
             }
         }
         return innerDto;
+    }
+    /**
+    * 检查依赖作业
+    * @param dependJobs
+    * @param successJobMap
+    * @return: java.util.Set<java.lang.String>
+    * @Author: wntl
+    * @Date: 2020/9/24
+    */
+    static Set<String> checkDependsJob(Set<String> dependJobs, Map<String, Object> successJobMap) {
+        if (CommonUtils.isEmpty(successJobMap)) {
+            return dependJobs;
+        }
+        Iterator<String> iterator = dependJobs.iterator();
+        while (iterator.hasNext()) {
+            String jobID = iterator.next();
+            if (successJobMap.get(jobID) != null) {
+                iterator.remove();
+            }
+        }
+        return dependJobs;
     }
 
     /**
@@ -293,6 +396,332 @@ public class TaskRecodeLogLogic implements InitializingBean {
         monitorQueue.put(monitorDto);
     }
 
+    /**
+     * 停止任务.
+     * 1、判断是否有执行中的任务, 若存在的话，将依赖于其任务的信息移除.
+     * 2、移除还未执行的作业.
+     * @param taskInstance 任务实例
+     */
+    public static void stopTask(String taskInstance) {
+        if (CommonUtils.isEmpty(taskInstance)) {
+            throw GitWebException.GIT1002("任务实例");
+        }
+        synchronized (taskInstanceMap) {
+            TaskExecuteDto executeDto = taskInstanceMap.get(taskInstance);
+            if (executeDto != null) {
+                if (executeDto.getJobInstances().size() == 0 && executeDto.getPendingJobs().size() == 0
+                        && executeDto.getInnerDtoMap().size() == 0) {
+                    throw GitWebException.GIT1001("任务已执行完毕.");
+                }
+                //设置停止标志. 标志当前任务已被停止.
+                boolean stopFlag = executeDto.setTaskStatusFlag(JobConstant.TASK_STATUS_0, JobConstant.TASK_STATUS_1);
+                if (!stopFlag) {
+                    throw GitWebException.GIT1001("当前任务状态[" + executeDto.getTaskStatusFlag() + "]不正常, 不能停止.");
+                }
+                Map<String, TaskExecuteDto.TaskInnerDto> innerDtoMap = executeDto.getInnerDtoMap();
+                if (CommonUtils.isNotEmpty(innerDtoMap)) {
+                    Iterator<String> iterator = innerDtoMap.keySet().iterator();
+                    LinkedList<String> dependsJob = null;
+                    LinkedList<String> beDependsJob = null;
+                    while (iterator.hasNext()) {
+                        String jobID = iterator.next();
+                        TaskExecuteDto.TaskInnerDto innerDto = innerDtoMap.get(jobID);
+                        if (innerDto.isExecutingFlag()) {
+                            //1.移除依赖的任务
+                            if (innerDto.isDependsFlag()) {
+                                if ((dependsJob = innerDto.getDependsJob()) != null) {
+                                    for (String dependJob : dependsJob) {
+                                        innerDtoMap.get(dependJob).getBeDependsJob().remove(jobID);
+                                    }
+                                }
+                            }
+                        } else {
+                            //移除未执行作业的实例
+                            executeDto.getJobInstances().remove(innerDto.getCurrentJobInstance());
+                            iterator.remove();
+                            logger.info("{}已被停止.", jobID);
+                        }
+                    }
+                }
+                //当不存在执行中的任务时, 直接将任务状态置为STOP.
+                if (CommonUtils.isEmpty(innerDtoMap) && CommonUtils.isEmpty(executeDto.getJobInstances())
+                        && CommonUtils.isEmpty(executeDto.getPendingJobs())) {
+                    taskInstanceMap.remove(taskInstance);
+                    //更新TASK状态
+                    updateTaskLogToStopOrCancel(taskInstance, JobExecutorEnum.STOP.getValue());
+                    updateJobLogToStopOrCancel(taskInstance, JobExecutorEnum.STOP.getValue());
+                }
+            } else {
+                throw GitWebException.GIT1001("任务已执行完毕或初始化未完成/失败.");
+            }
+        }
+        //记录停止事件
+    }
+    /**
+    * 重启任务
+    * @param taskInstance 任务实例
+    * @param taskID 任务ID
+    * @return: void
+    * @Author: wntl
+    * @Date: 2020/9/23
+    */
+    public static void restartTask(String taskInstance, String taskID) {
+        if (CommonUtils.isEmpty(taskInstance)) {
+            throw GitWebException.GIT_BATCH_INSTANCE("TASK", taskID);
+        }
+        if (CommonUtils.isEmpty(taskID)) {
+            throw GitWebException.GIT1002("任务ID");
+        }
+
+        BatchTaskLog checkTaskLog = GitContext.getBean(BatchTaskLogDao.class).selectOne1R(taskInstance, true);
+        if (CommonUtils.notEquals(checkTaskLog.getTaskStatus(), JobExecutorEnum.STOP.getValue())
+                && CommonUtils.notEquals(checkTaskLog.getTaskStatus(), JobExecutorEnum.FAILED.getValue())) {
+            throw GitWebException.GIT_TASK_STATUS_RESTART_ERROR(JobExecutorEnum.STOP.getValue() + "," + JobExecutorEnum.FAILED.getValue());
+        }
+        String taskStatus = checkTaskLog.getTaskStatus();
+
+        ExecuteTaskDto taskDto = new ExecuteTaskDto();
+        BatchTaskDefinition taskDefinition = GitContext.getBean(BatchTaskDefinitionDao.class).selectOne1R(taskID, true);
+        taskDto.setConcurrencyNum(taskDefinition.getTaskConcurrencyNum());
+        taskDto.setTaskId(taskID);
+        taskDto.setTaskName(taskDefinition.getTaskName());
+        taskDto.setTaskExecutionInstance(taskInstance);
+        CommonUtils.initMapValue(taskDto.getTaskInitValue(), taskDefinition.getTaskInitValue());
+
+        if (taskDto.getConcurrencyNum() > 0) {
+            if (!semaphoreMap.containsKey(taskInstance)) {
+                semaphoreMap.put(taskInstance, new Semaphore(taskDto.getConcurrencyNum()));
+            } else {
+                throw GitWebException.GIT_BATCH_CONFLICT_INSTANCE("TASK", taskID);
+            }
+        } else {
+            throw GitWebException.GIT_SPECIFIED_CONCURRENT_NUMBER(taskID);
+        }
+
+        List<RestartTaskDto> dtos = GitContext.queryForList("SELECT a.EXECUTE_TASK_ID, a.EXECUTE_JOB_ID, a.EXECUTE_JOB_TIMES, " +
+                        "a.EXECUTE_JOB_DEPENDS, b.EXECUTION_INSTANCE FROM BATCH_TASK_EXECUTE a, BATCH_JOB_LOG b " +
+                        "WHERE EXECUTE_TASK_ID = ? AND a.VALID_STATUS = '0' AND a.EXECUTE_JOB_ID = b.JOB_ID AND b.ASSOCIATE_TASK_INSTANCE = ? " +
+                        "AND b.JOB_STATUS = ? AND b.VALID_STATUS = '0' ORDER BY a.EXECUTE_JOB_NUM",
+                new Object[]{taskID, taskInstance, taskStatus}, RestartTaskDto.class);
+        if (CommonUtils.isEmpty(dtos)) {
+            logger.error("There is no data in the task[{}] to be restarted!!!!.", taskID);
+            throw GitWebException.GIT_RESTART_TASK_NO_DATA(taskID);
+        } else {
+            if (logger.isDebugEnabled()) {
+                logger.debug("TASK{}内作业信息: {}", taskID, CommonUtils.toString(dtos));
+            }
+            Map<String, ExecuteTaskDto> taskDtoMap = new HashMap<>();
+            for (RestartTaskDto dto : dtos) {
+                try {
+                    if (dto.getExecuteJobTimes() > 0) {
+                        timesMap.put(taskInstance + dto.getExecuteJobId(), new AtomicInteger(dto.getExecuteJobTimes()));
+                    }
+                    taskDtoMap.put(dto.getExecuteJobId(), assemblyObjectInfo(taskDto, dto.getExecuteJobId()));
+                } catch (CloneNotSupportedException e) {
+                    logger.error("deep clone error. {}", MineException.getStackTrace(e));
+                    updateTaskLogStatus(taskInstance, JobExecutorEnum.FAILED.getValue(), "deep clone error");
+                    String timesKey = "";
+                    for (RestartTaskDto executeFailed : dtos) {
+                        if (timesMap.containsKey(timesKey = (taskInstance + executeFailed.getExecuteJobId()))) {
+                            timesMap.remove(timesKey);
+                        }
+                    }
+                    semaphoreMap.remove(taskInstance);
+                    throw GitWebException.GIT_OBJECT_CLONE_ERROR();
+                }
+            }
+
+            Map<String, Object> successJobMap = GitContext.queryForMap(
+                    "SELECT JOB_ID, EXECUTION_INSTANCE FROM BATCH_JOB_LOG WHERE ASSOCIATE_TASK_INSTANCE = ? AND JOB_STATUS = ? AND VALID_STATUS = '0'",
+                    new Object[]{taskInstance, JobExecutorEnum.SUCCESS.getValue()}, "JOB_ID", "EXECUTION_INSTANCE");
+            BatchTaskExecute execute = null;
+            for (RestartTaskDto dto : dtos) {
+                ExecuteTaskDto executeTaskDto = taskDtoMap.get(dto.getExecuteJobId());
+                executeTaskDto.setExecutionInstance(dto.getExecutionInstance());
+                executeTaskDto.setSuccessJobMap(successJobMap);
+                executeTaskDto.setRestartTaskFlag(true);
+                String taskIns = taskDto.getTaskExecutionInstance();
+                taskInstanceMap.put(taskIns, new TaskExecuteDto());
+                execute = new BatchTaskExecute();
+                execute.setExecuteJobId(dto.getExecuteJobId());
+                execute.setExecuteJobDepends(dto.getExecuteJobDepends());
+                execute.setExecuteJobTimes(dto.getExecuteJobTimes());
+                execute.setExecuteTaskId(dto.getExecuteTaskId());
+                poolExecutor.submit(new TaskWorker(executeTaskDto, execute));
+            }
+
+            GitContext.doIndependentTransActionControl((input) -> {
+                BatchTaskLog taskLog = GitContext.getBean(BatchTaskLogDao.class).selectOne1(input, true);
+                taskLog.setTaskStatus(JobExecutorEnum.COMPLETING.getValue());
+                taskLog.setTimeStamp(System.nanoTime());
+                return GitContext.getBean(BatchTaskLogDao.class).updateOne1R(taskLog);
+            }, taskInstance);
+        }
+    }
+
+    /**
+    * 取消任务执行. 暂不实现
+    * @param taskInstance 任务实例
+    * @param isForceCancel 是否强制取消
+    * @return: void
+    * @Author: wntl
+    * @Date: 2020/9/23
+    */
+    public static void cancelTask(String taskInstance, boolean isForceCancel) {
+        if (CommonUtils.isEmpty(taskInstance)) {
+            throw GitWebException.GIT1002("任务实例");
+        }
+        synchronized (taskInstanceMap) {
+            TaskExecuteDto executeDto = taskInstanceMap.get(taskInstance);
+            if (executeDto != null) {
+                if (executeDto.getJobInstances().size() == 0 && executeDto.getPendingJobs().size() == 0
+                        && executeDto.getInnerDtoMap().size() == 0) {
+                    throw GitWebException.GIT1001("任务已执行完毕.");
+                }
+                boolean cancelFlag = executeDto.setTaskStatusFlag(JobConstant.TASK_STATUS_0, JobConstant.TASK_STATUS_2);
+                if (!cancelFlag) {
+                    throw GitWebException.GIT1001("当前任务状态[" + executeDto.getTaskStatusFlag() + "]不正常, 不能取消.");
+                }
+                Map<String, TaskExecuteDto.TaskInnerDto> innerDtoMap = executeDto.getInnerDtoMap();
+                if (CommonUtils.isNotEmpty(innerDtoMap)) {
+                    Iterator<String> iterator = innerDtoMap.keySet().iterator();
+                    LinkedList<String> dependsJob = null;
+                    LinkedList<String> beDependsJob = null;
+                    JobRecodeLogLogic jobRecodeLogLogic = null;
+                    while (iterator.hasNext()) {
+                        String jobID = iterator.next();
+                        TaskExecuteDto.TaskInnerDto innerDto = innerDtoMap.get(jobID);
+                        if (innerDto.isExecutingFlag()) {
+                            //1.移除依赖的任务
+                            if (innerDto.isDependsFlag()) {
+                                if ((dependsJob = innerDto.getDependsJob()) != null) {
+                                    for (String dependJob : dependsJob) {
+                                        innerDtoMap.get(dependJob).getBeDependsJob().remove(jobID);
+                                    }
+                                }
+                            }
+                            if (isForceCancel) {
+                                //取消运行中的JOB
+                                if (jobRecodeLogLogic == null) {
+                                    jobRecodeLogLogic = new JobRecodeLogLogic();
+                                }
+                                while (true) {
+                                    try {
+                                        //当执行取消操作时,程序运行中正好处于调度JOB前的数据处理逻辑中, 则等待调度开始再执行取消操作.
+                                        if (jobRecodeLogLogic.cancelJob(innerDto.getCurrentJobInstance()).getFlag()) {
+                                            break;
+                                        }
+                                        TimeUnit.MILLISECONDS.sleep(50);
+                                    } catch (InterruptedException e) {
+
+                                    } catch (MineException me) {
+                                        logger.error("cancel task error. message : {}", MineException.getStackTrace(me));
+                                    }
+                                }
+                            }
+                        } else {
+                            //移除未执行作业的实例
+                            executeDto.getJobInstances().remove(innerDto.getCurrentJobInstance());
+                            iterator.remove();
+                            logger.info("{}已被取消.", jobID);
+                        }
+                    }
+                }
+                //当不存在执行中的任务时, 直接将任务状态置为CANCEL.
+                if (CommonUtils.isEmpty(innerDtoMap) && CommonUtils.isEmpty(executeDto.getJobInstances())
+                        && CommonUtils.isEmpty(executeDto.getPendingJobs())) {
+                    taskInstanceMap.remove(taskInstance);
+                    //更新TASK状态
+                    updateTaskLogToStopOrCancel(taskInstance, JobExecutorEnum.CANCEL.getValue());
+                    updateJobLogToStopOrCancel(taskInstance, JobExecutorEnum.CANCEL.getValue());
+                }
+            } else {
+                throw GitWebException.GIT1001("任务已执行完毕或初始化未完成/失败.");
+            }
+        }
+    }
+
+    /**
+    * 更新任务日志
+    * @param taskInstance 任务实例
+    * @param status
+    * @param remark
+    * @return: void
+    * @Author: wntl
+    * @Date: 2020/9/22
+    */
+    static void updateTaskLogStatus(String taskInstance, String status, String remark) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("taskInstance", taskInstance);
+        map.put("status", status);
+        map.put("remark", remark);
+        GitContext.doIndependentTransActionControl((input) -> {
+            BatchTaskLog taskLog = GitContext.getBean(BatchTaskLogDao.class).selectOne1(input.get("taskInstance") + "", true);
+            taskLog.setTaskStatus(input.get("status") + "");
+            taskLog.setEndTime(CommonUtils.currentTime(new Date()));
+            taskLog.setRemark(input.get("remark") + "");
+            taskLog.setTimeStamp(System.nanoTime());
+            return GitContext.getBean(BatchTaskLogDao.class).updateOne1R(taskLog);
+        }, map);
+    }
+    /**
+    * 将任务日志更改为停止
+    * @param taskInstance 任务实例
+    * @return: void
+    * @Author: wntl
+    * @Date: 2020/9/22
+    */
+    static void updateTaskLogToStopOrCancel(String taskInstance, final String status) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("将任务[{}]日志状态置为停止.", taskInstance);
+        }
+        GitContext.doIndependentTransActionControl((input) -> {
+            BatchTaskLog taskLog = GitContext.getBean(BatchTaskLogDao.class).selectOne1R(input, true);
+            if (CommonUtils.notEquals(taskLog.getTaskStatus(), status)) {
+                taskLog.setTaskStatus(status);
+                taskLog.setEndTime(CommonUtils.currentTime(new Date()));
+                taskLog.setTimeStamp(System.nanoTime());
+                taskLog.setRemark("the current task is stopped.");
+                GitContext.getBean(BatchTaskLogDao.class).updateOne1R(taskLog);
+            }
+            return null;
+        }, taskInstance);
+    }
+
+    /**
+    * 作业日志状态置为停止.
+    * @param taskInstance 任务实例
+    * @return: void
+    * @Author: wntl
+    * @Date: 2020/9/23
+    */
+    static void updateJobLogToStopOrCancel(String taskInstance, final String status) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("将作业[{}]日志状态置为停止.", taskInstance);
+        }
+        Object[] args = new Object[]{status, taskInstance, JobExecutorEnum.NEW.getValue()};
+        GitContext.doIndependentTransActionControl((input) -> GitContext.update(
+                "update batch_job_log set job_status = ? where associate_task_instance = ? and job_status = ? and valid_status = '0'",
+                input), args);
+    }
+
+    /**
+    * 作业日志状态置为失败.
+    * @param jobInstance
+    * @return: void
+    * @Author: wntl
+    * @Date: 2020/9/24
+    */
+    static void updateJobLogToFailed(String jobInstance) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("将作业[{}]日志状态置为失败.", jobInstance);
+        }
+        GitContext.doIndependentTransActionControl((input) -> GitContext.update(
+                "update batch_job_log set job_status = ? where execution_instance = ? and job_status = ? and valid_status = '0'",
+                new Object[]{JobExecutorEnum.FAILED.getValue(), input, JobExecutorEnum.NEW.getValue()}), jobInstance);
+    }
+
+
     @Override
     public void afterPropertiesSet() throws Exception {
         if (MONITOR_TASK_THREAD == null) {
@@ -301,37 +730,47 @@ public class TaskRecodeLogLogic implements InitializingBean {
                 public void run() {
                     while (true) {
                         try {
+                            //TODO 获取结果后的处理之后可以放置异步运行
                             MonitorDto monitorDto = monitorQueue.take();
                             logger.info("notify message: {}.", monitorDto.toString());
                             String task = monitorDto.getTaskExecutionInstance();
                             String job = monitorDto.getJobExecutionInstance();
                             String jobID = monitorDto.getJobID();
                             String jobStatus = monitorDto.getJobStatus();
+                            if (monitorDto.hasEmptyTask()) {
+                                logger.error("获取结果值存在错误.");
+                            }
                             boolean isCompleted = false;
 
                             synchronized (taskInstanceMap) {
                                 if (taskInstanceMap.size() > 0 && taskInstanceMap.containsKey(task)) {
                                     TaskExecuteDto executeDto = taskInstanceMap.get(task);
+                                    //将执行完毕的JOB实例从缓存中消除.
                                     if (executeDto.getJobInstances().size() > 0) {
-                                        //将执行的JOB实例从缓存中消除
                                         executeDto.getJobInstances().remove(job);
                                     }
+                                    //处理任务中作业执行内容缓存.
                                     Map<String, TaskExecuteDto.TaskInnerDto> innerDtoMap = executeDto.getInnerDtoMap();
                                     if (innerDtoMap.size() > 0 && innerDtoMap.containsKey(jobID)) {
                                         TaskExecuteDto.TaskInnerDto innerDto = innerDtoMap.get(jobID);
-                                        if (CommonUtils.equals(jobStatus, JobExcutorEnum.SUCCESS.getValue())) {
+                                        if (CommonUtils.equals(jobStatus, JobExecutorEnum.SUCCESS.getValue())) {
                                             /*
                                              * 当JOB任务执行成功时。按照TASK内定义的JOB性质做特殊处理.
-                                             * 1.当JOB在TASK属于一次型作业时,将配置表中的记录去除.
+                                             * 1.判断JOB在TASK中的执行次数.
                                              * */
-                                            if (innerDto.isOneTimeFlag()) {
-                                                //更新执行表中的状态.
-                                                GitContext.doIndependentTransActionControl((input) -> {
-                                                    BatchTaskExecute taskExecute = GitContext.getBean(BatchTaskExecuteDao.class)
-                                                            .selectOne1R(input.getTaskID(), input.getJobID(), false);
-                                                    taskExecute.setValidStatus(JobContanst.VALID_STATUS_1);
-                                                    return GitContext.getBean(BatchTaskExecuteDao.class).updateOne1(taskExecute);
-                                                }, innerDto);
+                                            if (innerDto.getExecuteTimes() > 0) {
+                                                String timesKey = "";
+                                                if (timesMap.get(timesKey = (task + jobID)).get() == 1) {
+                                                    GitContext.doIndependentTransActionControl((input) -> {
+                                                        BatchTaskExecute taskExecute = GitContext.getBean(BatchTaskExecuteDao.class)
+                                                                .selectOne1R(input.getTaskID(), input.getJobID(), false);
+                                                        taskExecute.setValidStatus(JobConstant.VALID_STATUS_D);
+                                                        return GitContext.getBean(BatchTaskExecuteDao.class).updateOne1(taskExecute);
+                                                    }, innerDto);
+                                                    timesMap.remove(timesKey);
+                                                } else {
+                                                    timesMap.get(timesKey).decrementAndGet();
+                                                }
                                             }
                                             //2.判断当前JOB是否被依赖.当被依赖时信息需要消除对应的依赖.
                                             if (innerDto.isBeDependsFlag()) {
@@ -357,9 +796,15 @@ public class TaskRecodeLogLogic implements InitializingBean {
                                                                     logger.error("deep clone error. {}", MineException.getStackTrace(e));
                                                                 }
                                                             }
+                                                        } else {
+                                                            logger.error("{}未依赖于其他作业, 当前作业不执行跳过, 请检查作业执行配置是否正确.", beDepend);
                                                         }
                                                     } else {
-                                                        logger.error("{}消除依赖时出错.{}", jobID, beDepend);
+                                                        if (executeDto.isTaskStatusAbnormal()) {
+                                                            logger.warn("当前任务已被停止或取消, 依赖项已被移除. 状态: {}.", executeDto.getTaskStatusFlag());
+                                                        } else {
+                                                            logger.error("{}消除依赖时出错.{}", jobID, beDepend);
+                                                        }
                                                     }
                                                 }
                                                 innerDto.setBeDependsFlag(false);
@@ -373,7 +818,11 @@ public class TaskRecodeLogLogic implements InitializingBean {
                                                 //获取依赖当前JOB的所有JOB.将执行缓存中的信息消除.
                                                 LinkedList<String> beDepends = innerDto.getBeDependsJob();
                                                 for (String beDepend : beDepends) {
-                                                    innerDtoMap.remove(beDepend);
+                                                    TaskExecuteDto.TaskInnerDto taskInnerDto = innerDtoMap.remove(beDepend);
+                                                    //TODO 将状态置为失败
+                                                    updateJobLogToFailed(taskInnerDto.getCurrentJobInstance());
+                                                    //TODO 移除待执行作业实例.
+                                                    executeDto.getJobInstances().remove(taskInnerDto.getCurrentJobInstance());
                                                 }
                                             }
                                             executeDto.setTaskSuccessFlag(false);
@@ -381,33 +830,37 @@ public class TaskRecodeLogLogic implements InitializingBean {
                                         innerDtoMap.remove(jobID);
                                     }
 
-                                    if (executeDto.getJobInstances().size() == 0 && executeDto.getInnerDtoMap().size() == 0) {
+                                    //当任务被停止/取消时
+                                    if (executeDto.isTaskStatusAbnormal() && CommonUtils.isEmpty(executeDto.getJobInstances())) {
+                                        String status = executeDto.getTaskStatusFlag() == 1 ? JobExecutorEnum.STOP.getValue() :
+                                                ((executeDto.getTaskStatusFlag() == 2) ? JobExecutorEnum.CANCEL.getValue() : "");
+                                        updateTaskLogToStopOrCancel(task, status);
+                                        updateJobLogToStopOrCancel(task, status);
+                                        taskInstanceMap.remove(task);
+                                        isCompleted = true;
+                                    } else if (CommonUtils.isEmpty(executeDto.getJobInstances()) && CommonUtils.isEmpty(executeDto.getInnerDtoMap())
+                                            && CommonUtils.isEmpty(executeDto.getPendingJobs())) {
                                         logger.info("任务[{}]内作业逻辑上执行完毕, 更新任务状态.", task);
                                         if (!executeDto.isTaskSuccessFlag()) {
-                                            monitorDto.setJobStatus(JobExcutorEnum.FAILED.getValue());
+                                            monitorDto.setJobStatus(JobExecutorEnum.FAILED.getValue());
                                         }
-                                        //表示任务已经完成
-                                        GitContext.doIndependentTransActionControl((input) -> {
-                                            BatchTaskLog taskLog = GitContext.getBean(BatchTaskLogDao.class).selectOne1(input.getTaskExecutionInstance(), true);
-                                            taskLog.setEndTime(CommonUtils.currentTime(new Date()));
-                                            taskLog.setTimeStamp(System.nanoTime());
-                                            taskLog.setTaskStatus(input.getJobStatus());
-                                            return GitContext.getBean(BatchTaskLogDao.class).updateOne1(taskLog);
-                                        }, monitorDto);
+                                        updateTaskLogStatus(monitorDto.getTaskExecutionInstance(), monitorDto.getJobStatus(),"");
                                         taskInstanceMap.remove(task);
+                                        //表示任务已经完成
                                         isCompleted = true;
                                     }
                                 }
                             }
 
                             if (semaphoreMap.size() > 0 && semaphoreMap.containsKey(task)) {
-                                if(monitorDto.getConcurrencyNum() < semaphoreMap.get(task).availablePermits()){
-                                    logger.error("实例锁使用异常. 实例为: [}, 指定并发数为: {}, 使用并发数: {}.", task
+                                if (monitorDto.getConcurrencyNum() < semaphoreMap.get(task).availablePermits()) {
+                                    logger.warn("实例锁使用异常. 实例为: [}, 指定并发数为: {}, 使用并发数: {}.", task
                                     , monitorDto.getConcurrencyNum(), semaphoreMap.get(task).availablePermits());
-                                    throw GitWebException.GIT_APP_ERROR();
                                 }
                                 if (isCompleted) {
-                                    semaphoreMap.remove(task);
+                                    Semaphore semaphore = semaphoreMap.remove(task);
+                                    semaphore.release();
+                                    semaphore = null;
                                     logger.info("任务[{}]执行完毕, 消除执行信号量.", task);
                                 } else {
                                     semaphoreMap.get(task).release();
@@ -416,6 +869,9 @@ public class TaskRecodeLogLogic implements InitializingBean {
                                 logger.error("[{}]执行信号量异常.", task);
                             }
                         } catch (InterruptedException e) {
+
+                        } catch (Exception e) {
+                            logger.error("任务执行逻辑出错.{}", GitWebException.getStackTrace(e));
                         }
                     }
                 }

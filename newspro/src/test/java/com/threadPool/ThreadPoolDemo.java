@@ -22,7 +22,7 @@ public class ThreadPoolDemo implements Callable<String>{
 	@Override
 	public String call() throws Exception {
 		try{
-//			if(lock.tryLock()){
+//			if(lock.properties.tryLock()){
 //				count++;
 //				System.out.println("1111111," + count);
 //			}

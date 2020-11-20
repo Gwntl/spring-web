@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
  * 
  * @filename BatchTimingTaskLogRegisterDaoImpl.java
  * @author wzaUsers
- * @date 2020-08-20 11:08:58
+ * @date 2020-09-14 19:09:11
  * @version v1.0
 */
 @Repository

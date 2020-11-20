@@ -5,10 +5,10 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 	
-<!-- 	<import resource="classpath:config/quartz/quartz-base.xml"/> -->
-<!-- 	<import resource="classpath:config/quartz/quartz-test.xml"/> -->
+<!-- 	<import resource="classpath:config/batch/batch-base.xml"/> -->
+<!-- 	<import resource="classpath:config/batch/batch-test.xml"/> -->
 	
-<!-- 	<bean id="lock" class="com.java.base.thread.GetSynchronizedLock" init-method="init"></bean> -->
+<!-- 	<bean id="lock.properties" class="com.java.base.thread.GetSynchronizedLock" init-method="init"></bean> -->
 	
 		<context:component-scan base-package="com.quartz.job.*"></context:component-scan>
 	

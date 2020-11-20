@@ -1,21 +1,22 @@
 package org.mine.dao.impl;
 
-import java.util.List;
-import org.mine.model.BatchQueueExecute;
-import java.util.Map;
-import java.util.HashMap;
 import org.mine.aplt.exception.GitWebException;
 import org.mine.aplt.support.dao.BaseDaoSupport;
 import org.mine.aplt.support.dao.BatchOperator;
 import org.mine.aplt.util.CommonUtils;
 import org.mine.dao.BatchQueueExecuteDao;
+import org.mine.model.BatchQueueExecute;
 import org.springframework.stereotype.Repository;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 
  * @filename BatchQueueExecuteDaoImpl.java
  * @author wzaUsers
- * @date 2020-08-20 11:08:19
+ * @date 2020-09-14 11:09:02
  * @version v1.0
 */
 @Repository

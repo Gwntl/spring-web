@@ -7,7 +7,7 @@ import org.mine.model.BatchTimingStepLogRegister;
  * 
  * @filename BatchTimingStepLogRegisterDao.java
  * @author wzaUsers
- * @date 2020-08-14 16:08:07
+ * @date 2020-09-14 19:09:47
  * @version v1.0
 */
 
@@ -31,27 +31,27 @@ public interface BatchTimingStepLogRegisterDao {
 	 * 单笔查询
 	 * @param stepExecutionId 任务执行ID
 	 */
-	BatchTimingStepLogRegister selectOne1(String stepExecutionId, boolean nullException);
+	BatchTimingStepLogRegister selectOne1(Long stepExecutionId, boolean nullException);
 	/**
 	 * 单笔查询(正常状态 valid_status = 0)
 	 * @param stepExecutionId 任务执行ID
 	 */
-	BatchTimingStepLogRegister selectOne1R(String stepExecutionId, boolean nullException);
+	BatchTimingStepLogRegister selectOne1R(Long stepExecutionId, boolean nullException);
 	/**
 	 * 单笔查询(加锁  for update: 当使用索引时锁行, 其他锁表)
 	 * @param stepExecutionId 任务执行ID
 	 */
-	BatchTimingStepLogRegister selectOne1L(String stepExecutionId, boolean nullException);
+	BatchTimingStepLogRegister selectOne1L(Long stepExecutionId, boolean nullException);
 	/**
 	 * 单笔删除
 	 * @param stepExecutionId 任务执行ID
 	 */
-	int deleteOne1(String stepExecutionId);
+	int deleteOne1(Long stepExecutionId);
 	/**
 	 * 单笔删除(加锁  for update: 当使用索引时锁行, 其他锁表)
 	 * @param stepExecutionId 任务执行ID
 	 */
-	int deleteOne1L(String stepExecutionId);
+	int deleteOne1L(Long stepExecutionId);
 	/**
 	 * 单笔更新
 	 * @param batchTimingStepLogRegister 

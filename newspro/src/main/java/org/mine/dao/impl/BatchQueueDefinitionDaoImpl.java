@@ -15,7 +15,7 @@ import org.springframework.stereotype.Repository;
  * 
  * @filename BatchQueueDefinitionDaoImpl.java
  * @author wzaUsers
- * @date 2020-08-20 11:08:58
+ * @date 2020-09-17 20:09:12
  * @version v1.0
 */
 @Repository

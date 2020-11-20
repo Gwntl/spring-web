@@ -1,5 +1,6 @@
 package org.mine.aplt.util;
 
+import com.alibaba.druid.sql.visitor.functions.Char;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,8 +19,6 @@ import java.util.*;
  * @version v1.0
  */
 public final class CommonUtils {
-	private static final Logger logger = LoggerFactory.getLogger(CommonUtils.class);
-	
 
 	public static boolean isEmpty(Object obj){
 		return obj == null;
@@ -266,6 +265,47 @@ public final class CommonUtils {
 		}
 		return buffer.substring(0,buffer.lastIndexOf(",")) + "}";
 	}
+
+	public static String toStringNoTitle(Object[] obj) {
+		if(obj == null)
+			return null;
+
+		StringBuilder buffer = new StringBuilder();
+		for(int i = 0; i < obj.length; i++){
+			buffer.append(toStringByType(obj[i])).append(",");
+		}
+		return buffer.substring(0,buffer.lastIndexOf(","));
+	}
+
+	public static String toStringByType(Object obj) {
+		String str = "";
+		if (obj instanceof Map) {
+			str = toString((Map)obj);
+		} else if (obj instanceof List) {
+			str = toString((List)obj);
+		} else if (obj instanceof String[]) {
+			str = toString((String[])obj);
+		} else if (obj instanceof Long[] || obj instanceof long[] ) {
+			str = toString((Long[])obj);
+		} else if (obj instanceof Integer[] || obj instanceof int[] ) {
+			str = toString((Integer[])obj);
+		} else if (obj instanceof Boolean[] || obj instanceof boolean[]) {
+			str = toString((Boolean[])obj);
+		} else if (obj instanceof Double[] || obj instanceof double[]) {
+			str = toString((Double[])obj);
+		} else if (obj instanceof Short[] || obj instanceof short[]) {
+			str = toString((Short[])obj);
+		} else if (obj instanceof Character[] || obj instanceof char[]) {
+			str = toString((Character[])obj);
+		} else if (obj instanceof Byte[] || obj instanceof byte[]) {
+			str = toString((Byte[])obj);
+		} else if (obj instanceof Float[] || obj instanceof float[]) {
+			str = toString((Float[])obj);
+		} else {
+			str = obj.toString();
+		}
+		return str;
+	}
 	
 	/**
 	 * 数组转list(list转数组使用list.toArray())
@@ -290,11 +330,23 @@ public final class CommonUtils {
 		SimpleDateFormat dateFormat = new SimpleDateFormat(format);
 		return dateFormat.format(date);
 	}
-
+	/**
+	* 获取当前日期
+	* @param date
+	* @return: java.lang.String
+	* @Author: wntl
+	* @Date: 2020/9/22
+	*/
 	public static String currentDate(Date date){
 		return dateToString(date, "yyyyMMdd");
 	}
-
+	/**
+	* 获取当前时间
+	* @param date
+	* @return: java.lang.String
+	* @Author: wntl
+	* @Date: 2020/9/22
+	*/
 	public static String currentTime(Date date){
 		return dateToString(date, "yyyy-MM-dd HH:mm:ss");
 	}
@@ -314,8 +366,6 @@ public final class CommonUtils {
 					map.put(key_value[0], key_value[1]);
 				}
 			}
-		} else {
-			logger.warn("设置值为空!!!!");
 		}
 		return map;
 	}
@@ -591,6 +641,10 @@ public final class CommonUtils {
 			}
 		}
 	}
+
+	public static String getUUID(){
+		return UUID.randomUUID().toString().replace("-","").trim();
+	}
 	
 	public static void main(String[] args){
 //		Map<String, Object> map = new HashMap<>();
@@ -614,7 +668,37 @@ public final class CommonUtils {
 //		System.out.println(underLineToHump("ass_bsd_vdd", false));
 //		System.out.println(isNumber("1230.1"));
 //		System.out.println(toString(splitStrToList("a|b|c|d|", "|", true)));
-		System.out.println(humpToUnderLine("RaBc"));
+//		System.out.println(humpToUnderLine("RaBc"));
+//		System.out.println(getUUID());
+//		try {
+//			InetAddress address = InetAddress.getLocalHost();
+//			System.out.println(address.getHostAddress() + ", " + address.getHostName());
+//		} catch (UnknownHostException e) {
+//
+//		}
+//		Properties properties = System.getProperties();
+//		Enumeration<?> enumeration =  properties.propertyNames();
+//		while (enumeration.hasMoreElements()) {
+//			Object obj = (Object)enumeration.nextElement();
+//			System.out.println(obj);
+//		}
+//		System.out.println(System.getProperty("os.name"));
+//		System.out.println(System.getProperty("user.home"));
+//		System.out.println(System.getProperty("java.runtime.version"));
+		Map<String, Object> map = new HashMap<>();
+		map.put("1", 100);
+		map.put("2", 2.093);
+		map.put("3", "4947rjr");
+		map.put("4", new BigDecimal(100));
+		List<String> list = new ArrayList<>();
+		list.add("qweqwe");
+		list.add("qwe12e3qwe");
+		list.add("qweqwqwe12e");
+		list.add("");
+		String[] str = new String[]{"a","b"};
+		Long[] l = new Long[]{1L,2L};
+		Object[] obj = new Object[]{map, list, str, l};
+		System.out.println(toStringNoTitle(obj));
 	}
 	
 }

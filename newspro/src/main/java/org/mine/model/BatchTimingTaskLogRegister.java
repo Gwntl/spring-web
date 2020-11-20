@@ -4,7 +4,7 @@ package org.mine.model;
  * batch_timing_task_log_register--批量定时任务日志登记表
  * @filename BatchTimingTaskLogRegister.java
  * @author wzaUsers
- * @date 2020-08-20 11:08:58
+ * @date 2020-09-14 19:09:11
  * @version v1.0
 */
 public class BatchTimingTaskLogRegister {

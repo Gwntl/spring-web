@@ -417,12 +417,20 @@ public class GitContext implements ApplicationContextAware{
 		return getExecutionEnv().queryForObject(sql, BigDecimal.class);
 	}
 
+	/**
+	* 单笔记录查询为数据
+	* @param sql
+	* @param args
+	* @return: java.lang.Object[]
+	* @Author: wntl
+	* @Date: 2020/9/15
+	*/
 	public static Object[] queryForArrayByExtractor(String sql, Object[] args) {
 		return getExecutionEnv().queryForArrayByExtractor(sql, args);
 	}
 
 	/**
-	* 查询数组
+	* 多笔记录查询为数组
 	* @param sql
 	* @param args
 	* @return: java.util.List<java.lang.Object[]>

@@ -1,5 +1,6 @@
 package org.mine.aplt.support;
 
+import org.mine.aplt.constant.JobConstant;
 import org.mine.aplt.exception.GitWebException;
 import org.mine.aplt.exception.MineBizException;
 import org.mine.aplt.exception.MineException;
@@ -8,6 +9,7 @@ import org.mine.aplt.support.dao.BatchOperator;
 import org.mine.aplt.util.CommonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.dao.DataAccessException;
 
 import java.sql.SQLException;
@@ -23,9 +25,10 @@ import java.util.Map;
  * @date 2019年11月28日上午11:29:19 
  * @version v1.0
  */
-public abstract class BaseServiceTaskletExecutor implements ExcutorTask, GroupTask {
+public abstract class BaseServiceTaskletExecutor implements ExcutorTask, GroupTask, BeanNameAware {
 	protected static final Logger logger = LoggerFactory.getLogger(BaseServiceTaskletExecutor.class);
-	
+	public String beanName;
+
 	public Map<String, String> context;
 	
 	public Map<String, String> getContext() {
@@ -105,7 +108,12 @@ public abstract class BaseServiceTaskletExecutor implements ExcutorTask, GroupTa
 	* @Author: wntl
 	* @Date: 2020/8/17
 	*/
-	protected void afterProcessor(Map<String, Object> map, Map<String, Object> resultMap){}
+	protected void afterProcessor(Map<String, Object> map, Map<String, Object> resultMap) {
+		if (resultMap == null) {
+			resultMap = new HashMap<>();
+		}
+		resultMap.put(JobConstant.JOB_EXECUTOR_BEAN_NAME, this.beanName);
+	}
 
 	public String parseException(Throwable e){
 		String message = "";
@@ -123,5 +131,17 @@ public abstract class BaseServiceTaskletExecutor implements ExcutorTask, GroupTa
 			message = "系统应用异常";
 		}
 		return message;
+	}
+
+	@Override
+	public void setBeanName(String beanName) {
+		this.beanName = beanName;
+	}
+
+	/**
+	 * @return the beanName as beanName
+	 */
+	public String getBeanName() {
+		return beanName;
 	}
 }

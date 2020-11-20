@@ -9,7 +9,7 @@ import org.mine.dao.BatchTriggerDefinitionDao;
 import org.mine.model.BatchJobDefinition;
 import org.mine.quartz.ExecutorBase;
 import org.mine.quartz.dto.ExecuteTaskDto;
-import org.mine.quartz.trigger.ExcutorTrigger;
+import org.mine.quartz.trigger.ExecutorTrigger;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
 import org.quartz.JobKey;
@@ -51,7 +51,7 @@ public class SchedulerOperator {
 			detailImpl.setName(ApltContanst.DEFAULT_JOB_NAME + jobID);
 			detailImpl.setKey(new JobKey(detailImpl.getName(), ApltContanst.DEFAULT_JOB_GROUP));
 			BatchJobDefinition definition = jobDefinitionDao.selectOne1R(jobID, true);
-			detailImpl.setJobClass(ExecutorBase.getExcutorJob(definition.getJobExecutor()));
+			detailImpl.setJobClass(ExecutorBase.getExecutorJob(definition.getJobExecutor()));
 			ExecuteTaskDto taskDto = new ExecuteTaskDto();
 			JobDataMap dataMap = new JobDataMap();
 			CommonUtils.initMapValue(taskDto.getJobInitValue(), definition.getJobInitValue());
@@ -85,7 +85,7 @@ public class SchedulerOperator {
 		try {
 			StdScheduler scheduler = (StdScheduler) ExecutorBase.getSchedulerFactoryBean().getScheduler();
 			JobKey jobKey = new JobKey(ApltContanst.DEFAULT_JOB_NAME + jobID, ApltContanst.DEFAULT_JOB_GROUP);
-			ExcutorTrigger trigger = new ExcutorTrigger();
+			ExecutorTrigger trigger = new ExecutorTrigger();
 			@SuppressWarnings("unchecked")
 			List<CronTriggerImpl> triggerImpls =  (List<CronTriggerImpl>) scheduler.getTriggersOfJob(jobKey);
 
@@ -122,7 +122,7 @@ public class SchedulerOperator {
 			if (jobKey != null) {
 				JobDetail jobdtail = scheduler.getJobDetail(jobKey);
 				if (scheduler.deleteJob(jobKey)) {
-					ExcutorTrigger trigger = new ExcutorTrigger();
+					ExecutorTrigger trigger = new ExecutorTrigger();
 					for (String triggerId : triggerIds) {
 						scheduler.scheduleJob(jobdtail, trigger.definationTrigger(triggerId));
 					}

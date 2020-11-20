@@ -25,7 +25,7 @@ public class ThreadDemo implements Runnable{
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-//		synchronized (lock) {
+//		synchronized (lock.properties) {
 //			count++;
 //			System.out.println(Thread.currentThread().getName() + ", " + count);
 //		}

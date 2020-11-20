@@ -21,7 +21,7 @@ public class ThreadPoolExcutorsTest {
 	
 	@Test
 	public void test() {
-		Assert.notNull(excutor, "excutor is null");
+		Assert.notNull(excutor, "executor is null");
 		String s = "ssss";
 		if(s.equalsIgnoreCase("ssss")){
 			CompletableFuture<Void> future = CompletableFuture.runAsync(new Runnable() {

@@ -110,7 +110,7 @@ var prettyPrint;
   var CSHARP_KEYWORDS = [JAVA_KEYWORDS,
       "as,base,by,checked,decimal,delegate,descending,dynamic,event," +
       "fixed,foreach,from,group,implicit,in,internal,into,is,let," +
-      "lock,object,out,override,orderby,params,partial,readonly,ref,sbyte," +
+      "lock.properties,object,out,override,orderby,params,partial,readonly,ref,sbyte," +
       "sealed,stackalloc,string,select,uint,ulong,unchecked,unsafe,ushort," +
       "var,virtual,where"];
   var COFFEE_KEYWORDS = "all,and,by,catch,class,else,extends,false,finally," +

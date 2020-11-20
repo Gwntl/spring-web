@@ -2,7 +2,7 @@ package org.mine.quartz.task;
 
 import org.mine.aplt.support.bean.GitContext;
 import org.mine.dao.custom.BatchConfCustomDao;
-import org.mine.quartz.JobExcutorFactory;
+import org.mine.quartz.JobExecutorFactory;
 import org.mine.quartz.dto.ExecuteTaskDto;
 import org.mine.quartz.run.job.JobNoRecodeLogLogic;
 import org.quartz.Job;
@@ -28,7 +28,7 @@ public class AsyncTaskNoLogJob implements Job{
 			logger.error("The current  jobneed logging.");
 		} else {
 			taskDto.setExecutionInstance(GitContext.getBean(BatchConfCustomDao.class).getBatchSequence("sequence_id"));
-			JobExcutorFactory.call(new JobNoRecodeLogLogic(taskDto), taskDto.getJobLogFlag());
+			JobExecutorFactory.call(new JobNoRecodeLogLogic(taskDto), taskDto.getJobLogFlag());
 		}
 		logger.debug("AsyncTaskNoLogJob begin>>>>>>>>>>>>>>>>>>>>");
 	}

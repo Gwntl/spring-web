@@ -74,7 +74,7 @@ public class BinarySearchTree extends Tree{
 	}
 	
 	/**
-	 * 中序遍历
+	 * 中序遍历 左-中-右
 	 * @return
 	 */
 	public List<Integer> inorderTraversal(){
@@ -85,7 +85,7 @@ public class BinarySearchTree extends Tree{
 	}
 	
 	/**
-	 * 后序遍历
+	 * 后序遍历 左-右-中
 	 * @return
 	 */
 	public List<Integer> postorderTraversal(){

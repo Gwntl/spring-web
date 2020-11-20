@@ -4,16 +4,16 @@ package org.mine.model;
  * batch_step_log_history--批量定时任务日志登记表
  * @filename BatchStepLogHistory.java
  * @author wzaUsers
- * @date 2020-08-20 17:08:03
+ * @date 2020-09-24 14:09:30
  * @version v1.0
 */
 public class BatchStepLogHistory {
 	/**
-	 * 任务执行ID
+	 * 步骤执行实例
 	 */
 	private String executionId;
 	/**
-	 * 任务执行实例
+	 * JOB执行实例
 	 */
 	private String executionInstance;
 	/**
@@ -78,28 +78,28 @@ public class BatchStepLogHistory {
 	}
 
 	/**
-	 * 任务执行ID
+	 * 步骤执行实例
 	 * @return the executionId
 	 */
 	public String getExecutionId() {
 		return executionId;
 	}
 	/**
-	 * 任务执行ID
+	 * 步骤执行实例
 	 * @param executionId the executionId to set
 	 */
 	public void setExecutionId(String executionId) {
 		this.executionId = executionId;
 	}
 	/**
-	 * 任务执行实例
+	 * JOB执行实例
 	 * @return the executionInstance
 	 */
 	public String getExecutionInstance() {
 		return executionInstance;
 	}
 	/**
-	 * 任务执行实例
+	 * JOB执行实例
 	 * @param executionInstance the executionInstance to set
 	 */
 	public void setExecutionInstance(String executionInstance) {

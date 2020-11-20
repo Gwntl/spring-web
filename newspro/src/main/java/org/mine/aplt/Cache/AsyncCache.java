@@ -11,7 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
- * @Description 异步任务执行时日志缓存. 避免反复从数据库中读取值.</br>将查出来的日志信息存在内存中, 当使用完之后便立即抛弃.
+ * @Description 异步任务执行时日志缓存. 避免反复从数据库中读取值.</br>
+ * 将查出来的日志信息存在内存中, 当使用完之后便立即抛弃. 此处缓存理论上不可能存在数据冲突, 每次执行的key都是唯一的.
  * @ClassName: AsyncCache
  * @author: wntl
  * @date: 2020年5月27日 下午7:12:43

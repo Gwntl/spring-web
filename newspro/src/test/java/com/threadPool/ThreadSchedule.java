@@ -46,5 +46,11 @@ public class ThreadSchedule{
 		executorService.scheduleAtFixedRate(task1, 0, 4000, TimeUnit.MILLISECONDS);
 //		executorService.scheduleAtFixedRate(task2, 0, 2000, TimeUnit.MILLISECONDS);
 	}
-	
+
+	public void lambdaMethod(){
+		new Thread(()->{
+			System.out.println("aaa");
+		});
+	}
+
 }

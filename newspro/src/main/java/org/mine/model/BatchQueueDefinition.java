@@ -4,7 +4,7 @@ package org.mine.model;
  * batch_queue_definition--批量执行队列定义表(串行)
  * @filename BatchQueueDefinition.java
  * @author wzaUsers
- * @date 2020-08-20 11:08:58
+ * @date 2020-09-17 20:09:12
  * @version v1.0
 */
 public class BatchQueueDefinition {
@@ -37,6 +37,14 @@ public class BatchQueueDefinition {
 	 */
 	private Integer queueExecutionNum;
 	/**
+	 * 是否同时运行
+	 */
+	private String queueSameTimeRun;
+	/**
+	 * 最大并发执行数
+	 */
+	private Long queueMaxRunNum;
+	/**
 	 * 创建时间
 	 */
 	private String createDate;
@@ -57,6 +65,8 @@ public class BatchQueueDefinition {
 		this.queueExecutor = "";
 		this.queueInitValue = "";
 		this.queueExecutionNum = 0;
+		this.queueSameTimeRun = "";
+		this.queueMaxRunNum = 0L;
 		this.createDate = "";
 		this.validStatus = "0";
 		this.remark = "";
@@ -161,6 +171,34 @@ public class BatchQueueDefinition {
 		this.queueExecutionNum = queueExecutionNum;
 	}
 	/**
+	 * 是否同时运行
+	 * @return the queueSameTimeRun
+	 */
+	public String getQueueSameTimeRun() {
+		return queueSameTimeRun;
+	}
+	/**
+	 * 是否同时运行
+	 * @param queueSameTimeRun the queueSameTimeRun to set
+	 */
+	public void setQueueSameTimeRun(String queueSameTimeRun) {
+		this.queueSameTimeRun = queueSameTimeRun;
+	}
+	/**
+	 * 最大并发执行数
+	 * @return the queueMaxRunNum
+	 */
+	public Long getQueueMaxRunNum() {
+		return queueMaxRunNum;
+	}
+	/**
+	 * 最大并发执行数
+	 * @param queueMaxRunNum the queueMaxRunNum to set
+	 */
+	public void setQueueMaxRunNum(Long queueMaxRunNum) {
+		this.queueMaxRunNum = queueMaxRunNum;
+	}
+	/**
 	 * 创建时间
 	 * @return the createDate
 	 */
@@ -211,7 +249,7 @@ public class BatchQueueDefinition {
 		return "BatchQueueDefinition[" + 
 		"queueId=" + queueId + ", queueName=" + queueName + ", queueExcFlag=" + queueExcFlag + ", queueTriggerId=" + queueTriggerId + 
 		", queueExecutor=" + queueExecutor + ", queueInitValue=" + queueInitValue + ", queueExecutionNum=" + queueExecutionNum + 
-		", createDate=" + createDate + ", validStatus=" + validStatus + ", remark=" + remark + 
-		"]";
+		", queueSameTimeRun=" + queueSameTimeRun + ", queueMaxRunNum=" + queueMaxRunNum + ", createDate=" + createDate + 
+		", validStatus=" + validStatus + ", remark=" + remark + "]";
 	}
 }

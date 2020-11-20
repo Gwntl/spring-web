@@ -1,10 +1,12 @@
 package org.mine.quartz.dto;
 
+import org.mine.aplt.constant.JobConstant;
 import org.mine.aplt.util.CommonUtils;
 
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author wntl
@@ -23,14 +25,24 @@ public class TaskExecuteDto {
      */
     private Map<String, TaskInnerDto> innerDtoMap;
     /**
+     * 待执行作业队列. 非线程安全, 使用双向链表.
+     */
+    private LinkedList<String> pendingJobs;
+    /**
      * Task执行成功标志.
      */
     private boolean taskSuccessFlag;
+    /**
+     * 停止标志. 0-正常, 1-停止, 2-取消.
+     */
+    private AtomicInteger taskStatusFlag;
 
     public TaskExecuteDto() {
         this.jobInstances = new LinkedList<>();
         this.innerDtoMap = new ConcurrentHashMap<>();
+        this.pendingJobs = new LinkedList<>();
         this.taskSuccessFlag = true;
+        this.taskStatusFlag = new AtomicInteger(JobConstant.TASK_STATUS_0);
     }
 
     /**
@@ -66,6 +78,22 @@ public class TaskExecuteDto {
     }
 
     /**
+     * 待执行作业队列.
+     * @return the pendingJobs as pendingJobs
+     */
+    public LinkedList<String> getPendingJobs() {
+        return pendingJobs;
+    }
+
+    /**
+     * 待执行作业队列.
+     * @param pendingJobs the pendingJobs to set
+     */
+    public void setPendingJobs(LinkedList<String> pendingJobs) {
+        this.pendingJobs = pendingJobs;
+    }
+
+    /**
      * Task执行成功标志
      * @return the taskSuccessFlag as $field.comment
      */
@@ -79,6 +107,30 @@ public class TaskExecuteDto {
      */
     public void setTaskSuccessFlag(boolean taskSuccessFlag) {
         this.taskSuccessFlag = taskSuccessFlag;
+    }
+
+    /**
+     * 停止标志
+     * @return the taskStatusFlag as taskStatusFlag
+     */
+    public Integer getTaskStatusFlag() {
+        return taskStatusFlag.get();
+    }
+
+    /**
+     * 停止标志
+     * @param taskStatusFlag the taskStatusFlag to set
+     */
+    public boolean setTaskStatusFlag(Integer expectValue, Integer taskStatusFlag) {
+        return this.taskStatusFlag.compareAndSet(expectValue, taskStatusFlag);
+    }
+
+    /**
+     * 判断是否停止
+     * @return
+     */
+    public boolean isTaskStatusAbnormal() {
+        return taskStatusFlag.get() != 0;
     }
 
     public static class TaskInnerDto {
@@ -95,9 +147,9 @@ public class TaskExecuteDto {
          */
         private String currentJobInstance;
         /**
-         * 是否一次性任务. 表示在当前TASK执行配置中.
+         * 执行次数
          */
-        private boolean oneTimeFlag;
+        private Integer executeTimes;
         /**
          * 是否依赖其他JOB
          */
@@ -118,17 +170,22 @@ public class TaskExecuteDto {
          * 当前JOB执行DTO对象信息保存
          */
         private ExecuteTaskDto taskDto;
+        /**
+         * 当前JOB执行中标志
+         */
+        private boolean executingFlag;
 
         public TaskInnerDto(){
             this.taskID = "";
             this.jobID = "";
             this.currentJobInstance = "";
-            this.oneTimeFlag = false;
+            this.executeTimes = 0;
             this.dependsFlag = false;
             this.dependsJob = new LinkedList<>();
             this.beDependsFlag = false;
             this.beDependsJob = new LinkedList<>();
             this.taskDto = new ExecuteTaskDto();
+            this.executingFlag = false;
         }
 
         /**
@@ -174,17 +231,19 @@ public class TaskExecuteDto {
         }
 
         /**
-         * @return the oneTimeFlag as $field.comment
+         * 执行次数
+         * @return the executeTimes as $field.comment
          */
-        public boolean isOneTimeFlag() {
-            return oneTimeFlag;
+        public Integer getExecuteTimes() {
+            return executeTimes;
         }
 
         /**
-         * @param oneTimeFlag the oneTimeFlag to set
+         * 执行次数
+         * @param executeTimes the executeTimes to set
          */
-        public void setOneTimeFlag(boolean oneTimeFlag) {
-            this.oneTimeFlag = oneTimeFlag;
+        public void setExecuteTimes(Integer executeTimes) {
+            this.executeTimes = executeTimes;
         }
 
         /**
@@ -257,14 +316,31 @@ public class TaskExecuteDto {
             this.taskDto = taskDto;
         }
 
+        /**
+         * 当前JOB执行中标志
+         * @return the executingFlag as $field.comment
+         */
+        public boolean isExecutingFlag() {
+            return executingFlag;
+        }
+
+        /**
+         * 当前JOB执行中标志
+         * @param executingFlag the executingFlag to set
+         */
+        public void setExecutingFlag(boolean executingFlag) {
+            this.executingFlag = executingFlag;
+        }
+
         @Override
         public String toString() {
             return "TaskInnerDto{TaskID=" + taskID + ", jobID=" + jobID + ", currentJobInstance=" + currentJobInstance
-                    + ", " + "oneTimeFlag=" + oneTimeFlag + ", dependsFlag=" + dependsFlag
+                    + ", executeTimes=" + executeTimes + ", dependsFlag=" + dependsFlag
                     + ", dependsJob=" + (dependsJob != null ? CommonUtils.toString(dependsJob): null)
                     + "," + " beDependsFlag=" + beDependsFlag
                     + ", beDependsJob=" + (beDependsJob != null ? CommonUtils.toString(beDependsJob): null)
-                    + ", taskDto=" + (taskDto == null ? null : taskDto.toString()) + '}';
+                    + ", taskDto=" + (taskDto == null ? null : taskDto.toString()) + ", executingFlag=" + executingFlag
+                    + '}';
         }
     }
 
@@ -272,6 +348,6 @@ public class TaskExecuteDto {
     public String toString() {
         return "TaskExecuteDto{jobInstances=" + (jobInstances == null ? null : CommonUtils.toString(jobInstances))
                 + ", innerDtoMap=" + (innerDtoMap != null ? CommonUtils.toString(innerDtoMap) : "")
-                + ", taskSuccessFlag=" + taskSuccessFlag + '}';
+                + ", taskSuccessFlag=" + taskSuccessFlag + ", taskStopFlag=" + taskStatusFlag.get() + '}';
     }
 }

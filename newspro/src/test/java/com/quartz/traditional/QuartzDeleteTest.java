@@ -30,7 +30,7 @@ public class QuartzDeleteTest {
 	public static void main(String[] args) {
 		try {
 			//设置加载指定的配置文件
-			System.setProperty(StdSchedulerFactory.PROPERTIES_FILE, "src/test/java/com/quartz/traditional/quartz.properties");
+			System.setProperty(StdSchedulerFactory.PROPERTIES_FILE, "src/test/java/com/batch/traditional/batch.properties");
 			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 			
 			System.clearProperty(StdSchedulerFactory.PROPERTIES_FILE);

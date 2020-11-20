@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="DbOptimisticLock">
+	<resultMap type="org.mine.model.DbOptimisticLock" id="BaseResultMap">
+		<result column="lock_name" property="lockName"/>
+		<result column="lock_type" property="lockType"/>
+		<result column="lock_status" property="lockStatus"/>
+		<result column="lock_version" property="lockVersion"/>
+		<result column="lock_owner" property="lockOwner"/>
+		<result column="lock_time" property="lockTime"/>
+		<result column="create_time" property="createTime"/>
+		<result column="end_time" property="endTime"/>
+		<result column="update_time" property="updateTime"/>
+		<result column="valid_status" property="validStatus"/>
+		<result column="remark" property="remark"/>
+	</resultMap>
+
+	<sql id="Base_Select_List">
+		lock_name,lock_type,lock_status,lock_version,lock_owner,lock_time,
+		create_time,end_time,update_time,valid_status,remark
+	</sql>
+
+	<sql id="Base_Insert_Column">
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="lockName != null">lock_name,</if>
+			<if test="lockType != null">lock_type,</if>
+			<if test="lockStatus != null">lock_status,</if>
+			<if test="lockVersion != null">lock_version,</if>
+			<if test="lockOwner != null">lock_owner,</if>
+			<if test="lockTime != null">lock_time,</if>
+			<if test="createTime != null">create_time,</if>
+			<if test="endTime != null">end_time,</if>
+			<if test="updateTime != null">update_time,</if>
+			<if test="validStatus != null">valid_status,</if>
+			<if test="remark != null">remark,</if>
+		</trim>
+	</sql>
+
+	<sql id="Base_Insert_Values">
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="lockName != null">#{lockName},</if>
+			<if test="lockType != null">#{lockType},</if>
+			<if test="lockStatus != null">#{lockStatus},</if>
+			<if test="lockVersion != null">#{lockVersion},</if>
+			<if test="lockOwner != null">#{lockOwner},</if>
+			<if test="lockTime != null">#{lockTime},</if>
+			<if test="createTime != null">#{createTime},</if>
+			<if test="endTime != null">#{endTime},</if>
+			<if test="updateTime != null">#{updateTime},</if>
+			<if test="validStatus != null">#{validStatus},</if>
+			<if test="remark != null">#{remark},</if>
+		</trim>
+	</sql>
+
+	<insert id="insertOne" parameterType="org.mine.model.DbOptimisticLock">
+		insert into db_optimistic_lock
+		<include refid="DbOptimisticLock.Base_Insert_Column"/>
+		values 
+		<include refid="DbOptimisticLock.Base_Insert_Values"/>
+	</insert>
+
+	<insert id="batchInsert" parameterType="org.mine.model.DbOptimisticLock">
+		insert into db_optimistic_lock
+		<include refid="DbOptimisticLock.Base_Insert_Column"/>
+		values 
+		<include refid="DbOptimisticLock.Base_Insert_Values"/>
+	</insert>
+
+	<insert id="batchInsertXML" parameterType="java.util.List">
+		insert into db_optimistic_lock
+		(lock_name,lock_type,lock_status,lock_version,lock_owner
+			,lock_time,create_time,end_time,update_time
+			,valid_status,remark)
+		values
+		<foreach collection="list" item="item" index="index" separator=",">
+			(#{item.lockName},#{item.lockType},#{item.lockStatus},#{item.lockVersion},#{item.lockOwner}
+				,#{item.lockTime},#{item.createTime},#{item.endTime},#{item.updateTime}
+				,#{item.validStatus},#{item.remark})
+		</foreach>
+	</insert>
+	<select id="selectOne1" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="DbOptimisticLock.Base_Select_List"/>
+		from db_optimistic_lock
+		where lock_name = #{lockName} and lock_type = #{lockType}
+	</select>
+
+	<select id="selectOne1R" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="DbOptimisticLock.Base_Select_List"/>
+		from db_optimistic_lock
+		where lock_name = #{lockName} and lock_type = #{lockType} and valid_status = '0'
+	</select>
+
+	<select id="selectOne1L" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+		select
+		<include refid="DbOptimisticLock.Base_Select_List"/>
+		from db_optimistic_lock
+		where lock_name = #{lockName} and lock_type = #{lockType} for update
+	</select>
+
+	<delete id="deleteOne1" parameterType="org.mine.model.DbOptimisticLock">
+		delete from db_optimistic_lock
+		where
+		lock_name = #{lockName} and lock_type = #{lockType}
+	</delete>
+
+	<delete id="deleteOne1L" parameterType="org.mine.model.DbOptimisticLock">
+		delete from db_optimistic_lock
+		where
+		lock_name = #{lockName} and lock_type = #{lockType} for update
+	</delete>
+
+	<update id="updateOne1" parameterType="org.mine.model.DbOptimisticLock">
+		update db_optimistic_lock
+		<trim prefix="set" suffixOverrides=",">
+			<if test="lockStatus != null">lock_status = #{lockStatus},</if>
+			<if test="lockVersion != null">lock_version = #{lockVersion},</if>
+			<if test="lockOwner != null">lock_owner = #{lockOwner},</if>
+			<if test="lockTime != null">lock_time = #{lockTime},</if>
+			<if test="createTime != null">create_time = #{createTime},</if>
+			<if test="endTime != null">end_time = #{endTime},</if>
+			<if test="updateTime != null">update_time = #{updateTime},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where lock_name = #{lockName} and lock_type = #{lockType}
+	</update>
+
+	<update id="updateOne1R" parameterType="org.mine.model.DbOptimisticLock">
+		update db_optimistic_lock
+		<trim prefix="set" suffixOverrides=",">
+			<if test="lockStatus != null">lock_status = #{lockStatus},</if>
+			<if test="lockVersion != null">lock_version = #{lockVersion},</if>
+			<if test="lockOwner != null">lock_owner = #{lockOwner},</if>
+			<if test="lockTime != null">lock_time = #{lockTime},</if>
+			<if test="createTime != null">create_time = #{createTime},</if>
+			<if test="endTime != null">end_time = #{endTime},</if>
+			<if test="updateTime != null">update_time = #{updateTime},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where lock_name = #{lockName} and lock_type = #{lockType} and valid_status = '0'
+	</update>
+
+	<update id="updateOne1L" parameterType="org.mine.model.DbOptimisticLock">
+		update db_optimistic_lock
+		<trim prefix="set" suffixOverrides=",">
+			<if test="lockStatus != null">lock_status = #{lockStatus},</if>
+			<if test="lockVersion != null">lock_version = #{lockVersion},</if>
+			<if test="lockOwner != null">lock_owner = #{lockOwner},</if>
+			<if test="lockTime != null">lock_time = #{lockTime},</if>
+			<if test="createTime != null">create_time = #{createTime},</if>
+			<if test="endTime != null">end_time = #{endTime},</if>
+			<if test="updateTime != null">update_time = #{updateTime},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where lock_name = #{lockName} and lock_type = #{lockType} for update
+	</update>
+
+	<update id="batchUpdate1" parameterType="org.mine.model.DbOptimisticLock">
+		update db_optimistic_lock
+		<trim prefix="set" suffixOverrides=",">
+			<if test="lockStatus != null">lock_status = #{lockStatus},</if>
+			<if test="lockVersion != null">lock_version = #{lockVersion},</if>
+			<if test="lockOwner != null">lock_owner = #{lockOwner},</if>
+			<if test="lockTime != null">lock_time = #{lockTime},</if>
+			<if test="createTime != null">create_time = #{createTime},</if>
+			<if test="endTime != null">end_time = #{endTime},</if>
+			<if test="updateTime != null">update_time = #{updateTime},</if>
+			<if test="validStatus != null">valid_status = #{validStatus},</if>
+			<if test="remark != null">remark = #{remark},</if>
+		</trim>
+		where lock_name = #{lockName} and lock_type = #{lockType}
+	</update>
+
+</mapper>

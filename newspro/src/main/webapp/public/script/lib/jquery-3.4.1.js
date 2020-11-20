@@ -3739,10 +3739,10 @@ jQuery.extend( {
 					// fulfilled_handlers.disable
 					tuples[ 3 - i ][ 3 ].disable,
 
-					// progress_callbacks.lock
+					// progress_callbacks.lock.properties
 					tuples[ 0 ][ 2 ].lock,
 
-					// progress_handlers.lock
+					// progress_handlers.lock.properties
 					tuples[ 0 ][ 3 ].lock
 				);
 			}

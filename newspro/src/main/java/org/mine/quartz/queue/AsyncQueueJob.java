@@ -1,8 +1,5 @@
 package org.mine.quartz.queue;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.mine.aplt.support.bean.GitContext;
 import org.mine.aplt.support.dao.BatchOperator;
 import org.mine.dao.BatchQueueExecuteDao;
@@ -16,6 +13,9 @@ import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * @Description:  异步定时队列执行器.
  * @ClassName: AsyncQueueJob
@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 public class AsyncQueueJob implements Job {
 
 	private static final Logger logger = LoggerFactory.getLogger(AsyncQueueJob.class);
-	
+
 	@Override
 	public void execute(JobExecutionContext context) throws JobExecutionException {
 		logger.debug("AsyncQueueJob begin >>>>>>>>>");
@@ -39,7 +39,7 @@ public class AsyncQueueJob implements Job {
 		GitContext.doIndependentTransActionControl(new BatchOperator<Object, JobDataMap>() {
 			@Override
 			public Object call(JobDataMap map) {
-				
+
 				ExecuteTaskDto dto = (ExecuteTaskDto) map.get("dto");
 				List<BatchQueueExecute> queueExecutes = GitContext.getBean(BatchQueueExecuteDao.class).selectAll1R(dto.getQueueId());
 				LinkedList<String> executorTaskIds = new LinkedList<>();
@@ -49,12 +49,12 @@ public class AsyncQueueJob implements Job {
 				Long nanoTime = System.nanoTime();
 				JobQueueLogic.map.put(nanoTime, executorTaskIds);
 //				new JobQueueLogic(new JobDetailFactoryBean)
-				
+
 				return null;
 			}
 		}, context.getJobDetail().getJobDataMap());
-		
-		
+
+
 		logger.debug("AsyncQueueJob end >>>>>>>>>");
 		return;
 	}

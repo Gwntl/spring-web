@@ -1,10 +1,10 @@
 package com.algorithm;
 
+import org.mine.aplt.util.CommonUtils;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import org.mine.aplt.util.CommonUtils;
 
 /**
  * @Description:  平衡二叉树(二叉搜索树的升级版). 左右子树的深度差绝对值不大于1. 其他性质参照二叉搜索树.
@@ -170,7 +170,7 @@ public class BalanceBinaryTree extends Tree{
 	 * 		2. 左子树中的右子树中. LR(先将破环节点的下一个左节点内结构从右往左, 再将破环节点整个结构从左往右)</br>
 	 *		3. 右子树中的左子树中, RL(先将破环节点的下一个右节点内结构从左往右, 再将破环节点整个结构从右往左)</br>
 	 *		4. 右子树中的右子树中. RR(从右往左)</br>
-	 * @param node
+	 * @param brokenNode
 	 * @param value
 	 * @return
 	 */

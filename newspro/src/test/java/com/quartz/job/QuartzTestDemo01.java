@@ -8,7 +8,7 @@ public class QuartzTestDemo01 {
 	@Test
 	public void test() {
 //		fail("Not yet implemented");
-//		ApplicationContext context = new ClassPathXmlApplicationContext("src/test/resource/config/quartz/quartz.xml");
+//		ApplicationContext context = new ClassPathXmlApplicationContext("src/test/resource/config/batch/batch.xml");
 		
 	}
 	

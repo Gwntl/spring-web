@@ -4,7 +4,7 @@ package org.mine.model;
  * batch_queue_execute--批量队列运行表
  * @filename BatchQueueExecute.java
  * @author wzaUsers
- * @date 2020-08-20 11:08:19
+ * @date 2020-09-14 11:09:02
  * @version v1.0
 */
 public class BatchQueueExecute {
@@ -29,6 +29,10 @@ public class BatchQueueExecute {
 	 */
 	private Integer executeNum;
 	/**
+	 * 执行次数
+	 */
+	private Integer executorTimes;
+	/**
 	 * 创建时间
 	 */
 	private String createDate;
@@ -47,6 +51,7 @@ public class BatchQueueExecute {
 		this.executeTaskId = "";
 		this.executeTaskName = "";
 		this.executeNum = 0;
+		this.executorTimes = 0;
 		this.createDate = "";
 		this.validStatus = "0";
 		this.remark = "";
@@ -123,6 +128,20 @@ public class BatchQueueExecute {
 		this.executeNum = executeNum;
 	}
 	/**
+	 * 执行次数
+	 * @return the executorTimes
+	 */
+	public Integer getExecutorTimes() {
+		return executorTimes;
+	}
+	/**
+	 * 执行次数
+	 * @param executorTimes the executorTimes to set
+	 */
+	public void setExecutorTimes(Integer executorTimes) {
+		this.executorTimes = executorTimes;
+	}
+	/**
 	 * 创建时间
 	 * @return the createDate
 	 */
@@ -172,7 +191,7 @@ public class BatchQueueExecute {
 	public String toString() {
 		return "BatchQueueExecute[" + 
 		"executeQueueId=" + executeQueueId + ", executeQueueName=" + executeQueueName + ", executeTaskId=" + executeTaskId + ", executeTaskName=" + executeTaskName + 
-		", executeNum=" + executeNum + ", createDate=" + createDate + ", validStatus=" + validStatus + 
-		", remark=" + remark + "]";
+		", executeNum=" + executeNum + ", executorTimes=" + executorTimes + ", createDate=" + createDate + 
+		", validStatus=" + validStatus + ", remark=" + remark + "]";
 	}
 }
