@@ -156,19 +156,19 @@ public class JobConstant {
 	/**
 	 * 作业状态. 0-正常
 	 */
-	public static Integer JOB_STATUS_0 = 0;
+	public static final Integer JOB_STATUS_0 = 0;
 	/**
 	 * 作业状态. 1-停止
 	 */
-	public static Integer JOB_STATUS_1 = 1;
+	public static final Integer JOB_STATUS_1 = 1;
 	/**
 	 * 作业状态. 2-取消
 	 */
-	public static Integer JOB_STATUS_2 = 2;
+	public static final Integer JOB_STATUS_2 = 2;
 	/**
 	 * 作业状态. 8-执行完成
 	 */
-	public static Integer JOB_STATUS_8 = 8;
+	public static final Integer JOB_STATUS_8 = 8;
 	/**
 	 * 初始化未完成
 	 */

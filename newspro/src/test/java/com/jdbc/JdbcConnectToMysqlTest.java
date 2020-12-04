@@ -5,10 +5,11 @@ import org.junit.runner.RunWith;
 import org.mine.aplt.enumqz.JobExecutorEnum;
 import org.mine.aplt.support.bean.GitContext;
 import org.mine.aplt.util.CommonUtils;
-import org.mine.lock.db.DBLockInfo;
 import org.mine.lock.LockWorker;
+import org.mine.lock.db.DBLockInfo;
 import org.mine.lock.db.QueueDBOptimisticLocking;
 import org.mine.quartz.schduler.AutoScheduler;
+import org.mine.quartz.util.QuartzUtil;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -243,6 +244,14 @@ public class JdbcConnectToMysqlTest {
 				new Object[]{"", JobExecutorEnum.SUCCESS.getValue()}, "JOB_ID", "EXECUTION_INSTANCE");
 		System.out.println(CommonUtils.toString(successJobMap));
 	}
+
+	@Test
+	public void test8() {
+		String s = GitContext.queryForString("SELECT JOB_INIT_VALUE FROM BATCH_JOB_DEFINITION WHERE JOB_ID = ?", new Object[]{"JOB_TaskJobDemo02"});
+		System.out.println(s);
+		System.out.println(QuartzUtil.isCct(s));
+	}
+
 
 	@Test
 	public void dbLockTest() throws InterruptedException {
