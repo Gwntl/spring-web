@@ -1,7 +1,5 @@
 package org.mine.aplt.support;
 
-import org.springframework.stereotype.Component;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Random;
@@ -28,7 +26,6 @@ import java.util.concurrent.TimeUnit;
  * @ClassName: SnowflakeIdWorker
  * @date 2020/12/214:27
  */
-@Component
 public class SnowflakeIdWorker {
     // ==============================Fields===========================================
     /** 开始时间截 (2015-01-01) */
