@@ -1,16 +1,17 @@
 package org.mine.aplt.Cache;
 
+import org.mine.aplt.exception.RedisException;
 import org.mine.aplt.redis.RedisClientUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * redis缓存
+ * redis缓存.
  * @author wntl
  * @version v1.0
  * @Description:
@@ -182,29 +183,114 @@ public class RedisCache {
         return clientUtil.ttl(key);
     }
 
-    public Boolean setLockInfo(String key, Object value, Long expireTime) {
-        org.springframework.data.redis.cache.RedisCache redisCache =
-                new org.springframework.data.redis.cache.RedisCache(key, null, new RedisTemplate<>(), expireTime);
-        redisCache.put(key, value);
-        return true;
+    /**
+    * 获取哈希表中对应的值
+    * @param key
+    * @param field
+    * @return: java.lang.Object
+    * @Author: wntl
+    * @Date: 2020/11/26
+    */
+    public Object hashGet(String key, String field) {
+        return clientUtil.hashGet(key, field);
     }
 
-//    private static volatile RedisClientUtil util = null;
-//    private RedisCache(){}
+    public Map<Object, Object> hashGetAll(String key) {
+        return clientUtil.hashGetAll(key);
+    }
+
     /**
-    * 单例
-    * @return: org.mine.aplt.redis.RedisClientUtil
+    * 获取redis锁, 使用redis自带命令实现。弃用, 不建议使用
+    * @param key
+    * @param value
+    * @param timeOut
+    * @return: java.lang.Boolean
     * @Author: wntl
-    * @Date: 2020/11/19
+    * @Date: 2020/11/26
     */
-//    public static RedisClientUtil getRedisClientUtil() {
-//        if (util == null) {
-//            synchronized (RedisCache.class) {
-//                if (util == null) {
-//                    util = new RedisClientUtil();
-//                }
-//            }
-//        }
-//        return util;
-//    }
+    @Deprecated
+    public Boolean lock(String key, Object value, Long timeOut) {
+        return clientUtil.setIfAbsent(key, value, timeOut);
+    }
+
+    /**
+    * 获取redis锁，使用LUA脚本实现
+    * @param key
+    * @param value
+    * @param expire
+    * @return: java.lang.Boolean
+    * @Author: wntl
+    * @Date: 2020/11/26
+    */
+    public Boolean lock(String key, Object value, String expire) {
+        List<String> list = new ArrayList<>();
+        list.add(key);
+        String script = "if redis.call('set',KEYS[1], ARGV[1], 'ex', ARGV[2], 'nx') then return 1 else return 0 end";
+        return clientUtil.eval(script, list, Long.class, value, expire) != 0L;
+    }
+
+    /**
+    * 获取redis可重入锁，使用LUA脚本实现.
+    * @param key
+    * @param countKey
+    * @param val
+    * @param expire
+    * @return: java.lang.Boolean
+    * @Author: wntl
+    * @Date: 2020/11/26
+    */
+    public Boolean lock(String key, String countKey, Object val, String expire) {
+        List<String> list = new ArrayList<>();
+        list.add(key);
+        list.add(countKey);
+        String script = "if redis.call('set', KEYS[1], ARGV[1], 'ex', ARGV[2], 'nx') then redis.call('set', KEYS[2], ARGV[3], 'ex', ARGV[2]) " +
+                "else if redis.call('get', KEYS[1]) == ARGV[1] then redis.call('incr', KEYS[2]) else return 0 end end return 1";
+        return clientUtil.eval(script, list, Long.class, val, expire, "0") != 0L;
+    }
+
+    public boolean hasLock(String key, Object val) {
+        List<String> list = new ArrayList<>();
+        list.add(key);
+        String script = "if redis.call('get', KEYS[1]) == ARGV[1] then return 1 else return 0 end";
+        return clientUtil.eval(script, list, Long.class, val) != 0L;
+    }
+
+
+    /**
+    * 释放redis锁，为保证命令的原子性使用LUA脚本实现.
+    * @param key
+    * @param value
+    * @return: java.lang.Boolean
+    * @Author: wntl
+    * @Date: 2020/11/26
+    */
+    public void unLock(String key, Object value) {
+        List<String> list = new ArrayList<>();
+        list.add(key);
+        String script = "if redis.call('get', KEYS[1]) == ARGV[1] then redis.call('del', KEYS[1]) else return 0 end return 1";
+        if (clientUtil.eval(script, list, Long.class, value) == 0L) {
+            throw RedisException.REDIS_EVAL_ERROR(String.format("指定key[%s]或value[%s]在redis中不存在或者其他异常, 请检查!!", key, value));
+        }
+    }
+
+    /**
+    * 释放redis可重入锁
+    * @param key
+    * @param countKey
+    * @param value
+    * @return: java.lang.Boolean
+    * @Author: wntl
+    * @Date: 2020/11/26
+    */
+    public void unLock(String key, String countKey, Object value) {
+        List<String> list = new ArrayList<>();
+        list.add(key);
+        list.add(countKey);
+        String script = "if redis.call('get', KEYS[1]) == ARGV[1] then if redis.call('get', KEYS[2]) == ARGV[2] then " +
+                "redis.call('del', KEYS[1]) redis.call('del', KEYS[2]) else redis.call('decr', KEYS[2]) end else return 0 end return 1";
+        if (clientUtil.eval(script, list, Long.class, value, "0") == 0L) {
+            throw RedisException.REDIS_EVAL_ERROR(String.format("指定key[%s/%s]或value[%s]在redis中不存在或者其他异常, 请检查!!",
+                    key, countKey, value));
+        }
+    }
 }

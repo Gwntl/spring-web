@@ -1,9 +1,5 @@
 package org.mine.aplt.util;
 
-import com.alibaba.druid.sql.visitor.functions.Char;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
@@ -354,7 +350,7 @@ public final class CommonUtils {
 	/**
 	 * 将需要加入的初始值放入对应的属性中
 	 * @param map 初始值集
-	 * @param initValue 该值形式为<init=12,13,15;init1=1q;init2=orij>
+	 * @param initValue 该值形式为(init=12,13,15;init1=1q;init2=orij)
 	 * @return
 	 */
 	public static Map<String, Object> initMapValue(Map<String, Object> map, String initValue){
@@ -645,7 +641,7 @@ public final class CommonUtils {
 	public static String getUUID(){
 		return UUID.randomUUID().toString().replace("-","").trim();
 	}
-	
+
 	public static void main(String[] args){
 //		Map<String, Object> map = new HashMap<>();
 //		map.put("1", 100);
@@ -685,20 +681,21 @@ public final class CommonUtils {
 //		System.out.println(System.getProperty("os.name"));
 //		System.out.println(System.getProperty("user.home"));
 //		System.out.println(System.getProperty("java.runtime.version"));
-		Map<String, Object> map = new HashMap<>();
-		map.put("1", 100);
-		map.put("2", 2.093);
-		map.put("3", "4947rjr");
-		map.put("4", new BigDecimal(100));
-		List<String> list = new ArrayList<>();
-		list.add("qweqwe");
-		list.add("qwe12e3qwe");
-		list.add("qweqwqwe12e");
-		list.add("");
-		String[] str = new String[]{"a","b"};
-		Long[] l = new Long[]{1L,2L};
-		Object[] obj = new Object[]{map, list, str, l};
-		System.out.println(toStringNoTitle(obj));
+//		Map<String, Object> map = new HashMap<>();
+//		map.put("1", 100);
+//		map.put("2", 2.093);
+//		map.put("3", "4947rjr");
+//		map.put("4", new BigDecimal(100));
+//		List<String> list = new ArrayList<>();
+//		list.add("qweqwe");
+//		list.add("qwe12e3qwe");
+//		list.add("qweqwqwe12e");
+//		list.add("");
+//		String[] str = new String[]{"a","b"};
+//		Long[] l = new Long[]{1L,2L};
+//		Object[] obj = new Object[]{map, list, str, l};
+//		System.out.println(toStringNoTitle(obj));
+		System.out.println("tet_ee_sjd_01".replace('_', '.'));
 	}
 	
 }

@@ -17,10 +17,10 @@ import org.mine.dao.BatchJobLogDao;
 import org.mine.dao.BatchStepDefinitionDao;
 import org.mine.dao.BatchStepLogDao;
 import org.mine.dao.custom.BatchConfCustomDao;
-import org.mine.model.BatchJobLog;
-import org.mine.model.BatchStepDefinition;
-import org.mine.model.BatchStepLog;
-import org.mine.model.BatchTimingStepLogRegister;
+import org.mine.lock.redis.DefaultRedisLock;
+import org.mine.lock.redis.RedisLockInput;
+import org.mine.lock.redis.RedisLogicDecrConstant;
+import org.mine.model.*;
 import org.mine.quartz.JobExecutorFactory;
 import org.mine.quartz.dto.CallableResultDto;
 import org.mine.quartz.dto.ExecuteTaskDto;
@@ -30,6 +30,7 @@ import org.mine.quartz.run.BaseExecutor;
 import org.mine.quartz.run.JobTaskCallable;
 import org.mine.quartz.run.task.TaskRecodeLogLogic;
 import org.mine.quartz.trigger.ExecutorTrigger;
+import org.mine.rule.redis.RedisRuler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -115,9 +116,15 @@ public class JobRecodeLogLogic extends JobCall {
     @Override
     public void run() {
         BatchTimingStepLogRegister stepLogRegister = null;
+        //保存当前执行的JOB_ID
+        final String jobID = dto.getJobId();
+        DefaultRedisLock lock = null;
         try {
-            //保存当前执行的JOB_ID
-            final String jobID = dto.getJobId();
+            if (dto.getJobInitValue().get(JobConstant.CCT_FLAG).equals(JobConstant.CCT_FLAG_1)) {
+                lock = GitContext.getBean(DefaultRedisLock.class);
+                lock.lock(getJobLockInput(RedisLogicDecrConstant.QUARTZ_TIMING_JOB_LOGIC, jobID, dto.getJobInitValue()));
+            }
+
             List<String> executeStepIds = GitContext.queryForSingleFieldList(
                     "SELECT EXECUTE_STEP_ID FROM BATCH_JOB_EXECUTE WHERE EXECUTE_JOB_ID = ? ORDER BY EXECUTE_STEP_NUM",
                     new Object[]{jobID}, String.class);
@@ -211,9 +218,11 @@ public class JobRecodeLogLogic extends JobCall {
                 //先执行第一步
                 poolExecute(executionInstance, null);
             }
-        } catch(Throwable a){
+        } catch(Throwable a) {
             logger.error(GitWebException.getStackTrace(a));
             throw GitWebException.GIT1001("in " + this.getClass().getName() + ", an error occurred while executing step.");
+        } finally {
+            if (lock != null) lock.unlock(getJobLockInput(RedisLogicDecrConstant.QUARTZ_TIMING_JOB_LOGIC, jobID, null));
         }
     }
 
@@ -250,12 +259,12 @@ public class JobRecodeLogLogic extends JobCall {
                         node = stepsCache.get(executionInstance).removeFirst();
                     }
                 }
-                if(node != null){
+                if (node != null) {
                     //更新下一步的起始时间及执行状态.
-                    GitContext.doIndependentTransActionControl(new BatchOperator<Integer, String>() {
+                    BatchStepLog stepLog = GitContext.doIndependentTransActionControl(new BatchOperator<BatchStepLog, String>() {
 
                         @Override
-                        public Integer call(String input) {
+                        public BatchStepLog call(String input) {
                             BatchStepLogDao dao = GitContext.getBean(BatchStepLogDao.class);
                             BatchStepLog stepLog = dao.selectOne1R(linkIdCache.get(input).getFirst(), false);
                             if (stepLog != null) {
@@ -265,15 +274,18 @@ public class JobRecodeLogLogic extends JobCall {
                                 stepLog.setStepErrmsg("");
                                 dao.updateOne1(stepLog);
                             }
-                            return null;
+                            return stepLog;
                         }
                     }, executionInstance);
 
                     List<FutureTask<CallableResultDto>> futureTasks = new ArrayList<>();
-                    for(Map<String, Object> obj : node.getList()){
+                    RedisLockInput input = new RedisLockInput();
+                    String logicDesc = RedisLogicDecrConstant.QUARTZ_TIMING_STEP_LOGIC;
+                    input.setLogicDesc(logicDesc).setKey(stepLog.getStepId()).setValue(RedisRuler.doCreateValue(logicDesc, executionInstance));
+                    for (Map<String, Object> obj : node.getList()) {
                         if(CommonUtils.isNotEmpty(deliverValueMap)) obj.putAll(deliverValueMap);
-                        FutureTask<CallableResultDto> futureTask = new FutureTask<>(
-                                new InnerThread(node.getExecutor(), obj));
+                        obj.put(JobConstant.REDIS_LOCK_INPUT, input);
+                        FutureTask<CallableResultDto> futureTask = new FutureTask<>(new InnerThread(node.getExecutor(), obj));
                         pool.execute(futureTask);
                         futureTasks.add(futureTask);
                     }
@@ -339,6 +351,14 @@ public class JobRecodeLogLogic extends JobCall {
             throw GitWebException.GIT_JOB_STATUS_RESTART_ERROR(JobExecutorEnum.STOP.getValue() + "," + JobExecutorEnum.FAILED.getValue());
         }
 
+        boolean isCct = false;
+        DefaultRedisLock lock = null;
+        if ((isCct = dto.getJobInitValue().get(JobConstant.CCT_FLAG).equals(JobConstant.CCT_FLAG_1))) {
+            if (!(lock = GitContext.getBean(DefaultRedisLock.class)).tryLock(getJobLockInput(RedisLogicDecrConstant.QUARTZ_TIMING_JOB, jobLog.getJobId(), dto.getJobInitValue()))) {
+                throw GitWebException.GIT1001("当前作业在运行中或者已被重启.");
+            }
+        }
+
         final String jobStatus = jobLog.getJobStatus();
         List<BatchStepLog> stepLogs = GitContext.queryForList(
                 "SELECT a.EXECUTION_ID, a.STEP_ID FROM BATCH_STEP_LOG a, BATCH_JOB_EXECUTE b WHERE a.EXECUTION_INSTANCE = ? AND " +
@@ -346,73 +366,79 @@ public class JobRecodeLogLogic extends JobCall {
                 new Object[]{jobInstance, jobStatus}, BatchStepLog.class);
         if (CommonUtils.isEmpty(stepLogs)) {
             logger.error("There is no data in the job[{}] to be restarted!!!!.", jobInstance);
+            if (isCct) unlockJob(RedisLogicDecrConstant.QUARTZ_TIMING_JOB, jobLog.getJobId());
             throw GitWebException.GIT_RESTART_JOB_NO_DATA(jobInstance);
         } else {
             String jobID = jobLog.getJobId();
             try {
-                //Step的执行信息
-                LinkedList<InnerStepNode> stepNodes = new LinkedList<>();
-                //Step在日志表中的ID, 唯一标志
-                LinkedList<String> linkedIDList = new LinkedList<>();
-                for (BatchStepLog stepLog : stepLogs) {
-                    BatchStepDefinition stepDefinition = GitContext.getBean(BatchStepDefinitionDao.class).selectOne1R(stepLog.getStepId(), true);
-                    String stepID = stepDefinition.getStepId();
-                    MDCCache.set(stepID, stepDefinition.getStepLogMdcValue());
-                    CommonUtils.initMapValue(dto.getStepInitValue(), stepDefinition.getStepInitValue());
-                    final String executionID = stepLog.getExecutionId();
-                    GitContext.doIndependentTransActionControl(new BatchOperator<Object, String>() {
-                        @Override
-                        public Object call(String input) {
-                            return GitContext.update(
-                                    "update batch_step_log set step_status = ? where execution_instance = ? and step_status = ? and valid_status = '0'",
-                                    new Object[]{JobExecutorEnum.NEW.getValue(), input, jobStatus});
-                        }
-                    }, jobInstance);
+                try {
+                    if (isCct) lock.lock(getJobLockInput(RedisLogicDecrConstant.QUARTZ_TIMING_JOB_LOGIC, jobID, dto.getJobInitValue()));
+                    //Step的执行信息
+                    LinkedList<InnerStepNode> stepNodes = new LinkedList<>();
+                    //Step在日志表中的ID, 唯一标志
+                    LinkedList<String> linkedIDList = new LinkedList<>();
+                    for (BatchStepLog stepLog : stepLogs) {
+                        BatchStepDefinition stepDefinition = GitContext.getBean(BatchStepDefinitionDao.class).selectOne1R(stepLog.getStepId(), true);
+                        String stepID = stepDefinition.getStepId();
+                        MDCCache.set(stepID, stepDefinition.getStepLogMdcValue());
+                        CommonUtils.initMapValue(dto.getStepInitValue(), stepDefinition.getStepInitValue());
+                        final String executionID = stepLog.getExecutionId();
+                        GitContext.doIndependentTransActionControl(new BatchOperator<Object, String>() {
+                            @Override
+                            public Object call(String input) {
+                                return GitContext.update(
+                                        "update batch_step_log set step_status = ? where execution_instance = ? and step_status = ? and valid_status = '0'",
+                                        new Object[]{JobExecutorEnum.NEW.getValue(), input, jobStatus});
+                            }
+                        }, jobInstance);
 
-                    BaseServiceTaskletExecutor executor = ExecutorTrigger.getExecutor(stepDefinition.getStepActuator());
-                    stepNodes.add(new InnerStepNode(executor, executor.grouping(stepExecutionInfo(stepDefinition, dto))));
-                    linkedIDList.add(executionID);
-                }
-
-                //将当前执行job的历史ID放入缓存中,防止quartz中job的重复执行而导致的缓存脏数据.
-                stepsCache.put(jobInstance, stepNodes);
-                linkIdCache.put(jobInstance, linkedIDList);
-
-                GitContext.doIndependentTransActionControl((input) -> {
-                    BatchJobLog batchJobLog = GitContext.getBean(BatchJobLogDao.class).selectOne1R(input, true);
-                    batchJobLog.setStartTime(CommonUtils.currentTime(new Date()));
-                    batchJobLog.setJobStatus(JobExecutorEnum.COMPLETING.getValue());
-                    batchJobLog.setTimeStamp(System.nanoTime());
-                    batchJobLog.setJobErrmsg("");
-                    return GitContext.getBean(BatchJobLogDao.class).updateOne1(batchJobLog);
-                }, jobInstance);
-            } catch(Exception e) {
-                logger.error("restart job error message : {}", GitWebException.getStackTrace(e));
-                BatchJobLog job_log = GitContext.doIndependentTransActionControl((input) -> {
-                    GitContext.getBean(BatchConfCustomDao.class).updateStepLogInUnknownFailed(input,
-                            JobExecutorEnum.FAILED.getValue(), "an error occurred while deal step.");
-                    BatchJobLog log = GitContext.getBean(BatchJobLogDao.class).selectOne1R(input, false);
-                    if (log != null) {
-                        log.setJobStatus(JobExecutorEnum.FAILED.getValue());
-                        log.setEndTime(CommonUtils.currentTime(new Date()));
-                        log.setTimeStamp(System.nanoTime());
-                        log.setJobErrmsg("An unknown error occurred.");
-                        GitContext.getBean(BatchJobLogDao.class).updateOne1(log);
+                        BaseServiceTaskletExecutor executor = ExecutorTrigger.getExecutor(stepDefinition.getStepActuator());
+                        stepNodes.add(new InnerStepNode(executor, executor.grouping(stepExecutionInfo(stepDefinition, dto))));
+                        linkedIDList.add(executionID);
                     }
-                    return log;
-                }, jobInstance);
-                synchronized (stepsCache) {
-                    if(stepsCache.containsKey(jobInstance)) stepsCache.remove(jobInstance);
-                }
-                synchronized (linkIdCache) {
-                    if(linkIdCache.containsKey(jobInstance)) linkIdCache.remove(jobInstance);
-                }
-                //TODO 通知TASK任务已经完成,当前JOB结束运行. executionInstance
-                notifyTask(job_log);
 
-                throw GitWebException.GIT1001("重启Job时出错....");
+                    //将当前执行job的历史ID放入缓存中,防止quartz中job的重复执行而导致的缓存脏数据.
+                    stepsCache.put(jobInstance, stepNodes);
+                    linkIdCache.put(jobInstance, linkedIDList);
+
+                    GitContext.doIndependentTransActionControl((input) -> {
+                        BatchJobLog batchJobLog = GitContext.getBean(BatchJobLogDao.class).selectOne1R(input, true);
+                        batchJobLog.setStartTime(CommonUtils.currentTime(new Date()));
+                        batchJobLog.setJobStatus(JobExecutorEnum.COMPLETING.getValue());
+                        batchJobLog.setTimeStamp(System.nanoTime());
+                        batchJobLog.setJobErrmsg("");
+                        return GitContext.getBean(BatchJobLogDao.class).updateOne1(batchJobLog);
+                    }, jobInstance);
+                } catch(Exception e) {
+                    logger.error("restart job error message : {}", GitWebException.getStackTrace(e));
+                    BatchJobLog job_log = GitContext.doIndependentTransActionControl((input) -> {
+                        GitContext.getBean(BatchConfCustomDao.class).updateStepLogInUnknownFailed(input,
+                                JobExecutorEnum.FAILED.getValue(), "an error occurred while deal step.");
+                        BatchJobLog log = GitContext.getBean(BatchJobLogDao.class).selectOne1R(input, false);
+                        if (log != null) {
+                            log.setJobStatus(JobExecutorEnum.FAILED.getValue());
+                            log.setEndTime(CommonUtils.currentTime(new Date()));
+                            log.setTimeStamp(System.nanoTime());
+                            log.setJobErrmsg("An unknown error occurred.");
+                            GitContext.getBean(BatchJobLogDao.class).updateOne1(log);
+                        }
+                        return log;
+                    }, jobInstance);
+                    synchronized (stepsCache) {
+                        if(stepsCache.containsKey(jobInstance)) stepsCache.remove(jobInstance);
+                    }
+                    synchronized (linkIdCache) {
+                        if(linkIdCache.containsKey(jobInstance)) linkIdCache.remove(jobInstance);
+                    }
+                    //TODO 通知TASK任务已经完成,当前JOB结束运行. executionInstance
+                    notifyTask(job_log);
+
+                    throw GitWebException.GIT1001("重启Job时出错....");
+                }
+                poolExecute(jobInstance, StepReturnMapCache.get(linkIdCache.get(jobInstance).getFirst()));
+            } finally {
+                if (lock != null)  lock.unlock(getJobLockInput(RedisLogicDecrConstant.QUARTZ_TIMING_JOB_LOGIC, jobID, null));
             }
-            poolExecute(jobInstance, StepReturnMapCache.get(linkIdCache.get(jobInstance).getFirst()));
         }
         logger.debug("JobRecodeLogLogic.restartJob({}) end>>>>>>>>>>>>>>>>>>", jobInstance);
         return true;
@@ -430,35 +456,50 @@ public class JobRecodeLogLogic extends JobCall {
         if (jobLog == null) {
             dto.setInfo(JobConstant.JOB_UNINITIALIZED);
         } else if (jobLog != null) {
-            if (GitContext.getBean(BatchJobDefinitionDao.class).selectOne1R(jobLog.getJobId(), true).getJobLogFlag() != 0) {
+            BatchJobDefinition jobDef = null;
+            String jobID = jobLog.getJobId();
+            if ((jobDef = GitContext.getBean(BatchJobDefinitionDao.class).selectOne1R(jobID, true)).getJobLogFlag() != 0) {
                 throw  GitWebException.GIT1001("对象构建错误.");
             }
             if (CommonUtils.notEquals(jobLog.getJobStatus(), JobExecutorEnum.NEW.getValue())
                     && CommonUtils.notEquals(jobLog.getJobStatus(), JobExecutorEnum.COMPLETING.getValue())) {
                 dto.setInfo("当前状态[" + jobLog.getJobStatus() + "]不可以停止JOB.");
             } else {
-                synchronized (lockObj) {
-                    if ((integerMap = executingFlagMap.get(jobInstance)) == null) {
-                        //重取日志状态
-                        jobLog = GitContext.getBean(BatchJobLogDao.class).selectOne1R(jobInstance, true);
-                        if (CommonUtils.equals(jobLog.getJobStatus(), JobExecutorEnum.SUCCESS.getValue())) {
-                            dto.setInfo("当前JOB任务已完成.");
-                        } else {
-                            executingFlagMap.put(jobInstance, new AtomicInteger(1));
-                            dto.setFlag(true);
+                boolean isCct = false;
+                try {
+                    Map<String, Object> map = new HashMap<>();
+                    CommonUtils.initMapValue(map, jobDef.getJobInitValue());
+                    if ((isCct = map.get(JobConstant.CCT_FLAG).equals(JobConstant.CCT_FLAG_1))) {
+                        if (!GitContext.getBean(DefaultRedisLock.class).tryLock(getJobLockInput(RedisLogicDecrConstant.QUARTZ_TIMING_JOB_STOP, jobID, map))) {
+                            throw GitWebException.GIT1001("当前作业停止中或已被停止.");
                         }
-                    } else {
-                        //获取当前JOB实例中执行的STEP信息.
-                        List<FutureTask<CallableResultDto>> tasks = tasksResult.get(jobInstance);
-                        //当step缓存和执行器缓存均为空时, 表示当前JOB已执行完毕.
-                        if (CommonUtils.isEmpty(tasks) && CommonUtils.isEmpty(stepsCache.get(jobInstance))) {
-                            dto.setInfo("当前JOB实例[" + jobInstance + "]下所有STEP已全部执行完毕.");
-                        } else {
-                            if (integerMap.compareAndSet(JobConstant.JOB_STATUS_0, JobConstant.JOB_STATUS_1)) {
+                    }
+
+                    synchronized (lockObj) {
+                        if ((integerMap = executingFlagMap.get(jobInstance)) == null) {
+                            //重取日志状态
+                            jobLog = GitContext.getBean(BatchJobLogDao.class).selectOne1R(jobInstance, true);
+                            if (CommonUtils.equals(jobLog.getJobStatus(), JobExecutorEnum.SUCCESS.getValue())) {
+                                dto.setInfo("当前JOB任务已完成.");
+                            } else {
+                                executingFlagMap.put(jobInstance, new AtomicInteger(1));
                                 dto.setFlag(true);
+                            }
+                        } else {
+                            //获取当前JOB实例中执行的STEP信息.
+                            List<FutureTask<CallableResultDto>> tasks = tasksResult.get(jobInstance);
+                            //当step缓存和执行器缓存均为空时, 表示当前JOB已执行完毕.
+                            if (CommonUtils.isEmpty(tasks) && CommonUtils.isEmpty(stepsCache.get(jobInstance))) {
+                                dto.setInfo("当前JOB实例[" + jobInstance + "]下所有STEP已全部执行完毕.");
+                            } else {
+                                if (integerMap.compareAndSet(JobConstant.JOB_STATUS_0, JobConstant.JOB_STATUS_1)) {
+                                    dto.setFlag(true);
+                                }
                             }
                         }
                     }
+                } finally {
+                    if (isCct) unlockJob(RedisLogicDecrConstant.QUARTZ_TIMING_JOB_STOP, jobID);
                 }
             }
         }
@@ -478,55 +519,70 @@ public class JobRecodeLogLogic extends JobCall {
         if (jobLog == null) {
             dto.setInfo(JobConstant.JOB_UNINITIALIZED);
         } else if (jobLog != null) {
-            if (GitContext.getBean(BatchJobDefinitionDao.class).selectOne1R(jobLog.getJobId(), true).getJobLogFlag() != 0) {
+            BatchJobDefinition jobDef = null;
+            String jobID = jobLog.getJobId();
+            if ((jobDef = GitContext.getBean(BatchJobDefinitionDao.class).selectOne1R(jobLog.getJobId(), true)).getJobLogFlag() != 0) {
                 throw  GitWebException.GIT1001("对象构建错误.");
             }
             if (CommonUtils.notEquals(jobLog.getJobStatus(), JobExecutorEnum.NEW.getValue())
                     && CommonUtils.notEquals(jobLog.getJobStatus(), JobExecutorEnum.COMPLETING.getValue())) {
                 dto.setInfo("当前状态[" + jobLog.getJobStatus() + "]不可以取消JOB.");
             } else {
-                synchronized (lockObj) {
-                    if ((integerMap = executingFlagMap.get(jobInstance)) == null) {
-                        //重取日志状态
-                        jobLog = GitContext.getBean(BatchJobLogDao.class).selectOne1R(jobInstance, true);
-                        if (CommonUtils.equals(jobLog.getJobStatus(), JobExecutorEnum.SUCCESS.getValue())) {
-                            dto.setInfo("当前JOB任务已完成.");
-                        } else {
-                            executingFlagMap.put(jobInstance, new AtomicInteger(JobConstant.JOB_STATUS_2));
-                            dto.setFlag(true);
+                boolean isCct = false;
+                try {
+                    Map<String, Object> map = new HashMap<>();
+                    CommonUtils.initMapValue(map, jobDef.getJobInitValue());
+                    if ((isCct = map.get(JobConstant.CCT_FLAG).equals(JobConstant.CCT_FLAG_1))) {
+                        if (!GitContext.getBean(DefaultRedisLock.class).tryLock(getJobLockInput(RedisLogicDecrConstant.QUARTZ_TIMING_JOB_CANCEL, jobID, map))) {
+                            throw GitWebException.GIT1001("当前作业取消中或已被取消.");
                         }
-                    } else {
-                        //获取当前JOB实例中执行的STEP信息.
-                        List<FutureTask<CallableResultDto>> tasks = tasksResult.get(jobInstance);
-                        //当step缓存和执行器缓存均为空时, 表示当前JOB已执行完毕.
-                        if (CommonUtils.isEmpty(tasks) && CommonUtils.isEmpty(stepsCache.get(jobInstance))) {
-                            dto.setInfo("当前JOB实例[" + jobInstance + "]下所有STEP已全部执行完毕.");
+                    }
+
+                    synchronized (lockObj) {
+                        if ((integerMap = executingFlagMap.get(jobInstance)) == null) {
+                            //重取日志状态
+                            jobLog = GitContext.getBean(BatchJobLogDao.class).selectOne1R(jobInstance, true);
+                            if (CommonUtils.equals(jobLog.getJobStatus(), JobExecutorEnum.SUCCESS.getValue())) {
+                                dto.setInfo("当前JOB任务已完成.");
+                            } else {
+                                executingFlagMap.put(jobInstance, new AtomicInteger(JobConstant.JOB_STATUS_2));
+                                dto.setFlag(true);
+                            }
                         } else {
-                            if (integerMap.compareAndSet(JobConstant.JOB_STATUS_0, JobConstant.JOB_STATUS_2)) {
-                                if (CommonUtils.isNotEmpty(tasks)) {
-                                    try {
-                                        //STEP是顺序执行, 当存在任务在执行中时, 有且仅有一个STEP在执行.
-                                        for (FutureTask<CallableResultDto> task : tasks) {
-                                            if (!task.isDone()) {
-                                                if (res = task.cancel(true)) {
-                                                    break;
+                            //获取当前JOB实例中执行的STEP信息.
+                            List<FutureTask<CallableResultDto>> tasks = tasksResult.get(jobInstance);
+                            //当step缓存和执行器缓存均为空时, 表示当前JOB已执行完毕.
+                            if (CommonUtils.isEmpty(tasks) && CommonUtils.isEmpty(stepsCache.get(jobInstance))) {
+                                dto.setInfo("当前JOB实例[" + jobInstance + "]下所有STEP已全部执行完毕.");
+                            } else {
+                                if (integerMap.compareAndSet(JobConstant.JOB_STATUS_0, JobConstant.JOB_STATUS_2)) {
+                                    if (CommonUtils.isNotEmpty(tasks)) {
+                                        try {
+                                            //STEP是顺序执行, 当存在任务在执行中时, 有且仅有一个STEP在执行.
+                                            for (FutureTask<CallableResultDto> task : tasks) {
+                                                if (!task.isDone()) {
+                                                    if (res = task.cancel(true)) {
+                                                        break;
+                                                    }
                                                 }
                                             }
+                                            if (!res) {
+                                                integerMap.compareAndSet(JobConstant.JOB_STATUS_2, JobConstant.JOB_STATUS_0);
+                                            }
+                                            dto.setFlag(res);
+                                        } catch (Exception e) {
+                                            logger.error("cancel step error info : {}", MineException.getStackTrace(e));
+                                            throw GitWebException.GIT1001("取消执行中的STEP失败.");
                                         }
-                                        if (!res) {
-                                            integerMap.compareAndSet(JobConstant.JOB_STATUS_2, JobConstant.JOB_STATUS_0);
-                                        }
-                                        dto.setFlag(res);
-                                    } catch (Exception e) {
-                                        logger.error("cancel step error info : {}", MineException.getStackTrace(e));
-                                        throw GitWebException.GIT1001("取消执行中的STEP失败.");
+                                    } else {
+                                        dto.setFlag(true);
                                     }
-                                } else {
-                                    dto.setFlag(true);
                                 }
                             }
                         }
                     }
+                } finally {
+                    if (isCct) unlockJob(RedisLogicDecrConstant.QUARTZ_TIMING_JOB_CANCEL, jobID);
                 }
             }
         }
@@ -576,23 +632,31 @@ public class JobRecodeLogLogic extends JobCall {
     * @Date: 2020/8/25
     */
     public static void notifyTask(BatchJobLog job_log) {
-        if (CommonUtils.isNotEmpty(job_log.getAssociateTaskInstance())) {
-            MonitorDto monitorDto = new MonitorDto();
-            monitorDto.setJobID(job_log.getJobId());
-            monitorDto.setJobExecutionInstance(job_log.getExecutionInstance());
-            monitorDto.setTaskExecutionInstance(job_log.getAssociateTaskInstance());
-            monitorDto.setConcurrencyNum(job_log.getConcurrencyNum());
-            monitorDto.setJobStatus(job_log.getJobStatus());
-            if (!TaskRecodeLogLogic.notify(monitorDto)) {
-                logger.warn("接收队列数已满, 使用异步方式推送信息.");
-                //异步发送
-                try {
-                    lock.lock();
-                    linkedQueue.offer(monitorDto);
-                    condition.signal();
-                } finally {
-                    lock.unlock();
+        try {
+            if (CommonUtils.isNotEmpty(job_log.getAssociateTaskInstance())) {
+                MonitorDto monitorDto = new MonitorDto();
+                monitorDto.setJobID(job_log.getJobId());
+                monitorDto.setJobExecutionInstance(job_log.getExecutionInstance());
+                monitorDto.setTaskExecutionInstance(job_log.getAssociateTaskInstance());
+                monitorDto.setConcurrencyNum(job_log.getConcurrencyNum());
+                monitorDto.setJobStatus(job_log.getJobStatus());
+                if (!TaskRecodeLogLogic.notify(monitorDto)) {
+                    logger.warn("接收队列数已满, 使用异步方式推送信息.");
+                    //异步发送
+                    try {
+                        lock.lock();
+                        linkedQueue.offer(monitorDto);
+                        condition.signal();
+                    } finally {
+                        lock.unlock();
+                    }
                 }
+            }
+        } finally {
+            String jobID = job_log.getJobId();
+            if (isCct(job_log.getJobId())) {
+                unlockJob(RedisLogicDecrConstant.QUARTZ_TIMING_JOB, jobID);
+                logger.info("[{}.{}]JOB锁已释放.", jobID, job_log.getExecutionInstance());
             }
         }
     }
@@ -837,7 +901,7 @@ public class JobRecodeLogLogic extends JobCall {
         Iterator<InnerStepNode> iterator = nodes.iterator();
         while(iterator.hasNext()){
             buffer.append(iterator.next().toString());
-            if(iterator.hasNext()){
+            if (iterator.hasNext()) {
                 buffer.append(",");
             }
         }

@@ -389,7 +389,13 @@ public class CurrThreadExecutionEnv {
 			logger.debug("queryForSingleFieldList clz : {}", clz);
 		}
 		try {
-			return this.jdbcTemplate.queryForObject(sql, args, new CustomRowMapper<>(clz));
+			return this.jdbcTemplate.queryForObject(sql, args, new RowMapper<T>(){
+				@Override
+				public T mapRow(ResultSet rs, int rowNum) throws SQLException {
+					return (T)rs.getObject(1);
+				}
+			});
+
 		} catch (EmptyResultDataAccessException e) {
 			return null;
 		} catch (DataAccessException de) {

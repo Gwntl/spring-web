@@ -5,6 +5,7 @@ import org.quartz.Job;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Repository;
 
@@ -37,6 +38,10 @@ public class ExecutorBase implements ApplicationContextAware{
 	
 	public static SchedulerFactoryBean getDynamicScheduler() {
 		return (SchedulerFactoryBean) applicationContext.getBean("&DynamicOperationScheduler");
+	}
+
+	public static ThreadPoolTaskExecutor getResultExecutor() {
+		return (ThreadPoolTaskExecutor)applicationContext.getBean("resultPoll");
 	}
 	
 	public static Class<? extends Job> getExecutorJob(String jobPath) {

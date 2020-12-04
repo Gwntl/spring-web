@@ -144,15 +144,15 @@ public class JobConstant {
 	/**
 	 * 任务状态. 0-正常
 	 */
-	public static Integer TASK_STATUS_0 = 0;
+	public static final Integer TASK_STATUS_0 = 0;
 	/**
 	 * 任务状态. 1-停止
 	 */
-	public static Integer TASK_STATUS_1 = 1;
+	public static final Integer TASK_STATUS_1 = 1;
 	/**
 	 * 任务状态. 2-取消
 	 */
-	public static Integer TASK_STATUS_2 = 2;
+	public static final Integer TASK_STATUS_2 = 2;
 	/**
 	 * 作业状态. 0-正常
 	 */
@@ -172,5 +172,27 @@ public class JobConstant {
 	/**
 	 * 初始化未完成
 	 */
-	public static String JOB_UNINITIALIZED = "UNINITIALIZED";
+	public static final String JOB_UNINITIALIZED = "UNINITIALIZED";
+	/**
+	 * 并发标志 0-是, 1-否
+	 */
+	public static final String CCT_FLAG = "cctFlag";
+	/**
+	 * 并发标志 0-是
+	 */
+	public static final String CCT_FLAG_0 = "0";
+	/**
+	 * 并发标志 1-否
+	 */
+	public static final String CCT_FLAG_1 = "1";
+	/**
+	 * 过期时间
+	 */
+	public static final String EXPIRE_TIME = "expireTime";
+	/**
+	 * 重试次数
+	 */
+	public static final String RETRY_TIMES = "retryTimes";
+
+	public static final String REDIS_LOCK_INPUT = "redisLockInput";
 }

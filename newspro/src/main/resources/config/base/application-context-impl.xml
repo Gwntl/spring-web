@@ -174,7 +174,7 @@
 	<aop:aspectj-autoproxy proxy-target-class="true"/>
 
     <!-- 配置线程池 -->
-	<bean id="threadTaskPoll" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+	<bean id="resultPoll" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
 		<property name="corePoolSize" value="20"/>
 		<property name="maxPoolSize" value="30"/>
 		<property name="keepAliveSeconds" value="120"/>

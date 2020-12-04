@@ -1,5 +1,7 @@
 package org.mine.rule.redis;
 
+import com.sun.istack.internal.NotNull;
+import org.mine.aplt.support.SnowflakeIdWorker;
 import org.mine.rule.Ruler;
 
 /**
@@ -17,16 +19,22 @@ import org.mine.rule.Ruler;
  * @ClassName: RedisKeyRuler
  * @date 2020/11/2014:35
  */
-public class RedisKeyRuler implements Ruler {
+public class RedisRuler implements Ruler {
     private static final String PROJECT_NAME = "wntl";
     private static final String BASE_DIR = System.getProperty("user.dir");
-    private static final String MODULE_NAME = PROJECT_NAME.substring(BASE_DIR.lastIndexOf("\\") + 1).toLowerCase();
+    private static final String MODULE_NAME = BASE_DIR.substring(BASE_DIR.lastIndexOf("\\") + 1).toLowerCase();
     private static final String SEPARATOR = ":";
+    private static final String SUFFIX_KEY_COUNT = "count";
     public static final String VALUE_TYPE_STRING = "string";
     public static final String VALUE_TYPE_LIST = "list";
     public static final String VALUE_TYPE_HASH = "hash";
     public static final String VALUE_TYPE_SET = "set";
     public static final String VALUE_TYPE_SORT_SET = "sortset";
+
+
+    public static String doCreateKey(@NotNull String logicDesc, @NotNull String baseKeyName) {
+        return doCreateKey(logicDesc, baseKeyName, VALUE_TYPE_STRING);
+    }
 
     /**
     * 创建redisKey
@@ -37,9 +45,36 @@ public class RedisKeyRuler implements Ruler {
     * @Author: wntl
     * @Date: 2020/11/20
     */
-    public static String doCreateKey(String logicDesc, String baseKeyName, String valueType) {
+    public static String doCreateKey(@NotNull String logicDesc, @NotNull String baseKeyName, @NotNull String valueType) {
         return new StringBuilder().append(PROJECT_NAME).append(SEPARATOR).append(MODULE_NAME)
                 .append(SEPARATOR).append(logicDesc.toLowerCase()).append(SEPARATOR).append(baseKeyName.toLowerCase())
                 .append(SEPARATOR).append(valueType).toString();
+    }
+    /**
+    * 创建计数key
+    * @param baseKey
+    * @return: java.lang.String
+    * @Author: wntl
+    * @Date: 2020/11/26
+    */
+    public static String doCreateCountKey(String baseKey) {
+        return baseKey + SEPARATOR + SUFFIX_KEY_COUNT;
+    }
+
+    /**
+    * 创建redis锁value值
+    * @param prefix 前缀
+    * @param suffix 后缀
+    * @return: java.lang.String
+    * @Author: wntl
+    * @Date: 2020/11/26
+    */
+    public static String doCreateValue(@NotNull String prefix, @NotNull String suffix) {
+        return prefix.toLowerCase() + SEPARATOR + SnowflakeIdWorker.getSnowflakeIdWorker(false).nextId() + SEPARATOR + suffix.toLowerCase();
+    }
+
+    public static void main(String[] args) {
+//        doCreateKey("", "","");
+        System.out.println(Thread.currentThread().getId());
     }
 }

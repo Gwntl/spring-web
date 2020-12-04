@@ -44,7 +44,7 @@ public class SchedulerOperator {
 	 * 动态注册JOB服务.
 	 * @param triggerID
 	 */
-	public boolean registerJob(String jobID, String triggerID){
+	public boolean registerJob(String jobID, String triggerID) {
 		boolean isSuccess = false;
 		try {
 			JobDetailImpl detailImpl = new JobDetailImpl();
@@ -80,7 +80,7 @@ public class SchedulerOperator {
 	 * @param jobID
 	 * @param triggerIds
 	 */
-	public boolean reloadJob(String jobID, List<String> triggerIds){
+	public boolean reloadJob(String jobID, List<String> triggerIds) {
 		boolean isSuccess = false;
 		try {
 			StdScheduler scheduler = (StdScheduler) ExecutorBase.getSchedulerFactoryBean().getScheduler();
@@ -114,7 +114,7 @@ public class SchedulerOperator {
 	 * @param jobID
 	 * @param triggerIds
 	 */
-	public boolean reloadTrigger(String jobID, List<String> triggerIds){
+	public boolean reloadTrigger(String jobID, List<String> triggerIds) {
 		boolean isSuccess = false;
 		try {
 			StdScheduler scheduler = (StdScheduler) ExecutorBase.getSchedulerFactoryBean().getScheduler();
@@ -157,7 +157,7 @@ public class SchedulerOperator {
 	 * @param pauseFlag 可暂停标志
 	 * @param force 强制暂停标志. 当JOB不支持暂停时,使用强制暂停时,重启后会将misfir的时间点全部补回来.
 	 */
-	public boolean pauseJob(String jobID, int pauseFlag, boolean force){
+	public boolean pauseJob(String jobID, int pauseFlag, boolean force) {
 		boolean isSuccess = false;
 		try {
 			StdScheduler scheduler = (StdScheduler) ExecutorBase.getSchedulerFactoryBean().getScheduler();
@@ -182,7 +182,7 @@ public class SchedulerOperator {
 	 * @param resumeFlag 可重启标志.
 	 * @param force 强制重启标志.
 	 */
-	public boolean restartJob(String jobID, int resumeFlag, boolean force){
+	public boolean restartJob(String jobID, int resumeFlag, boolean force) {
 		boolean isSuccess = false;
 		try {
 			StdScheduler scheduler = (StdScheduler) ExecutorBase.getSchedulerFactoryBean().getScheduler();

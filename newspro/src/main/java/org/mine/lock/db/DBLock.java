@@ -15,7 +15,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 数据库锁
@@ -38,8 +37,6 @@ public abstract class DBLock implements Lock {
     private static long timeOut = 60 * 60 * 1000;
 
     private static long warningOut = 30 * 60 * 1000;
-
-    protected static long tryAgain = TimeUnit.SECONDS.toNanos(5);
 
     /**
     * 尝试获取锁. 立即返回结果.
@@ -142,16 +139,6 @@ public abstract class DBLock implements Lock {
     public String getKey(String lockName, String lockType) { return lockName + "-" + lockType; }
 
     /**
-     * 等待
-     */
-    public void waitMoment() {
-        long againTime = System.nanoTime() + tryAgain;
-        while (System.nanoTime() <= againTime) {
-            //TODO 什么都不做.
-        }
-    }
-
-    /**
      * 插入独占锁记录
      * @param lockName 锁名称
      * @param lockType 锁类型
@@ -208,16 +195,16 @@ public abstract class DBLock implements Lock {
                 if (list != null && list.size() > 0) {
                     Iterator<DbOptimisticLock> iterator = list.iterator();
                     while (iterator.hasNext()) {
-                        DbOptimisticLock optimisticLock = iterator.next();
+                        DbOptimisticLock lock = iterator.next();
                         try {
                             Long current = System.currentTimeMillis();
-                            Long lockTime = optimisticLock.getLockTime() * 1000;
-                            Long end = lockTime > 0L ? formatter.parse(optimisticLock.getEndTime()).getTime() : 0L;
-                            Long update  = formatter.parse(optimisticLock.getUpdateTime()).getTime();
-                            String key = getKey(optimisticLock.getLockName(), optimisticLock.getLockType());
+                            Long lockTime = lock.getLockTime() * 1000;
+                            Long end = lockTime > 0L ? formatter.parse(lock.getEndTime()).getTime() : 0L;
+                            Long update  = formatter.parse(lock.getUpdateTime()).getTime();
+                            String key = getKey(lock.getLockName(), lock.getLockType());
                             DBLockInfo lockInfo = lockMap.get(key);
-                            if (lockTime > 0 && current > end && (CommonUtils.equals(lockInfo.getVersion(), optimisticLock.getLockVersion())
-                                    && CommonUtils.equals(lockInfo.getOwnerID(), optimisticLock.getLockOwner()) && !lockInfo.getStatus())) {
+                            if (lockTime > 0 && current > end && (CommonUtils.equals(lockInfo.getVersion(), lock.getLockVersion())
+                                    && CommonUtils.equals(lockInfo.getOwnerID(), lock.getLockOwner()) && !lockInfo.getStatus())) {
                                 //更新数据状态
                                 int r = GitContext.doIndependentTransActionControl(new BatchOperator<Integer, DbOptimisticLock>() {
                                     @Override
@@ -227,13 +214,13 @@ public abstract class DBLock implements Lock {
                                                 new Object[]{CommonUtils.currentTime(new Date()), input.getLockName(), input.getLockType(),
                                                         input.getLockVersion(), input.getLockOwner()});
                                     }
-                                }, optimisticLock);
+                                }, lock);
                                 if (r > 0) {
                                     logger.info("remove lock successful.");
                                 }
                             } else if (lockTime == 0L) {
-                                if (((current - update) / timeOut) > 0 && (CommonUtils.equals(lockInfo.getVersion(), optimisticLock.getLockVersion())
-                                        && CommonUtils.equals(lockInfo.getOwnerID(), optimisticLock.getLockOwner()) && !lockInfo.getStatus())) {
+                                if (((current - update) / timeOut) > 0 && (CommonUtils.equals(lockInfo.getVersion(), lock.getLockVersion())
+                                        && CommonUtils.equals(lockInfo.getOwnerID(), lock.getLockOwner()) && !lockInfo.getStatus())) {
                                     GitContext.doIndependentTransActionControl(new BatchOperator<Integer, DbOptimisticLock>() {
                                         @Override
                                         public Integer call(DbOptimisticLock input) {
@@ -242,11 +229,11 @@ public abstract class DBLock implements Lock {
                                                 new Object[]{CommonUtils.currentTime(new Date()), input.getLockName(), input.getLockType(),
                                                         input.getLockVersion(), input.getLockOwner()});
                                         }
-                                    }, optimisticLock);
-                                } else if (((current - update) / warningOut) > 0 && (CommonUtils.equals(lockInfo.getVersion(), optimisticLock.getLockVersion())
-                                        && CommonUtils.equals(lockInfo.getOwnerID(), optimisticLock.getLockOwner()) && lockInfo.getStatus())) {
+                                    }, lock);
+                                } else if (((current - update) / warningOut) > 0 && (CommonUtils.equals(lockInfo.getVersion(), lock.getLockVersion())
+                                        && CommonUtils.equals(lockInfo.getOwnerID(), lock.getLockOwner()) && lockInfo.getStatus())) {
                                     //监控报警
-                                    logger.error("====== {} holds the lock for more than a specified time.", optimisticLock.getLockName());
+                                    logger.error("====== {} holds the lock for more than a specified time.", lock.getLockName());
                                 }
                             }
                         } catch (ParseException e) {

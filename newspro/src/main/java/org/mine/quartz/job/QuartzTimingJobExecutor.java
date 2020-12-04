@@ -1,7 +1,12 @@
 package org.mine.quartz.job;
 
+import org.mine.aplt.constant.JobConstant;
+import org.mine.aplt.support.bean.GitContext;
+import org.mine.lock.redis.DefaultRedisLock;
+import org.mine.lock.redis.RedisLogicDecrConstant;
 import org.mine.quartz.dto.ExecuteTaskDto;
 import org.mine.quartz.run.BaseExecutor;
+import org.mine.quartz.run.job.JobCall;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -26,7 +31,16 @@ public class QuartzTimingJobExecutor implements Job {
         logger.debug("QuartzTimingJobExecutor.execute() begin >>>>>>>>>>>>>>>>>>>>>>");
         Map<String, Object> map = context.getJobDetail().getJobDataMap();
         ExecuteTaskDto taskDto = (ExecuteTaskDto) map.get("dto");
-        BaseExecutor.baseExecutor(taskDto);
+        if (taskDto.getJobInitValue().get(JobConstant.CCT_FLAG).equals(JobConstant.CCT_FLAG_1)) {
+            if (GitContext.getBean(DefaultRedisLock.class).tryLock(JobCall.getJobLockInput(RedisLogicDecrConstant.QUARTZ_TIMING_JOB,
+                    taskDto.getJobId(), taskDto.getJobInitValue()))) {
+                BaseExecutor.baseExecutor(taskDto);
+            } else {
+                logger.warn("The current existence job is running.");
+            }
+        } else {
+            BaseExecutor.baseExecutor(taskDto);
+        }
         logger.debug("QuartzTimingJobExecutor.execute() end <<<<<<<<<<<<<<<<<<<<<<<<");
     }
 }

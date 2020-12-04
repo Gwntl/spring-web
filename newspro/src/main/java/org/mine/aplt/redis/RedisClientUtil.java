@@ -8,6 +8,8 @@ import org.springframework.data.redis.connection.RedisZSetCommands;
 import org.springframework.data.redis.core.DefaultTypedTuple;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Component;
 import org.mine.aplt.redis.CustomRedisTemplate.ZSetOperatorInput;
 
@@ -405,6 +407,30 @@ public class RedisClientUtil {
             return false;
         }
     }
+
+    /**
+    * 当且仅当key中不存在值时才设置值并设置超时时间. set key value EX(秒)|PX(毫秒) timeout NX(不存在)|XX
+    * 此处使用 'SET key value EX timeout NX' 命令 .返回值存在问题.
+    * @param key
+    * @param value
+    * @param timeOut 超时时间, 秒为单位
+    * @return: boolean
+    * @Author: wntl
+    * @Date: 2020/11/26
+    */
+    public boolean setIfAbsent(String key, Object value, Long timeOut) {
+        try {
+            if (CommonUtils.isEmpty(key)) {
+                log.debug("setIfAbsent key is null");
+                return false;
+            }
+            return customRedisTemplate.setIfAbsent(key, value, timeOut);
+        } catch (Exception e) {
+            log.error("setIfAbsent error : ", e);
+            return false;
+        }
+    }
+
     /**
     * 设置多个不存在value的key值. mSetNX key value [key value...]
     * @param data
@@ -2660,4 +2686,18 @@ public class RedisClientUtil {
     }
 
     /* ====================以上为ZSet有序集合操作======================== */
+
+    public <T> T eval(String script, List<String> keys, Class<T> clazz, Object... args) {
+        try {
+            if (CommonUtils.isEmpty(script)) {
+                return null;
+            }
+            RedisScript<T> redisScript = new DefaultRedisScript<>(script, clazz);
+            return template.execute(redisScript, keys, args);
+        } catch (Exception e) {
+            log.error("redis zAdd error : ", e);
+            return null;
+        }
+    }
+
 }

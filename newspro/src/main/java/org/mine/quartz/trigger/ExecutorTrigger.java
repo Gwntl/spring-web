@@ -93,8 +93,8 @@ public class ExecutorTrigger extends CronTriggerImpl implements InitializingBean
 	public void afterPropertiesSet() throws Exception {
 		//初始化执行器缓存
 		quartzStepCache.putAll(context.getBeansOfType(BaseServiceTaskletExecutor.class));
-		loadTimingJobData();
-//		loadTimingTaskData();
+//		loadTimingJobData();
+		loadTimingTaskData();
 //		loadTimingQueueData();
 		logger.info("load timing data over....");
 	}

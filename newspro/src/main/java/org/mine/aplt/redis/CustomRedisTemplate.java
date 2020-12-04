@@ -1,17 +1,18 @@
 package org.mine.aplt.redis;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisStringCommands;
 import org.springframework.data.redis.connection.RedisZSetCommands.Aggregate;
 import org.springframework.data.redis.connection.RedisZSetCommands.Limit;
 import org.springframework.data.redis.connection.RedisZSetCommands.Range;
 import org.springframework.data.redis.connection.RedisZSetCommands.Tuple;
+import org.springframework.data.redis.connection.StringRedisConnection;
 import org.springframework.data.redis.core.DefaultTypedTuple;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations.TypedTuple;
+import org.springframework.data.redis.core.types.Expiration;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.SerializationUtils;
 import org.springframework.stereotype.Component;
@@ -47,6 +48,13 @@ public class CustomRedisTemplate {
         Assert.notNull(key, "non null key required");
         Assert.notNull(keySerializer(), "non null keySerializer required");
         return this.keySerializer() == null && key instanceof byte[] ? (byte[])((byte[])key) : this.keySerializer().serialize(key);
+    }
+
+    @SuppressWarnings("unchecked")
+    byte[] rawValue(Object value) {
+        Assert.notNull(value, "non null value required");
+        Assert.notNull(valueSerializer(), "non null valueSerializer required");
+        return this.valueSerializer() == null && value instanceof byte[] ? (byte[]) value : this.valueSerializer().serialize(value);
     }
 
     <K> byte[][] rawKeys(K key, Collection<K> keys) {
@@ -123,6 +131,19 @@ public class CustomRedisTemplate {
     }
 
     /** 以下为字符串操作 **/
+    public Boolean setIfAbsent(String key, Object value, Long timeOut) {
+        final byte[] rawKey = rawKey(key);
+        final byte[] rawValue = rawValue(value);
+        final Expiration expiration = Expiration.seconds(timeOut);
+        return (Boolean)redisTemplate.execute(new RedisCallback<Boolean>() {
+            public Boolean doInRedis(RedisConnection connection) {
+                connection.set(rawKey, rawValue, expiration, StringRedisConnection.SetOption.ifAbsent());
+                return true;
+            }
+        }, true);
+    }
+
+
     public Long incr(Object key) {
         final byte[] rawKey = rawKey(key);
         return (Long)redisTemplate.execute(new RedisCallback<Long>() {

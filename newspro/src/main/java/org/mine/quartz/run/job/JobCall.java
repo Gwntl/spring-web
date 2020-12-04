@@ -1,24 +1,33 @@
 package org.mine.quartz.run.job;
 
 import org.mine.aplt.Cache.MDCCache;
+import org.mine.aplt.constant.JobConstant;
 import org.mine.aplt.exception.GitWebException;
 import org.mine.aplt.exception.MineException;
 import org.mine.aplt.support.BaseServiceTaskletExecutor;
 import org.mine.aplt.support.bean.GitContext;
 import org.mine.aplt.util.CommonUtils;
+import org.mine.lock.redis.DefaultRedisLock;
+import org.mine.lock.redis.RedisLock;
+import org.mine.lock.redis.RedisLockInput;
+import org.mine.lock.redis.ReentrantRedisLock;
 import org.mine.model.BatchJobLog;
 import org.mine.model.BatchStepDefinition;
 import org.mine.quartz.dto.CallableResultDto;
 import org.mine.quartz.dto.ExecuteTaskDto;
 import org.mine.quartz.dto.JobOperatorDto;
+import org.mine.quartz.util.QuartzUtil;
+import org.mine.rule.redis.RedisRuler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class JobCall implements Runnable, InitializingBean {
@@ -115,6 +124,48 @@ public abstract class JobCall implements Runnable, InitializingBean {
 	}
 
 	/**
+	 * 判断是否并发
+	 * @param jobID
+	 * @return: boolean
+	 * @Author: wntl
+	 * @Date: 2020/12/3
+	 */
+	public static boolean isCct(String jobID) {
+		return QuartzUtil.isCct(GitContext.queryForString("SELECT JOB_INIT_VALUE FROM BATCH_JOB_DEFINITION " +
+				"WHERE JOB_ID = ?", new Object[]{ jobID }));
+	}
+
+	/**
+	* 获取JOB处理锁对象
+	* @param jobID
+	* @param map
+	* @return: org.mine.lock.redis.RedisLockInput
+	* @Author: wntl
+	* @Date: 2020/12/3
+	*/
+	public static RedisLockInput getJobLockInput(String logicDesc, String jobID, Map<String, Object> map) {
+		RedisLockInput lockInput = new RedisLockInput();
+		lockInput.setLogicDesc(logicDesc).setKey(jobID);
+		if (map != null) {
+			lockInput.setValue(RedisRuler.doCreateValue(logicDesc, jobID))
+					.setExpire(Long.valueOf((String)map.get(JobConstant.EXPIRE_TIME)))
+					.setRetryTimes(Long.valueOf((String)map.get(JobConstant.RETRY_TIMES)));
+		}
+		return lockInput;
+	}
+
+	/**
+	* JOB锁解锁
+	* @param jobID
+	* @return: void
+	* @Author: wntl
+	* @Date: 2020/12/3
+	*/
+	public static void unlockJob(String jobLogic, String jobID) {
+		GitContext.getBean(DefaultRedisLock.class).unlock(getJobLockInput(jobLogic, jobID, null));
+	}
+
+	/**
 	 * 内部执行节点
 	 * @author: wntl
 	 * @date: 2020年4月29日 下午8:06:05
@@ -195,7 +246,15 @@ public abstract class JobCall implements Runnable, InitializingBean {
 		@Override
 		public CallableResultDto call() throws Exception {
 			CallableResultDto dto = new CallableResultDto();
-			try{
+			RedisLock lock = null;
+			RedisLockInput input = null;
+			try {
+				if (obj.get(JobConstant.CCT_FLAG).equals(JobConstant.CCT_FLAG_1)) {
+					lock = GitContext.getBean(ReentrantRedisLock.class);
+					input = (RedisLockInput)obj.get(JobConstant.REDIS_LOCK_INPUT);
+					lock.lock(input.setExpire(Long.valueOf((String)obj.get(JobConstant.EXPIRE_TIME)))
+							.setRetryTimes(Long.valueOf((String)obj.get(JobConstant.RETRY_TIMES))));
+				}
 				GitContext.init(MDCCache.get(obj.get("STEP_ID").toString()));
 				dto.setMap(executor.handler(obj));
 				dto.setResult(true);
@@ -203,6 +262,8 @@ public abstract class JobCall implements Runnable, InitializingBean {
 				logger.error("error message : {}", MineException.getStackTrace(e));
 				dto.setResult(false);
 				dto.setMseeage(e.getMessage());
+			} finally {
+				if (lock != null) lock.unlock(input);
 			}
 			return dto;
 		}

@@ -1,13 +1,9 @@
 package org.mine.quartz;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.mine.aplt.constant.ApltContanst;
+
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class JobExecutorFactory {
 	
@@ -29,7 +25,7 @@ public class JobExecutorFactory {
 		}
 		return factory;
 	}
-	
+
 	/**
 	 * 单例方法(双重检验锁,依赖volatile的内存可见性及先写后读及重量级锁锁类实例.), 供Job调度作业时使用.
 	 * 根据不同场景实现不同的线程池.
@@ -40,7 +36,7 @@ public class JobExecutorFactory {
 			synchronized (JobExecutorFactory.class) {
 				if (executor == null) {
 					//此处使用有界队列, 由于需要记录日志的异步定时任务偏少.
-					executor = new ThreadPoolExecutor(16, 32, 50L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(128), new CustomThreadFactory("JOB-EXECUTOR-"));
+					executor = new ThreadPoolExecutor(16, 32, 50L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(1024), new CustomThreadFactory("JOB-EXECUTOR-"));
 				}
 			}
 		}
